@@ -297,10 +297,12 @@ add({id:"z1", type:"reken", pts:20, label:"Zoekopdracht", kaartjes:true,
 add({id:"z2", type:"reken", pts:20, label:"Zoekopdracht", kaartjes:true,
   q:"Hoeveel euro rente betaal je in totaal?", formule:"Totale kosten - geleend bedrag",
   raw:() => KAART.termijn*KAART.maanden - KAART.bedrag, dec:2, unit:"€",
+  vorige:[["Totale kosten", () => eur(KAART.termijn*KAART.maanden)]],
   hints:["Rente is wat je extra terugbetaalt.","Trek het geleende bedrag af van de totale kosten.","Totale kosten min €5.400."]});
 add({id:"z3", type:"reken", pts:20, label:"Zoekopdracht", kaartjes:true,
   q:"Hoeveel procent is de rente van het geleende bedrag? Rond af op 1 decimaal.", formule:"(Deel : geheel) x 100",
   raw:() => ((KAART.termijn*KAART.maanden - KAART.bedrag)/KAART.bedrag)*100, dec:1, unit:"%",
+  vorige:[["Totale kosten", () => eur(KAART.termijn*KAART.maanden)], ["Rente", () => eur(KAART.termijn*KAART.maanden - KAART.bedrag)]],
   hints:["Het deel is de rente, het geheel is het geleende bedrag.","(rente : geleend bedrag) x 100.","(600 : 5400) x 100, rond af op 1 decimaal."]});
 
 /* ---- open vragen (AI-nakijken) ---- */
@@ -411,7 +413,7 @@ function render(){
   else if (S.fase === "kluis") m.innerHTML = vKluis();
   else if (S.fase === "einde") m.innerHTML = vEinde();
   save();
-  if (changed) { lastKey = key; window.scrollTo({top:0}); const a = $("#ans"); if (a) a.focus({preventScroll:true}); }
+  if (changed) { lastKey = key; window.scrollTo({top:0}); const a = $("#ber") || $("#ans"); if (a) a.focus({preventScroll:true}); }
 }
 
 function vStart(){
@@ -476,7 +478,7 @@ function startKamer(k){
 }
 function startQ(){
   const def = Q[S.rij[S.qi]];
-  cur = {def, att:0, hints:0, done:false, earned:0, msg:null, text:"", sel:[], gaveUp:false, busy:false, fails:0};
+  cur = {def, att:0, hints:0, paid:0, freeUsed:false, done:false, earned:0, msg:null, text:"", sel:[], gaveUp:false, busy:false, fails:0};
   if (def.type === "mc") {
     const idx = def.opts.map((_,i)=>i);
     cur.order = def.fixedOrder ? idx : shuffle(idx.slice());
@@ -487,7 +489,7 @@ function startQ(){
     cur.locked = {};       // left -> true
     cur.pickL = null; cur.lastWrong = [];
   } else if (def.type === "reken") {
-    cur.val = "";
+    cur.val = ""; cur.ber = ""; cur.berFb = null; cur.berBusy = false;
   } else if (def.type === "kaartjes") {
     cur.f = {b:"", t:"", m:""}; cur.fok = {};
   } else if (def.type === "open") {
@@ -502,17 +504,21 @@ function vKamer(){
   return `<section class="stack"><div class="meta"><span><b>${K.naam}</b> · opdracht ${S.qi+1} van ${S.rij.length}</span>${pts}</div><div class="prog">${prog}</div></section>
   <section class="card stack">
     <div><span class="tag">${d.label}</span></div>
-    ${d.kaartjes ? kaartBox() : ""}
+    ${d.kaartjes ? kaartBox(d) : ""}
     <p class="q">${esc(d.q)}</p>
     ${d.formule ? `<div><span class="formula">${esc(d.formule)}</span></div>` : ""}
     ${vBody(d)}
     ${cur.msg ? cur.msg : ""}
+    ${cur.berBusy ? `<div class="fb info">De AI kijkt naar je berekening...</div>` : ""}
+    ${cur.berFb ? `<div class="fb info"><b>Feedback op je berekening:</b> ${esc(cur.berFb)}</div>` : ""}
     ${vActions(d)}
   </section>
   ${vHints(d)}`;
 }
-function kaartBox(){
-  return `<div class="cards"><span>Geleend bedrag: <b>${eur(KAART.bedrag)}</b></span><span>Maandtermijn: <b>${eur(KAART.termijn)}</b></span><span>Aantal maanden: <b>${KAART.maanden}</b></span></div>`;
+function kaartBox(d){
+  const vorige = (d.vorige || []).map(v => `<span>${v[0]}: <b>${v[1]()}</b></span>`).join("");
+  return `<div class="cards"><span>Geleend bedrag: <b>${eur(KAART.bedrag)}</b></span><span>Maandtermijn: <b>${eur(KAART.termijn)}</b></span><span>Aantal maanden: <b>${KAART.maanden}</b></span></div>` +
+    (vorige ? `<div class="cards" style="border-style:solid;border-color:var(--good)"><span style="grid-column:1/-1;color:var(--muted)">Dit heb je al uitgerekend:</span>${vorige}</div>` : "");
 }
 function vBody(d){
   if (d.type === "mc") {
@@ -543,7 +549,8 @@ function vBody(d){
     return `<div class="match"><div class="mcol">${L}</div><div class="mcol">${R}</div></div>`;
   }
   if (d.type === "reken") {
-    return `<div class="inl">${d.unit==="€"?'<span class="unit">€</span>':""}<input id="ans" type="text" inputmode="decimal" autocomplete="off" placeholder="Typ je antwoord" value="${esc(cur.val)}" ${cur.done?"disabled":""}>${d.unit==="%"?'<span class="unit">%</span>':""}</div>`;
+    return `<label class="fl" for="ber">Schrijf je berekening op<textarea id="ber" style="min-height:110px" placeholder="Schrijf je som op, bijvoorbeeld: 12 x 5 =" ${cur.done?"disabled":""}>${esc(cur.ber||"")}</textarea></label>
+    <div class="inl">${d.unit==="€"?'<span class="unit">€</span>':""}<input id="ans" type="text" inputmode="decimal" autocomplete="off" placeholder="Typ je antwoord" value="${esc(cur.val)}" ${cur.done?"disabled":""}>${d.unit==="%"?'<span class="unit">%</span>':""}</div>`;
   }
   if (d.type === "kaartjes") {
     const f = (k, lab, ph) => `<label class="fl" for="f_${k}">${lab}<input id="f_${k}" data-f="${k}" type="text" inputmode="decimal" autocomplete="off" placeholder="${ph}" value="${esc(cur.f[k])}" class="${cur.fok[k]===true?"good-field":cur.fok[k]===false?"bad-field":""}" ${cur.done?"disabled":""}></label>`;
@@ -573,7 +580,7 @@ function vHints(d){
   if (cur.done) return "";
   const n = cur.hints, max = d.hints.length;
   const list = d.hints.slice(0,n).map(h => `<div class="hint">${esc(h)}</div>`).join("");
-  const cost = CONFIG.HINT_KOSTEN[Math.min(n, CONFIG.HINT_KOSTEN.length-1)];
+  const cost = CONFIG.HINT_KOSTEN[Math.min(cur.paid, CONFIG.HINT_KOSTEN.length-1)];
   const can = n < max && S.saldo >= cost;
   const btn = n >= max ? `<button class="btn small ghost" disabled>Geen hints meer</button>`
     : `<button class="btn small" data-act="hint" ${can?"":"disabled"}>Koop hint ${n+1} (${eur(cost)})</button>`;
@@ -615,14 +622,36 @@ function checkMC(){
 }
 function checkReken(){
   const d = cur.def, v = parseNum(cur.val);
+  if ((cur.ber || "").trim().length < 3 || !/\d/.test(cur.ber)) { cur.msg = `<div class="fb info">Schrijf eerst je berekening op in het bovenste vak. Daarna typ je het antwoord.</div>`; render(); return; }
+  cur.berFb = null;
   if (isNaN(v)) { cur.msg = `<div class="fb info">Typ een getal, bijvoorbeeld 12,5.</div>`; render(); return; }
   cur.att++;
   const raw = d.raw(), exp = Number(raw.toFixed(d.dec));
-  if (Math.abs(v-exp) < 1e-9) { finishGood(award(d.pts, cur.att)); return; }
-  cur.fails++;
-  const near = Math.abs(v-raw) <= Math.pow(10,-d.dec) * 1.01;
-  cur.msg = wrongTxt(near ? "Het getal ligt dichtbij. Controleer de afronding." : "");
-  render();
+  const goed = Math.abs(v-exp) < 1e-9;
+  if (goed) finishGood(award(d.pts, cur.att));
+  else {
+    cur.fails++;
+    const near = Math.abs(v-raw) <= Math.pow(10,-d.dec) * 1.01;
+    cur.msg = wrongTxt(near ? "Het getal ligt dichtbij. Controleer de afronding." : "");
+    render();
+  }
+  berekeningFeedback(goed, exp);
+}
+async function berekeningFeedback(goed, exp){
+  if (!CONFIG.WORKER_URL) return;
+  const mine = cur, d = cur.def;
+  mine.berBusy = true; render();
+  try {
+    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 20000);
+    const r = await fetch(CONFIG.WORKER_URL, {method:"POST", headers:{"Content-Type":"application/json"}, signal:ctl.signal,
+      body: JSON.stringify({mode:"berekening", vraag:d.q, formule:d.formule || "", berekening:String(mine.ber).slice(0,800), antwoord:String(mine.val).slice(0,40), juist:goed, juistAntwoord:String(exp)})});
+    clearTimeout(to);
+    if (!r.ok) throw new Error("status " + r.status);
+    const j = await r.json();
+    mine.berFb = String(j.feedback || "").slice(0,400);
+  } catch(e) { mine.berFb = null; }
+  mine.berBusy = false;
+  if (cur === mine) render();
 }
 function checkKaartjes(){
   const want = {b:KAART.bedrag, t:KAART.termijn, m:KAART.maanden};
@@ -675,7 +704,9 @@ async function checkOpen(){
   else {
     cur.fails++;
     const n = d.crit.filter((_,i)=>cur.met[i]).length;
-    cur.msg = `<div class="fb bad"><b>${n} van de ${d.crit.length} onderdelen kloppen.</b> ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Verbeter je antwoord en laat opnieuw nakijken.${fbTxt}${viaAI ? "" : '<div style="margin-top:6px;color:var(--muted);font-size:15px">(demo-nakijker)</div>'}</div>`;
+    let gratis = "";
+    if (!cur.freeUsed && cur.hints < d.hints.length) { cur.freeUsed = true; cur.hints++; gratis = ` <b>Je krijgt een gratis hint.</b> Lees hem goed onder de opdracht en denk zelf na over wat je kunt verbeteren.`; }
+    cur.msg = `<div class="fb bad"><b>${n} van de ${d.crit.length} onderdelen kloppen.</b>${gratis} ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Verbeter je antwoord en laat opnieuw nakijken.${fbTxt}${viaAI ? "" : '<div style="margin-top:6px;color:var(--muted);font-size:15px">(demo-nakijker)</div>'}</div>`;
   }
   tweenAfter();
 }
@@ -812,9 +843,9 @@ const A = {
   },
   geefop: geefOp,
   hint(){
-    const d = cur.def, n = cur.hints, cost = CONFIG.HINT_KOSTEN[Math.min(n, CONFIG.HINT_KOSTEN.length-1)];
+    const d = cur.def, n = cur.hints, cost = CONFIG.HINT_KOSTEN[Math.min(cur.paid, CONFIG.HINT_KOSTEN.length-1)];
     if (n >= d.hints.length || S.saldo < cost) return;
-    S.saldo -= cost; cur.hints++; render(); setTimeout(tweenSaldo, 30);
+    S.saldo -= cost; cur.hints++; cur.paid++; render(); setTimeout(tweenSaldo, 30);
   },
   volgende(){
     if (S.qi < S.rij.length-1) { S.qi++; startQ(); render(); }
@@ -832,6 +863,7 @@ document.addEventListener("input", e => {
   const t = e.target;
   if (t.id === "ans" && cur) cur.val = t.value;
   else if (t.id === "txt" && cur) cur.text = t.value;
+  else if (t.id === "ber" && cur) cur.ber = t.value;
   else if (t.dataset && t.dataset.f && cur) cur.f[t.dataset.f] = t.value;
 });
 document.addEventListener("keydown", e => {
