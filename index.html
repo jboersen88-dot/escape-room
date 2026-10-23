@@ -1,0 +1,866 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Millionair worden</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<style>
+/* Concept: een bankkluis-kantoor. Donkerblauw inktpapier, goud als enige accent, grote tikvlakken voor iPad. */
+:root{
+  --bg:#0e1a2b;
+  --panel:#16263d;
+  --panel-2:#1d3250;
+  --line:#2c4466;
+  --fg:#f4efe2;
+  --muted:#a3b3ca;
+  --gold:#f2b632;
+  --gold-ink:#2a1d00;
+  --good:#4fd08a;
+  --bad:#ff7366;
+  --warn:#f2b632;
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  background:var(--bg);
+  background-image:radial-gradient(1200px 600px at 80% -10%,rgba(242,182,50,.10),transparent 60%),radial-gradient(900px 500px at -10% 110%,rgba(79,208,138,.06),transparent 60%);
+  background-attachment:fixed;
+  color:var(--fg);font-family:var(--body);font-size:19px;line-height:1.5;margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 40px;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.wrap{max-width:920px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);line-height:1.15;margin:0;text-wrap:balance}
+h1{font-size:clamp(34px,6vw,56px);font-weight:800;letter-spacing:-.01em}
+h2{font-size:clamp(24px,3.6vw,32px);font-weight:800}
+h3{font-size:20px;font-weight:600}
+p{margin:0}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.top .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between}
+.brand{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:.02em;color:var(--gold)}
+.brand small{display:block;font-family:var(--body);font-weight:400;color:var(--muted);font-size:14px;letter-spacing:0}
+.chips{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.purse{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 16px 6px 8px;font-family:var(--display);font-weight:800;font-size:22px;font-variant-numeric:tabular-nums}
+.coin{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe08a,var(--gold) 60%,#b8821a);color:var(--gold-ink);display:grid;place-items:center;font-size:17px;font-weight:800}
+.digits{display:flex;gap:6px}
+.dg{min-width:44px;height:44px;border-radius:10px;border:1px dashed var(--line);display:grid;place-items:center;color:var(--muted);font-family:var(--display);font-weight:800;font-size:22px}
+.dg.has{border:1px solid var(--gold);color:var(--gold);background:rgba(242,182,50,.1)}
+
+main{padding-top:26px;display:flex;flex-direction:column;gap:22px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}
+.lead{color:var(--muted);max-width:60ch}
+.stack{display:flex;flex-direction:column;gap:14px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+/* buttons */
+.btn{min-height:54px;padding:12px 24px;border-radius:14px;border:1px solid var(--line);background:var(--panel-2);cursor:pointer;font-weight:700;font-size:19px;touch-action:manipulation}
+.btn:hover{border-color:var(--gold)}
+.btn.gold{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
+.btn.gold:hover{filter:brightness(1.06)}
+.btn.ghost{background:transparent}
+.btn.small{min-height:44px;padding:8px 16px;font-size:17px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:8px 4px;font-size:16px}
+
+/* inputs */
+input[type=text],textarea{width:100%;background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:14px 16px;font-size:20px}
+input[type=text]:focus,textarea:focus{border-color:var(--gold);outline:none}
+textarea{min-height:150px;resize:vertical}
+label.fl{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:16px}
+.inl{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.inl input{flex:1 1 180px;width:auto}
+.unit{display:grid;place-items:center;font-family:var(--display);font-weight:800;color:var(--gold);font-size:22px;padding:0 4px}
+.bad-field{border-color:var(--bad)!important}
+.good-field{border-color:var(--good)!important}
+
+/* lobby */
+.doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.door{position:relative;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:6px;min-height:170px;cursor:pointer;color:inherit}
+.door .num{font-family:var(--display);font-weight:800;font-size:44px;line-height:1;color:var(--gold)}
+.door .nm{font-family:var(--display);font-weight:800;font-size:22px}
+.door .sub{color:var(--muted);font-size:16px}
+.door .st{margin-top:auto;font-size:15px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.door.open{border-color:var(--gold)}
+.door.open .st{color:var(--gold)}
+.door.klaar{border-color:var(--good);background:linear-gradient(180deg,rgba(79,208,138,.10),var(--panel))}
+.door.klaar .st{color:var(--good)}
+.door.lock{opacity:.85}
+.door.soon{opacity:.5;cursor:default}
+.door .big{position:absolute;right:16px;top:14px;font-family:var(--display);font-weight:800;font-size:44px;color:var(--good)}
+
+/* question */
+.prog{display:flex;gap:5px}
+.prog i{flex:1;height:8px;border-radius:4px;background:var(--line)}
+.prog i.d{background:var(--good)}
+.prog i.c{background:var(--gold)}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:16px}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:2px 12px;font-size:14px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gold)}
+.q{font-size:22px;line-height:1.4}
+.formula{font-family:var(--display);background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:8px 14px;color:var(--gold);display:inline-block;font-size:18px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;gap:14px;align-items:center;text-align:left;min-height:60px;padding:12px 16px;border-radius:14px;border:2px solid var(--line);background:var(--bg);cursor:pointer;font-size:20px}
+.opt .bx{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--muted)}
+.opt.multi .bx{border-radius:7px}
+.opt.sel{border-color:var(--gold);background:rgba(242,182,50,.08)}
+.opt.sel .bx{background:var(--gold);border-color:var(--gold)}
+.opt.ok{border-color:var(--good);background:rgba(79,208,138,.12)}
+.opt.no{border-color:var(--bad);background:rgba(255,115,102,.10)}
+.opt[disabled]{cursor:default}
+
+/* koppel */
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px}
+@media(max-width:560px){.match{grid-template-columns:1fr}}
+.mcol{display:flex;flex-direction:column;gap:10px}
+.mi{min-height:58px;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);text-align:left;cursor:pointer;font-size:18px;position:relative}
+.mi.pick{border-color:var(--gold);box-shadow:0 0 0 2px rgba(242,182,50,.35)}
+.mi.lk{cursor:default}
+.mi.c0{border-color:#6aa8ff}.mi.c1{border-color:#ff9bd0}.mi.c2{border-color:#9be28f}.mi.c3{border-color:#ffb36b}.mi.c4{border-color:#c9a6ff}.mi.c5{border-color:#5fe0d6}
+.mi .pn{position:absolute;right:10px;top:8px;font-family:var(--display);font-weight:800;font-size:14px;color:var(--muted)}
+.mi.ok{background:rgba(79,208,138,.14);border-color:var(--good)}
+.mi.no{background:rgba(255,115,102,.12);border-color:var(--bad)}
+
+/* feedback + hints */
+.fb{border-radius:12px;padding:12px 16px;font-size:18px}
+.fb.good{background:rgba(79,208,138,.13);border:1px solid var(--good)}
+.fb.bad{background:rgba(255,115,102,.11);border:1px solid var(--bad)}
+.fb.info{background:var(--bg);border:1px solid var(--line);color:var(--muted)}
+.crit{display:flex;flex-direction:column;gap:6px;margin:8px 0 0;padding:0;list-style:none}
+.crit li{display:flex;gap:10px}
+.crit .k{flex:none;width:22px;font-weight:800}
+.hints{display:flex;flex-direction:column;gap:8px}
+.hint{background:var(--bg);border-left:4px solid var(--gold);border-radius:6px 12px 12px 6px;padding:10px 14px;font-size:17px}
+.cards{background:var(--bg);border:1px dashed var(--gold);border-radius:12px;padding:12px 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 18px;font-size:17px}
+.cards b{color:var(--gold);font-variant-numeric:tabular-nums}
+.sc{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-size:18px}
+.pay{font-family:var(--display);font-weight:800;color:var(--good)}
+
+/* kluis */
+.vault{display:flex;flex-direction:column;gap:18px;align-items:center}
+.slots{display:flex;gap:12px}
+.slot{width:74px;height:92px;border-radius:14px;background:var(--bg);border:2px solid var(--line);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:46px;color:var(--gold)}
+.slot.f{border-color:var(--gold)}
+.tokens{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.tok{width:70px;height:70px;border-radius:50%;border:2px solid var(--gold);background:var(--panel-2);font-family:var(--display);font-weight:800;font-size:30px;color:var(--gold);cursor:pointer}
+.tok[disabled]{opacity:.25;cursor:default}
+.hist{display:flex;flex-direction:column;gap:8px;width:100%;align-items:center}
+.hr{display:flex;gap:8px}
+.ht{width:52px;height:52px;border-radius:10px;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:26px;position:relative}
+.ht.g{background:var(--good);color:#06301a}
+.ht.y{background:var(--warn);color:var(--gold-ink)}
+.ht.n{background:var(--panel-2);color:var(--muted)}
+.ht small{position:absolute;right:4px;bottom:0;font-size:12px;font-family:var(--body)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;color:var(--muted);font-size:16px}
+.legend span{display:inline-flex;gap:8px;align-items:center}
+.legend i{width:16px;height:16px;border-radius:4px;display:inline-block}
+
+/* einde */
+.fin{text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
+.money{font-family:var(--display);font-weight:800;font-size:clamp(60px,14vw,120px);color:var(--gold);line-height:1;font-variant-numeric:tabular-nums}
+.stamp{border:3px double var(--gold);border-radius:14px;padding:12px 28px;font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.08em;color:var(--gold);transform:rotate(-2deg)}
+canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--gold);color:var(--gold-ink);font-weight:700;border-radius:999px;padding:12px 24px;z-index:50;max-width:90vw;text-align:center}
+.foot{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.teacher{border:1px dashed var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+@media(prefers-reduced-motion:no-preference){
+  main.enter .card,main.enter .door{animation:rise .35s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .slot.f{animation:pop .2s ease}
+  @keyframes pop{from{transform:scale(.85)}to{transform:scale(1)}}
+}
+</style>
+
+</head>
+<body>
+<div class="top"><div class="wrap">
+  <div class="brand">MILLIONAIR WORDEN<small id="sub">Economie jaar 2 · Hoofdstuk 2</small></div>
+  <div class="chips" id="chips"></div>
+</div></div>
+<div class="wrap"><main id="main" aria-live="polite"></main></div>
+<canvas id="confetti" hidden></canvas>
+<div id="toastbox"></div>
+
+<script>
+"use strict";
+/* =========================================================
+   INSTELLINGEN (door de meester aan te passen)
+   ========================================================= */
+const CONFIG = {
+  WORKER_URL: "",                       // Cloudflare Worker-adres voor AI-nakijken. Leeg = demo-nakijker (zoekt trefwoorden).
+  START_GELD: 500,
+  HINT_KOSTEN: [10, 20, 40],
+  KAMER_CIJFERS: {1: 3, 2: 5, 3: 7, 4: 9},   // cijfer dat elke kamer oplevert
+  KLUISCODE: [7, 3, 9, 5],                    // de juiste volgorde in de kluis
+  KAMERCODES: {1: "KANTOOR", 2: "SPAARPOT", 3: "BANKIER", 4: "POLIS"}, // code onder de QR-code
+  CODEWOORD: "GOUDEN KLUIS",                  // geheim woord op het eindscherm (voor de beloning)
+  ZOEK_PLEKKEN: [                              // hints bij het zoeken van de 3 kaartjes in kamer 3
+    "Het eerste kaartje hangt op een plek waar je naar buiten kijkt.",
+    "Het tweede kaartje zit in de buurt van de deur.",
+    "Het derde kaartje ligt onder of achter iets in het lokaal."
+  ]
+};
+
+/* =========================================================
+   VRAGEN
+   ========================================================= */
+const KAMERS = {
+  1: {naam: "Het kantoor", par: "2.1 Inkomen en uitgaven", beschikbaar: false},
+  2: {naam: "De spaarkamer", par: "2.2 Wat levert sparen op?", beschikbaar: false},
+  3: {naam: "De bank", par: "2.3 Waarom zou je lenen?", beschikbaar: true},
+  4: {naam: "De verzekeraar", par: "2.4 Verzekeren, hoezo?", beschikbaar: false}
+};
+
+const Q = {};
+const add = q => { Q[q.id] = q; return q; };
+
+/* ---- meerkeuze ---- */
+add({id:"m_delen", type:"mc", pts:10, multi:true, label:"Meerkeuze",
+  q:"Uit welke twee delen bestaat een maandtermijn? (meerdere antwoorden goed)",
+  opts:["Aflossing","Rente","Premie","Eigen risico"], correct:[0,1],
+  hints:["Een maandtermijn betaal je aan de bank. Denk aan: terugbetalen en betalen voor het lenen.",
+         "Premie en eigen risico horen bij een ander onderwerp: verzekeren.",
+         "Eén goed antwoord is 'het geleende geld terugbetalen', de ander is 'wat je extra betaalt voor het lenen'."]});
+add({id:"m_tf", type:"mc", pts:10, label:"Juist of onjuist",
+  q:"Juist of onjuist: bij een lening met maandtermijnen betaal je elke maand hetzelfde bedrag.",
+  opts:["Juist","Onjuist"], correct:[0], fixedOrder:true,
+  hints:["Denk aan een abonnement: je weet vooraf wat je elke maand betaalt.",
+         "Bij een maandtermijn is het bedrag van tevoren afgesproken.",
+         "Het antwoord is: juist. Het bedrag blijft elke maand gelijk."]});
+add({id:"m_leeftijd", type:"mc", pts:10, label:"Meerkeuze",
+  q:"Vanaf welke leeftijd mag je zelf geld lenen bij de bank?",
+  opts:["Vanaf 14 jaar","Vanaf 16 jaar","Vanaf 18 jaar","Vanaf 21 jaar"], correct:[2], fixedOrder:true,
+  hints:["Het gaat om de leeftijd waarop je meerderjarig bent.",
+         "Meerderjarig zit tussen 16 en 21 jaar.",
+         "Je bent meerderjarig als je 18 bent."]});
+add({id:"m_hyp", type:"mc", pts:10, label:"Welke hoort bij...",
+  q:"Welke omschrijving hoort bij een hypotheek?",
+  opts:["Een lening om een huis te kopen","Een lening om een auto te kopen","Een lening om een reis te boeken","Een lening om kleding te kopen"], correct:[0],
+  hints:["Een hypotheek is een heel groot bedrag dat je lang terugbetaalt.",
+         "Je woont er straks in.",
+         "Het gaat om een huis."]});
+add({id:"m_waarom", type:"mc", pts:10, label:"Begrijpen",
+  q:"Waarom is dezelfde lening in 2 jaar terugbetalen goedkoper dan in 3 jaar?",
+  opts:["Je betaalt over een kortere tijd rente","Je betaalt elke maand minder aflossing","Je krijgt korting van de bank","Je hoeft het geleende bedrag niet terug te betalen"], correct:[0],
+  hints:["Kijk naar het aantal maanden waarover je rente betaalt.",
+         "Rente betaal je voor elke maand dat je het geld nog niet hebt terugbetaald.",
+         "Korter lenen betekent minder maanden rente betalen."]});
+
+/* ---- koppelen ---- */
+add({id:"k_lenen", type:"koppel", pts:20, label:"Koppelen",
+  q:"Koppel elk begrip aan de juiste uitleg. Tik links op een begrip en daarna rechts op de uitleg.",
+  pairs:[["Aflossing","Het geleende geld terugbetalen"],
+         ["Rente","Wat je extra betaalt voor het lenen"],
+         ["Maandtermijn","Het vaste bedrag dat je elke maand betaalt"],
+         ["Persoonlijke lening","Een dure lening bij de bank voor een groot doel"],
+         ["Hypotheek","Een lening om een huis te kopen"],
+         ["Totale kosten","Maandtermijn x aantal maanden"]],
+  hints:["Begin met de makkelijkste: de hypotheek en de aflossing.",
+         "Bij 'Totale kosten' staat een rekensom in de uitleg.",
+         "Rente is het extra bedrag, aflossing is het terugbetalen van wat je leende."]});
+
+/* ---- rekenen ---- */
+const rk = (id, q, formule, raw, dec, unit, hints) => add({id, type:"reken", pts:20, label:"Rekenen", q, formule, raw, dec, unit, hints});
+rk("r_totaal","Mats leent €15.000 en betaalt 36 maanden lang €462,96 per maand. Hoeveel betaalt hij in totaal terug?",
+   "Maandtermijn x aantal maanden", () => 462.96*36, 2, "€",
+   ["Totale kosten = maandbedrag keer het aantal maanden.","Reken uit: 462,96 x 36.","Het antwoord ligt tussen €16.600 en €16.700."]);
+rk("r_perc1","Mats leent €15.000 en betaalt in totaal €16.666,56 terug. Hoeveel procent van het geleende bedrag is de rente? Rond af op 1 decimaal.",
+   "(Deel : geheel) x 100", () => ((16666.56-15000)/15000)*100, 1, "%",
+   ["Bereken eerst de rente: wat je terugbetaalt min wat je leende.","De rente is €1.666,56. Het deel is de rente, het geheel is het geleende bedrag.","(1666,56 : 15000) x 100, daarna afronden op 1 decimaal."]);
+rk("r_perc2","Je leent €350 en betaalt €16,25 rente. Hoeveel procent is de rente van het geleende bedrag? Rond af op 2 decimalen.",
+   "(Deel : geheel) x 100", () => (16.25/350)*100, 2, "%",
+   ["De rente is het deel, het geleende bedrag is het geheel.","(16,25 : 350) x 100.","Het antwoord ligt tussen 4% en 5%."]);
+rk("r_besp","Een lening van €12.000 kost in 36 maanden in totaal €13.248 en in 24 maanden in totaal €12.804. Hoeveel rente bespaar je door in 24 maanden terug te betalen?",
+   "Verschil van de twee totaalbedragen", () => 13248-12804, 0, "€",
+   ["Je vergelijkt twee totaalbedragen.","Trek het kleinste totaalbedrag af van het grootste.","13.248 min 12.804."]);
+
+/* ---- zoekopdracht (3 kaartjes in het lokaal) ---- */
+const KAART = {bedrag:5400, termijn:250, maanden:24};
+add({id:"z0", type:"kaartjes", pts:0, label:"Zoekopdracht",
+  q:"Een lening uitrekenen kan alleen met de juiste gegevens. Drie kaartjes met een getal zijn verstopt in het lokaal. Zoek ze op en typ de getallen hieronder in.",
+  hints:[CONFIG.ZOEK_PLEKKEN[0], CONFIG.ZOEK_PLEKKEN[1], CONFIG.ZOEK_PLEKKEN[2]]});
+add({id:"z1", type:"reken", pts:20, label:"Zoekopdracht", kaartjes:true,
+  q:"Wat zijn de totale kosten van deze lening?", formule:"Maandtermijn x aantal maanden",
+  raw:() => KAART.termijn*KAART.maanden, dec:2, unit:"€",
+  hints:["Gebruik de maandtermijn en het aantal maanden van je kaartjes.","Reken uit: maandtermijn x aantal maanden.","250 x 24."]});
+add({id:"z2", type:"reken", pts:20, label:"Zoekopdracht", kaartjes:true,
+  q:"Hoeveel euro rente betaal je in totaal?", formule:"Totale kosten - geleend bedrag",
+  raw:() => KAART.termijn*KAART.maanden - KAART.bedrag, dec:2, unit:"€",
+  hints:["Rente is wat je extra terugbetaalt.","Trek het geleende bedrag af van de totale kosten.","Totale kosten min €5.400."]});
+add({id:"z3", type:"reken", pts:20, label:"Zoekopdracht", kaartjes:true,
+  q:"Hoeveel procent is de rente van het geleende bedrag? Rond af op 1 decimaal.", formule:"(Deel : geheel) x 100",
+  raw:() => ((KAART.termijn*KAART.maanden - KAART.bedrag)/KAART.bedrag)*100, dec:1, unit:"%",
+  hints:["Het deel is de rente, het geheel is het geleende bedrag.","(rente : geleend bedrag) x 100.","(600 : 5400) x 100, rond af op 1 decimaal."]});
+
+/* ---- open vragen (AI-nakijken) ---- */
+add({id:"o_manieren", type:"open", pts:30, label:"Open vraag",
+  q:"Noem de drie manieren om te lenen. Geef bij elke manier een voorbeeld van wanneer je die gebruikt.",
+  crit:[
+   {label:"Lenen bij ouders of familie", tekst:"Noemt geld lenen van ouders of familie en geeft een passend voorbeeld.", rx:/ouder|familie|vader|moeder|\bpa\b|\bma\b/i},
+   {label:"Persoonlijke lening", tekst:"Noemt de persoonlijke lening bij de bank en geeft een passend voorbeeld (bijvoorbeeld een auto of grote aankoop).", rx:/persoonlijk/i},
+   {label:"Hypotheek", tekst:"Noemt de hypotheek en geeft aan dat die bedoeld is voor het kopen van een huis.", rx:/hypotheek/i}],
+  model:"Lenen bij je ouders (bijvoorbeeld geld voor een telefoon), een persoonlijke lening bij de bank (bijvoorbeeld voor een auto) en een hypotheek (om een huis te kopen).",
+  hints:["Je kunt lenen bij mensen die je kent, bij de bank voor allerlei doelen, en voor een huis.","Eén manier begint met 'persoonlijke', een andere met 'hypo'.","Drie manieren: ouders, persoonlijke lening, hypotheek. Bedenk bij elk een voorbeeld."]});
+add({id:"o_termijn", type:"open", pts:30, label:"Open vraag",
+  q:"Een maandtermijn bestaat uit twee delen. Noem beide delen en leg uit wat ze betekenen.",
+  crit:[
+   {label:"Aflossing", tekst:"Noemt aflossing en legt uit dat dit het terugbetalen van het geleende bedrag is.", rx:/aflos/i},
+   {label:"Rente", tekst:"Noemt rente en legt uit dat dit het extra bedrag is dat je betaalt voor het lenen.", rx:/rente/i}],
+  model:"Aflossing is het terugbetalen van het geleende bedrag. Rente is wat je extra betaalt omdat je geld leent.",
+  hints:["Eén deel gaat over het geleende geld zelf, het andere over de kosten van het lenen.","Het eerste deel begint met 'af', het tweede met 'ren'.","Aflossing en rente. Leg bij elk uit wat het is."]});
+add({id:"o_waarom", type:"open", pts:30, label:"Open vraag",
+  q:"Leg uit waarom dezelfde lening goedkoper is als je hem in 2 jaar terugbetaalt dan in 3 jaar, ook al is je maandbedrag dan hoger.",
+  crit:[
+   {label:"Kortere periode", tekst:"Legt uit dat je bij 2 jaar over een kortere periode (minder maanden) rente betaalt.", rx:/korter|minder maanden|minder lang|minder tijd|sneller/i},
+   {label:"Minder rente in totaal", tekst:"Legt uit dat je daardoor in totaal minder rente betaalt, dus dat de lening goedkoper is.", rx:/minder rente|goedkoper|minder betal|minder kosten|minder terug/i}],
+  model:"Bij 2 jaar betaal je over een kortere periode rente, dus in totaal minder rente. Het maandbedrag is hoger omdat je sneller aflost.",
+  hints:["Denk aan het aantal maanden waarover je rente betaalt.","Hoe langer je geld van de bank gebruikt, hoe meer rente je betaalt.","Korter lenen = minder maanden rente = in totaal goedkoper."]});
+add({id:"c_scooter", type:"open", creatief:true, pts:60, label:"Creatieve opdracht",
+  q:"Sara (19) wil een scooter van €3.000. Optie A: €262 per maand, 12 maanden lang. Optie B: €134 per maand, 24 maanden lang. Schrijf een leenadvies voor Sara. Reken de totale kosten en de rente van beide opties uit en kies welke je haar aanraadt. Leg uit waarom.",
+  crit:[
+   {label:"Totale kosten van optie A", tekst:"Noemt de totale kosten van optie A: €3.144 (262 x 12).", rx:/3\.?144/},
+   {label:"Totale kosten van optie B", tekst:"Noemt de totale kosten van optie B: €3.216 (134 x 24).", rx:/3\.?216/},
+   {label:"Rente van beide opties", tekst:"Noemt de rente: optie A €144 en optie B €216 (totaal min €3.000).", rx:/144[\s\S]*216|216[\s\S]*144/},
+   {label:"Keuze met uitleg", tekst:"Kiest een optie en onderbouwt dat met rente, totale kosten of maandbedrag (bijvoorbeeld A is goedkoper, B past beter bij een klein budget).", rx:/optie\s*[ab]|kies|raad|advies|beter/i}],
+  model:"A kost €3.144 (rente €144), B kost €3.216 (rente €216). A is goedkoper, maar B heeft een lager maandbedrag. Een goed advies kiest één optie en legt uit waarom.",
+  hints:["Totale kosten = maandbedrag x aantal maanden. Doe dat voor A en voor B.","Rente = totale kosten min €3.000. Vergelijk de twee renten.","A: 262 x 12 = 3.144 en B: 134 x 24 = 3.216. Kies en leg uit waarom."]});
+
+function bouwRij(k){
+  const pick = a => a[Math.floor(Math.random()*a.length)];
+  if (k === 3) {
+    return ["m_delen", pick(["m_tf","m_leeftijd"]), "k_lenen", pick(["m_hyp","m_waarom"]),
+            pick(["o_manieren","o_termijn","o_waarom"]), pick(["r_totaal","r_perc1","r_perc2","r_besp"]),
+            "z0","z1","z2","z3","c_scooter"];
+  }
+  return [];
+}
+
+/* =========================================================
+   TOESTAND
+   ========================================================= */
+const fresh = () => ({fase:"start", duo:"", saldo:CONFIG.START_GELD, open:{}, klaar:{}, cijfers:{}, kamer:null, rij:[], qi:0, t0:null, t1:null, test:false, poging:[], kaart:null});
+let S = fresh();
+let cur = null;           // huidige vraag (runtime)
+let shown = S.saldo;      // getoond saldo (animatie)
+const LS = "millionair-worden-v1";
+function save(){ try { localStorage.setItem(LS, JSON.stringify(S)); } catch(e){} }
+function load(){ try { const j = localStorage.getItem(LS); if (j) return Object.assign(fresh(), JSON.parse(j)); } catch(e){} return null; }
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const shuffle = a => { for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const nf = (n, d=0) => Number(n).toLocaleString("nl-NL", {minimumFractionDigits:d, maximumFractionDigits:d});
+const eur = n => "€" + nf(n);
+const factor = att => att <= 1 ? 1 : att === 2 ? .5 : .25;
+function toast(t){ const el = document.createElement("div"); el.className="toast"; el.textContent=t; $("#toastbox").appendChild(el); setTimeout(()=>el.remove(), 2600); }
+
+function parseNum(str){
+  let s = String(str).trim().replace(/[€%\s]/g,"");
+  if (!s) return NaN;
+  if (s.includes(",")) s = s.replace(/\./g,"").replace(",",".");
+  else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g,"");
+  return /^-?\d+(\.\d+)?$/.test(s) ? Number(s) : NaN;
+}
+
+/* =========================================================
+   KOP (saldo + cijfers)
+   ========================================================= */
+function renderChips(){
+  if (S.fase === "start") { $("#chips").innerHTML = ""; return; }
+  const dg = [1,2,3,4].map(k => S.cijfers[k] !== undefined
+    ? `<div class="dg has" title="Kamer ${k}">${S.cijfers[k]}</div>` : `<div class="dg" title="Kamer ${k}">?</div>`).join("");
+  $("#chips").innerHTML = `<div class="digits" aria-label="Verzamelde cijfers">${dg}</div>
+    <div class="purse" aria-label="Je geld"><span class="coin">€</span><span id="saldo">${nf(shown)}</span></div>`;
+  $("#sub").textContent = S.duo ? "Duo: " + S.duo : "Economie jaar 2 · Hoofdstuk 2";
+}
+function tweenSaldo(){
+  const el = $("#saldo"); if (!el) return;
+  const from = shown, to = S.saldo;
+  if (from === to) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { shown = to; el.textContent = nf(to); return; }
+  const t0 = performance.now();
+  const step = t => { const p = Math.min(1,(t-t0)/600); shown = Math.round(from+(to-from)*p); const e = $("#saldo"); if (e) e.textContent = nf(shown); if (p<1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+
+/* =========================================================
+   SCHERMEN
+   ========================================================= */
+let lastKey = "";
+function render(){
+  renderChips();
+  const key = S.fase + ":" + S.qi + ":" + (S.kamer||"");
+  const changed = key !== lastKey;
+  const m = $("#main");
+  m.classList.toggle("enter", changed);
+  if (S.fase === "start") m.innerHTML = vStart();
+  else if (S.fase === "lobby") m.innerHTML = vLobby();
+  else if (S.fase === "kamer") m.innerHTML = vKamer();
+  else if (S.fase === "kamerklaar") m.innerHTML = vKamerKlaar();
+  else if (S.fase === "kluis") m.innerHTML = vKluis();
+  else if (S.fase === "einde") m.innerHTML = vEinde();
+  save();
+  if (changed) { lastKey = key; window.scrollTo({top:0}); const a = $("#ans"); if (a) a.focus({preventScroll:true}); }
+}
+
+function vStart(){
+  return `<section class="stack">
+    <h1>Word miljonair!</h1>
+    <p class="lead">Jullie krijgen <b>${eur(CONFIG.START_GELD)}</b> om mee te beginnen. Beantwoord vragen, verdien geld en verzamel de cijfers van de kluiscode. Open de kluis en jullie zijn miljonair.</p>
+  </section>
+  <section class="card stack">
+    <h3>Spelregels</h3>
+    <p>Goed antwoord in één keer: volle prijs. Tweede poging: de helft. Daarna een kwart.</p>
+    <p>Een hint kost geld (${CONFIG.HINT_KOSTEN.map(eur).join(", ")}). Het duo met het meeste geld wint.</p>
+    <p>Elke kamer geeft één cijfer. Daarna zoeken jullie de goede volgorde voor de kluis.</p>
+  </section>
+  <section class="card stack">
+    <label class="fl" for="duo">Namen van jullie duo
+      <input id="duo" type="text" maxlength="40" placeholder="Bijvoorbeeld: Sam en Noor" autocomplete="off">
+    </label>
+    <div class="row"><button class="btn gold" data-act="begin">Start de escape room</button></div>
+  </section>
+  ${teacherBox()}`;
+}
+
+function teacherBox(){
+  return `<div class="foot"><button class="link" data-act="meester">${S.test ? "Meester-modus uitzetten" : "Meester-modus"}</button></div>
+  ${S.test ? `<div class="teacher"><b>Meester-modus</b>
+     <p class="lead">Alle deuren staan open. Het AI-nakijken staat op: ${CONFIG.WORKER_URL ? "AI via Worker" : "demo (trefwoorden)"}.</p>
+     <div class="row"><button class="btn small" data-act="testklaar">Zet kamers 1, 2 en 4 op klaar</button>
+     <button class="btn small ghost" data-act="reset">Alles opnieuw beginnen</button></div></div>` : ""}`;
+}
+
+function vLobby(){
+  const alle = [1,2,3,4].every(k => S.klaar[k]);
+  const doors = [1,2,3,4].map(k => {
+    const K = KAMERS[k]; const klaar = S.klaar[k]; const open = S.open[k] || S.test;
+    let cls = "door", st = "", extra = "";
+    if (klaar) { cls += " klaar"; st = "Klaar"; extra = `<div class="big">${S.cijfers[k]}</div>`; }
+    else if (!K.beschikbaar) { cls += " soon"; st = "Wordt gebouwd"; }
+    else if (open) { cls += " open"; st = "Open, ga naar binnen"; }
+    else { cls += " lock"; st = "Vergrendeld, scan de QR-code"; }
+    return `<button class="${cls}" data-act="deur" data-k="${k}">${extra}<span class="num">${k}</span><span class="nm">${K.naam}</span><span class="sub">${K.par}</span><span class="st">${st}</span></button>`;
+  }).join("");
+  const sel = S.deurK && !S.klaar[S.deurK] && KAMERS[S.deurK].beschikbaar && !(S.open[S.deurK] || S.test)
+    ? `<section class="card stack"><h3>Kamer ${S.deurK} is nog dicht</h3>
+        <p class="lead">Zoek de QR-code van deze kamer in het lokaal en scan hem met de iPad. Lukt dat niet? Typ de code die onder de QR-code staat.</p>
+        <div class="inl"><input id="kcode" type="text" autocapitalize="characters" autocomplete="off" placeholder="Code onder de QR-code">
+        <button class="btn gold" data-act="kcode">Open kamer</button></div><div id="kmsg"></div></section>` : "";
+  return `<section class="stack"><h2>De gang met vier kamers</h2>
+    <p class="lead">Kies zelf in welke volgorde jullie de kamers doen. Elke kamer geeft één cijfer van de kluiscode.</p></section>
+  <section class="doors">${doors}</section>${sel}
+  ${alle ? `<section class="card stack"><h3>Alle cijfers verzameld!</h3><p>Jullie hebben vier cijfers. Nu de kluis nog openen.</p>
+    <div class="row"><button class="btn gold" data-act="naarkluis">Naar de kluis</button></div></section>` : ""}
+  ${teacherBox()}`;
+}
+
+/* ---- kamer ---- */
+function startKamer(k){
+  S.kamer = k;
+  if (!S.rij.length || S.rijK !== k) { S.rij = bouwRij(k); S.rijK = k; S.qi = 0; }
+  S.fase = "kamer";
+  startQ();
+  render();
+}
+function startQ(){
+  const def = Q[S.rij[S.qi]];
+  cur = {def, att:0, hints:0, done:false, earned:0, msg:null, text:"", sel:[], gaveUp:false, busy:false, fails:0};
+  if (def.type === "mc") {
+    const idx = def.opts.map((_,i)=>i);
+    cur.order = def.fixedOrder ? idx : shuffle(idx.slice());
+  } else if (def.type === "koppel") {
+    cur.left = def.pairs.map((_,i)=>i);
+    cur.right = shuffle(def.pairs.map((_,i)=>i));
+    cur.link = {};         // left -> right
+    cur.locked = {};       // left -> true
+    cur.pickL = null; cur.lastWrong = [];
+  } else if (def.type === "reken") {
+    cur.val = "";
+  } else if (def.type === "kaartjes") {
+    cur.f = {b:"", t:"", m:""}; cur.fok = {};
+  } else if (def.type === "open") {
+    cur.met = {}; cur.text = "";
+  }
+}
+
+function vKamer(){
+  const d = cur.def, K = KAMERS[S.kamer];
+  const prog = S.rij.map((_,i) => `<i class="${i<S.qi?"d":i===S.qi?"c":""}"></i>`).join("");
+  const pts = d.pts ? `<span>Te verdienen: <b class="pay">${eur(d.pts)}</b></span>` : `<span>Zoek-opdracht</span>`;
+  return `<section class="stack"><div class="meta"><span><b>${K.naam}</b> · opdracht ${S.qi+1} van ${S.rij.length}</span>${pts}</div><div class="prog">${prog}</div></section>
+  <section class="card stack">
+    <div><span class="tag">${d.label}</span></div>
+    ${d.kaartjes ? kaartBox() : ""}
+    <p class="q">${esc(d.q)}</p>
+    ${d.formule ? `<div><span class="formula">${esc(d.formule)}</span></div>` : ""}
+    ${vBody(d)}
+    ${cur.msg ? cur.msg : ""}
+    ${vActions(d)}
+  </section>
+  ${vHints(d)}`;
+}
+function kaartBox(){
+  return `<div class="cards"><span>Geleend bedrag: <b>${eur(KAART.bedrag)}</b></span><span>Maandtermijn: <b>${eur(KAART.termijn)}</b></span><span>Aantal maanden: <b>${KAART.maanden}</b></span></div>`;
+}
+function vBody(d){
+  if (d.type === "mc") {
+    return `<div class="opts">` + cur.order.map(i => {
+      let c = "opt" + (d.multi ? " multi" : "");
+      if (cur.sel.includes(i)) c += " sel";
+      if (cur.done && d.correct.includes(i)) c += " ok";
+      if (cur.mark && cur.mark.includes(i)) c += " no";
+      return `<button class="${c}" data-act="kies" data-i="${i}" ${cur.done?"disabled":""}><span class="bx"></span><span>${esc(d.opts[i])}</span></button>`;
+    }).join("") + `</div>`;
+  }
+  if (d.type === "koppel") {
+    const colorOf = l => Object.keys(cur.link).indexOf(String(l));
+    const L = cur.left.map(l => {
+      let c = "mi"; const lk = cur.link[l] !== undefined;
+      if (cur.pickL === l) c += " pick";
+      if (lk) c += " c" + (colorOf(l)%6);
+      if (cur.locked[l]) c += " ok lk";
+      if (cur.lastWrong.includes(l)) c += " no";
+      return `<button class="${c}" data-act="kl" data-l="${l}" ${cur.done||cur.locked[l]?"":""}>${esc(d.pairs[l][0])}</button>`;
+    }).join("");
+    const R = cur.right.map(r => {
+      const l = Object.keys(cur.link).find(x => cur.link[x] === r);
+      let c = "mi"; if (l !== undefined) c += " c" + (colorOf(l)%6);
+      if (l !== undefined && cur.locked[l]) c += " ok lk";
+      return `<button class="${c}" data-act="kr" data-r="${r}">${esc(d.pairs[r][1])}</button>`;
+    }).join("");
+    return `<div class="match"><div class="mcol">${L}</div><div class="mcol">${R}</div></div>`;
+  }
+  if (d.type === "reken") {
+    return `<div class="inl">${d.unit==="€"?'<span class="unit">€</span>':""}<input id="ans" type="text" inputmode="decimal" autocomplete="off" placeholder="Typ je antwoord" value="${esc(cur.val)}" ${cur.done?"disabled":""}>${d.unit==="%"?'<span class="unit">%</span>':""}</div>`;
+  }
+  if (d.type === "kaartjes") {
+    const f = (k, lab, ph) => `<label class="fl" for="f_${k}">${lab}<input id="f_${k}" data-f="${k}" type="text" inputmode="decimal" autocomplete="off" placeholder="${ph}" value="${esc(cur.f[k])}" class="${cur.fok[k]===true?"good-field":cur.fok[k]===false?"bad-field":""}" ${cur.done?"disabled":""}></label>`;
+    return `<div class="stack">${f("b","Geleend bedrag (€)","bijvoorbeeld 1500")}${f("t","Maandtermijn (€)","bijvoorbeeld 100")}${f("m","Aantal maanden","bijvoorbeeld 12")}</div>`;
+  }
+  if (d.type === "open") {
+    const res = d.crit.map((c,i) => cur.met[i] ? `<li><span class="k" style="color:var(--good)">✓</span><span>${esc(c.label)}</span></li>` : `<li><span class="k" style="color:var(--bad)">${cur.att?"✗":"·"}</span><span style="color:var(--muted)">${cur.att?"Onderdeel "+(i+1)+" ontbreekt of klopt nog niet":"Onderdeel "+(i+1)}</span></li>`).join("");
+    return `<textarea id="txt" placeholder="Typ hier je antwoord..." ${cur.done?"disabled":""} ${d.creatief?'style="min-height:220px"':""}>${esc(cur.text)}</textarea>
+      <ul class="crit">${res}</ul>`;
+  }
+  return "";
+}
+function vActions(d){
+  if (cur.done) {
+    const last = S.qi === S.rij.length-1;
+    return `<div class="row"><button class="btn gold" data-act="volgende">${last ? "Kamer afronden" : "Volgende opdracht"}</button></div>`;
+  }
+  let b = "";
+  if (d.type === "mc") b = `<button class="btn gold" data-act="check" ${cur.sel.length?"":"disabled"}>Controleer</button>`;
+  else if (d.type === "koppel") b = `<button class="btn gold" data-act="check" ${Object.keys(cur.link).length === d.pairs.length ? "" : "disabled"}>Controleer</button>`;
+  else if (d.type === "open") b = `<button class="btn gold" data-act="check" ${cur.busy?"disabled":""}>${cur.busy ? "Aan het nakijken..." : "Laat nakijken"}</button>`;
+  else b = `<button class="btn gold" data-act="check">Controleer</button>`;
+  const give = (cur.att >= 3 || cur.fails >= 3) ? `<button class="btn ghost" data-act="geefop">Toon het antwoord (€0)</button>` : "";
+  return `<div class="row">${b}${give}</div>`;
+}
+function vHints(d){
+  if (cur.done) return "";
+  const n = cur.hints, max = d.hints.length;
+  const list = d.hints.slice(0,n).map(h => `<div class="hint">${esc(h)}</div>`).join("");
+  const cost = CONFIG.HINT_KOSTEN[Math.min(n, CONFIG.HINT_KOSTEN.length-1)];
+  const can = n < max && S.saldo >= cost;
+  const btn = n >= max ? `<button class="btn small ghost" disabled>Geen hints meer</button>`
+    : `<button class="btn small" data-act="hint" ${can?"":"disabled"}>Koop hint ${n+1} (${eur(cost)})</button>`;
+  return `<section class="hints">${list}<div class="row">${btn}</div></section>`;
+}
+
+/* ---- beloningen en afronden ---- */
+function award(base, att){
+  const a = Math.round(base * factor(att));
+  S.saldo += a; cur.earned += a; return a;
+}
+function payTxt(a, att){
+  const t = att <= 1 ? "Meteen goed: volle prijs!" : att === 2 ? "Tweede poging: de helft." : "Derde poging of later: een kwart.";
+  return `<div class="fb good"><b>Goed!</b> Je verdient <span class="pay">${eur(a)}</span>. ${t}</div>`;
+}
+function wrongTxt(extra){
+  const nxt = cur.att === 1 ? "Opnieuw proberen levert de helft op." : "Opnieuw proberen levert een kwart op.";
+  return `<div class="fb bad"><b>Nog niet goed.</b> ${extra ? extra + " " : ""}${nxt}</div>`;
+}
+function finishGood(a){
+  cur.done = true; cur.msg = a ? payTxt(a, cur.att) : `<div class="fb good"><b>Goed!</b></div>`;
+  tweenAfter();
+}
+function tweenAfter(){ render(); setTimeout(tweenSaldo, 30); }
+
+/* ---- controleren ---- */
+function checkMC(){
+  const d = cur.def; cur.att++;
+  const sel = cur.sel.slice().sort(), ok = d.correct.slice().sort();
+  const good = sel.length === ok.length && sel.every((v,i) => v === ok[i]);
+  if (good) { cur.mark = null; finishGood(award(d.pts, cur.att)); }
+  else {
+    cur.mark = sel.filter(i => !d.correct.includes(i));
+    cur.msg = wrongTxt(d.multi && sel.some(i=>d.correct.includes(i)) ? "Een deel klopt, maar er mist er nog een of er staat er een te veel bij." : "");
+    cur.fails++; render();
+    cur.sel = []; // keuze wissen na foute poging
+    setTimeout(() => { if (cur && !cur.done) { cur.mark = null; render(); } }, 900);
+  }
+}
+function checkReken(){
+  const d = cur.def, v = parseNum(cur.val);
+  if (isNaN(v)) { cur.msg = `<div class="fb info">Typ een getal, bijvoorbeeld 12,5.</div>`; render(); return; }
+  cur.att++;
+  const raw = d.raw(), exp = Number(raw.toFixed(d.dec));
+  if (Math.abs(v-exp) < 1e-9) { finishGood(award(d.pts, cur.att)); return; }
+  cur.fails++;
+  const near = Math.abs(v-raw) <= Math.pow(10,-d.dec) * 1.01;
+  cur.msg = wrongTxt(near ? "Het getal ligt dichtbij. Controleer de afronding." : "");
+  render();
+}
+function checkKaartjes(){
+  const want = {b:KAART.bedrag, t:KAART.termijn, m:KAART.maanden};
+  let all = true; cur.att++;
+  for (const k of ["b","t","m"]) { const v = parseNum(cur.f[k]); const ok = v === want[k]; cur.fok[k] = ok; if (!ok) all = false; }
+  if (all) { finishGood(0); cur.msg = `<div class="fb good"><b>Gevonden!</b> Met deze gegevens kun je de lening uitrekenen.</div>`; render(); }
+  else { cur.fails++; cur.msg = `<div class="fb bad"><b>Nog niet alles klopt.</b> De rode velden kloppen niet. Kijk nog eens goed op de kaartjes. Een hint kan helpen.</div>`; render(); }
+}
+function checkKoppel(){
+  const d = cur.def; cur.att++;
+  const wrong = [];
+  for (const l of Object.keys(cur.link)) { if (cur.locked[l]) continue; if (Number(cur.link[l]) === Number(l)) cur.locked[l] = true; else wrong.push(l); }
+  if (!wrong.length) { finishGood(award(d.pts, cur.att)); return; }
+  cur.fails++;
+  cur.lastWrong = wrong.map(Number);
+  cur.msg = wrongTxt(`${wrong.length} van de ${d.pairs.length} koppelingen klopt nog niet. De rest staat vast.`);
+  render();
+  setTimeout(() => { if (!cur || cur.done) return; wrong.forEach(l => delete cur.link[l]); cur.lastWrong = []; render(); }, 1100);
+}
+
+/* ---- open vragen: AI of demo ---- */
+async function checkOpen(){
+  const d = cur.def, text = (cur.text || "").trim();
+  if (text.length < 6) { cur.msg = `<div class="fb info">Schrijf eerst je antwoord op.</div>`; render(); return; }
+  cur.busy = true; render();
+  let res = null, viaAI = false;
+  if (CONFIG.WORKER_URL && (cur.aiFails||0) < 2) {
+    try {
+      const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 25000);
+      const r = await fetch(CONFIG.WORKER_URL, {method:"POST", headers:{"Content-Type":"application/json"}, signal:ctl.signal,
+        body: JSON.stringify({vraag:d.q, criteria:d.crit.map((c,i)=>({id:i, tekst:c.tekst})), antwoord:text.slice(0,1500)})});
+      clearTimeout(to);
+      if (!r.ok) throw new Error("status " + r.status);
+      const j = await r.json();
+      res = {ok: d.crit.map((_,i) => !!(j.resultaten && (j.resultaten[i] === true || j.resultaten[String(i)] === true))), fb: String(j.feedback || "")};
+      viaAI = true;
+    } catch(e) {
+      cur.aiFails = (cur.aiFails||0) + 1; cur.busy = false;
+      if (cur.aiFails < 2) { cur.msg = `<div class="fb info">De nakijkhulp reageert niet. Probeer het nog een keer.</div>`; render(); return; }
+    }
+  }
+  if (!res) res = {ok: d.crit.map(c => c.rx.test(text)), fb: ""};
+  cur.busy = false; cur.att++;
+  let got = 0; const share = d.pts / d.crit.length;
+  res.ok.forEach((ok,i) => { if (ok && !cur.met[i]) { cur.met[i] = true; got += Math.round(share * factor(cur.att)); } });
+  S.saldo += got; cur.earned += got;
+  const allMet = d.crit.every((_,i) => cur.met[i]);
+  const fbTxt = res.fb ? `<div style="margin-top:6px">${esc(res.fb)}</div>` : "";
+  if (allMet) { cur.done = true; cur.msg = `<div class="fb good"><b>Compleet!</b> In totaal verdiend: <span class="pay">${eur(cur.earned)}</span>.${fbTxt}</div>`; }
+  else {
+    cur.fails++;
+    const n = d.crit.filter((_,i)=>cur.met[i]).length;
+    cur.msg = `<div class="fb bad"><b>${n} van de ${d.crit.length} onderdelen kloppen.</b> ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Verbeter je antwoord en laat opnieuw nakijken.${fbTxt}${viaAI ? "" : '<div style="margin-top:6px;color:var(--muted);font-size:15px">(demo-nakijker)</div>'}</div>`;
+  }
+  tweenAfter();
+}
+
+function geefOp(){
+  const d = cur.def; let ans = "";
+  if (d.type === "mc") ans = d.correct.map(i => d.opts[i]).join(" en ");
+  else if (d.type === "reken") ans = (d.unit==="€"?"€":"") + nf(Number(d.raw().toFixed(d.dec)), d.dec) + (d.unit==="%"?"%":"");
+  else if (d.type === "koppel") ans = d.pairs.map(p => p[0] + " = " + p[1]).join("; ");
+  else if (d.type === "open") ans = d.model;
+  else if (d.type === "kaartjes") ans = "Geleend bedrag €5.400, maandtermijn €250, aantal maanden 24. Zoek de kaartjes de volgende keer eerst op.";
+  if (d.type === "koppel") d.pairs.forEach((_,i) => { cur.link[i] = i; cur.locked[i] = true; });
+  if (d.type === "mc") cur.sel = d.correct.slice();
+  cur.done = true; cur.gaveUp = true;
+  cur.msg = `<div class="fb info"><b>Het antwoord was:</b> ${esc(ans)}</div>`;
+  render();
+}
+
+/* ---- kamer klaar ---- */
+function vKamerKlaar(){
+  const k = S.kamer, c = CONFIG.KAMER_CIJFERS[k];
+  return `<section class="card fin"><span class="tag">Kamer ${k} gehaald</span>
+    <h2>${KAMERS[k].naam} is geopend</h2>
+    <p class="lead">Dit cijfer hoort bij de kluiscode:</p>
+    <div class="slot f" style="width:110px;height:130px;font-size:72px">${c}</div>
+    <p>Onthoud het of bekijk het bovenin. Jullie saldo is nu <b class="pay">${eur(S.saldo)}</b>.</p>
+    <button class="btn gold" data-act="lobby">Terug naar de gang</button></section>`;
+}
+
+/* ---- kluis (Mastermind) ---- */
+let kl = {slots:[null,null,null,null]};
+function vKluis(){
+  const have = Object.values(S.cijfers);
+  const used = kl.slots.filter(x => x !== null);
+  const tokens = have.map(n => `<button class="tok" data-act="tok" data-n="${n}" ${used.includes(n)?"disabled":""} aria-label="Cijfer ${n}">${n}</button>`).join("");
+  const slots = kl.slots.map(n => `<div class="slot ${n!==null?"f":""}">${n!==null?n:""}</div>`).join("");
+  const filled = kl.slots.every(x => x !== null);
+  const hist = S.poging.map(p => `<div class="hr">${p.d.map((n,i)=>`<div class="ht ${p.r[i]}">${n}<small>${p.r[i]==="g"?"✓":p.r[i]==="y"?"~":"·"}</small></div>`).join("")}</div>`).join("");
+  return `<section class="card vault"><h2>De kluis</h2>
+    <p class="lead" style="text-align:center">Zet de vier cijfers in de goede volgorde. Je mag zo vaak proberen als je wilt.</p>
+    <div class="slots">${slots}</div>
+    <div class="tokens">${tokens}</div>
+    <div class="row"><button class="btn ghost" data-act="wis">Wis alles</button><button class="btn gold" data-act="open" ${filled?"":"disabled"}>Open de kluis</button></div>
+    <div class="legend"><span><i style="background:var(--good)"></i> Goede plek</span><span><i style="background:var(--warn)"></i> Cijfer klopt, plek niet</span><span><i style="background:var(--panel-2)"></i> Staat er niet op die plek</span></div>
+    ${hist ? `<div class="hist">${hist}</div>` : ""}
+  </section><div class="foot"><button class="link" data-act="lobby">Terug naar de gang</button></div>`;
+}
+function proefKluis(){
+  const g = kl.slots.slice(), code = CONFIG.KLUISCODE.slice();
+  const r = g.map((n,i) => n === code[i] ? "g" : "n");
+  const rest = {}; code.forEach((n,i) => { if (r[i] !== "g") rest[n] = (rest[n]||0)+1; });
+  g.forEach((n,i) => { if (r[i] !== "g" && rest[n] > 0) { r[i] = "y"; rest[n]--; } });
+  S.poging.push({d:g, r});
+  if (r.every(x => x === "g")) { S.fase = "einde"; S.t1 = Date.now(); render(); confetti(); return; }
+  kl.slots = [null,null,null,null]; render();
+}
+
+/* ---- einde ---- */
+function vEinde(){
+  const min = Math.max(1, Math.round(((S.t1 || Date.now()) - (S.t0 || Date.now()))/60000));
+  return `<section class="fin"><div class="stamp">KLUIS OPEN</div>
+    <h1>${esc(S.duo || "Jullie")} zijn miljonair!</h1>
+    <div class="money">${eur(S.saldo)}</div>
+    <p class="lead">in ${min} ${min===1?"minuut":"minuten"} · ${S.poging.length} ${S.poging.length===1?"poging":"pogingen"} in de kluis</p>
+  </section>
+  <section class="card fin"><span class="tag">Beloning</span>
+    <h2>Laat dit scherm aan de meester zien</h2>
+    <p>Het codewoord voor jullie tractatie is:</p>
+    <div class="stamp" style="transform:none">${esc(CONFIG.CODEWOORD)}</div>
+    <p class="lead">Het duo met het meeste geld krijgt er één extra.</p></section>`;
+}
+
+/* ---- confetti ---- */
+function confetti(){
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const c = $("#confetti"); c.hidden = false; c.width = innerWidth; c.height = innerHeight;
+  const g = c.getContext("2d"), cols = ["#f2b632","#4fd08a","#6aa8ff","#ff9bd0","#f4efe2"];
+  const P = Array.from({length:140}, () => ({x:Math.random()*c.width, y:-20-Math.random()*c.height*.6, vx:(Math.random()-.5)*3, vy:2+Math.random()*4, s:6+Math.random()*8, r:Math.random()*6, c:cols[Math.floor(Math.random()*cols.length)]}));
+  let f = 0;
+  (function loop(){ g.clearRect(0,0,c.width,c.height); P.forEach(p => { p.x+=p.vx; p.y+=p.vy; p.r+=.1; g.save(); g.translate(p.x,p.y); g.rotate(p.r); g.fillStyle=p.c; g.fillRect(-p.s/2,-p.s/4,p.s,p.s/2); g.restore(); });
+    if (++f < 260) requestAnimationFrame(loop); else { c.hidden = true; } })();
+}
+
+/* =========================================================
+   ACTIES
+   ========================================================= */
+const A = {
+  begin(){
+    const v = ($("#duo").value || "").trim();
+    if (v.length < 2) { toast("Vul eerst jullie namen in."); return; }
+    S.duo = v; S.fase = "lobby"; S.t0 = Date.now(); render(); applyHash();
+  },
+  meester(){ S.test = !S.test; render(); },
+  testklaar(){ [1,2,4].forEach(k => { S.klaar[k] = true; S.cijfers[k] = CONFIG.KAMER_CIJFERS[k]; }); render(); toast("Kamers 1, 2 en 4 staan op klaar."); },
+  reset(){ try { localStorage.removeItem(LS); } catch(e){} const t = S.test; S = fresh(); S.test = t; shown = S.saldo; cur = null; kl = {slots:[null,null,null,null]}; render(); },
+  deur(el){
+    const k = Number(el.dataset.k), K = KAMERS[k];
+    if (S.klaar[k]) return;
+    if (!K.beschikbaar) { toast("Deze kamer wordt nog gebouwd."); return; }
+    if (S.open[k] || S.test) { S.open[k] = true; S.deurK = null; startKamer(k); return; }
+    S.deurK = k; render();
+  },
+  kcode(){
+    const v = ($("#kcode").value || "").trim().toUpperCase(), k = S.deurK;
+    if (v === CONFIG.KAMERCODES[k]) { S.open[k] = true; S.deurK = null; toast("Kamer " + k + " is open!"); startKamer(k); }
+    else $("#kmsg").innerHTML = `<div class="fb bad" style="margin-top:10px">Die code klopt niet. Kijk nog eens goed bij de QR-code.</div>`;
+  },
+  lobby(){ S.fase = "lobby"; S.deurK = null; render(); },
+  naarkluis(){ S.fase = "kluis"; kl = {slots:[null,null,null,null]}; render(); },
+  kies(el){
+    const i = Number(el.dataset.i), d = cur.def;
+    if (cur.done) return;
+    if (d.multi) cur.sel = cur.sel.includes(i) ? cur.sel.filter(x => x !== i) : cur.sel.concat(i);
+    else cur.sel = [i];
+    cur.mark = null; cur.msg = null; render();
+  },
+  kl(el){
+    const l = Number(el.dataset.l); if (cur.done || cur.locked[l]) return;
+    if (cur.link[l] !== undefined) { delete cur.link[l]; cur.pickL = null; }
+    else cur.pickL = (cur.pickL === l ? null : l);
+    cur.msg = null; render();
+  },
+  kr(el){
+    const r = Number(el.dataset.r); if (cur.done) return;
+    const owner = Object.keys(cur.link).find(x => cur.link[x] === r);
+    if (owner !== undefined) { if (!cur.locked[owner]) delete cur.link[owner]; cur.msg = null; render(); return; }
+    if (cur.pickL === null) { toast("Tik eerst links op een begrip."); return; }
+    cur.link[cur.pickL] = r; cur.pickL = null; cur.msg = null; render();
+  },
+  check(){
+    const t = cur.def.type;
+    if (t === "mc") checkMC(); else if (t === "reken") checkReken(); else if (t === "koppel") checkKoppel();
+    else if (t === "kaartjes") checkKaartjes(); else if (t === "open") checkOpen();
+  },
+  geefop: geefOp,
+  hint(){
+    const d = cur.def, n = cur.hints, cost = CONFIG.HINT_KOSTEN[Math.min(n, CONFIG.HINT_KOSTEN.length-1)];
+    if (n >= d.hints.length || S.saldo < cost) return;
+    S.saldo -= cost; cur.hints++; render(); setTimeout(tweenSaldo, 30);
+  },
+  volgende(){
+    if (S.qi < S.rij.length-1) { S.qi++; startQ(); render(); }
+    else {
+      const k = S.kamer; S.klaar[k] = true; S.cijfers[k] = CONFIG.KAMER_CIJFERS[k]; S.rij = []; S.rijK = null; S.qi = 0;
+      S.fase = "kamerklaar"; render();
+    }
+  },
+  tok(el){ const n = Number(el.dataset.n); const i = kl.slots.indexOf(null); if (i < 0 || kl.slots.includes(n)) return; kl.slots[i] = n; render(); },
+  wis(){ kl.slots = [null,null,null,null]; render(); },
+  open(){ if (kl.slots.every(x => x !== null)) proefKluis(); }
+};
+document.addEventListener("click", e => { const el = e.target.closest("[data-act]"); if (el && A[el.dataset.act]) A[el.dataset.act](el, e); });
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.id === "ans" && cur) cur.val = t.value;
+  else if (t.id === "txt" && cur) cur.text = t.value;
+  else if (t.dataset && t.dataset.f && cur) cur.f[t.dataset.f] = t.value;
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target.id === "ans") { e.preventDefault(); A.check(); }
+  if (e.key === "Enter" && e.target.id === "duo") { e.preventDefault(); A.begin(); }
+  if (e.key === "Enter" && e.target.id === "kcode") { e.preventDefault(); A.kcode(); }
+});
+
+/* QR-code: de link eindigt op #k3 (kamer 3) */
+function applyHash(){
+  const m = /^#k([1-4])$/.exec(location.hash || "");
+  if (!m || S.fase === "start") return;
+  const k = Number(m[1]);
+  if (!S.open[k]) { S.open[k] = true; toast("Kamer " + k + " is ontgrendeld!"); }
+  if (S.fase === "lobby") render();
+}
+addEventListener("hashchange", applyHash);
+
+/* start */
+(function init(){
+  const old = load();
+  if (old && old.fase !== "start" && old.fase !== "einde") {
+    S = old; shown = S.saldo;
+    if (S.fase === "kamer") { startQ(); }
+  }
+  render(); applyHash();
+})();
+window.__G = {get S(){return S}, get cur(){return cur}, Q, A, CONFIG, KAART};
+</script>
+
+</body>
+</html>
