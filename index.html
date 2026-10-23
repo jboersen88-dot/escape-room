@@ -132,6 +132,19 @@ label.fl{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size
 .mi.ok{background:rgba(79,208,138,.14);border-color:var(--good)}
 .mi.no{background:rgba(255,115,102,.12);border-color:var(--bad)}
 
+select{background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-size:19px;color:var(--fg);min-height:52px}
+select:focus{border-color:var(--gold);outline:none}
+.pr{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}
+.pr input{flex:1 1 140px;width:auto}
+.tw{overflow-x:auto}
+table.begr{width:100%;border-collapse:collapse;font-size:18px}
+.begr th,.begr td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+.begr thead th{color:var(--muted);font-size:14px;text-transform:uppercase;letter-spacing:.05em}
+.begr tr.grp th{background:var(--panel-2);color:var(--gold);font-family:var(--display);font-size:20px}
+.begr tr.tot td:first-child{font-weight:700}
+.begr input{width:150px;padding:10px 12px;font-size:19px}
+.begr select{min-height:48px;font-size:17px;padding:8px 10px}
+
 /* feedback + hints */
 .fb{border-radius:12px;padding:12px 16px;font-size:18px}
 .fb.good{background:rgba(79,208,138,.13);border:1px solid var(--good)}
@@ -396,54 +409,93 @@ add({id:"o_uitgaven", type:"open", pts:30, label:"Open vraag",
   model:"Vaste lasten (bijvoorbeeld huur), huishoudelijke of dagelijkse uitgaven (bijvoorbeeld boodschappen) en incidentele uitgaven (bijvoorbeeld een vakantie).",
   hints:["Denk aan uitgaven die vast zijn, dagelijks zijn en af en toe voorkomen.","De groepen beginnen met 'vaste', 'huishoudelijke' en 'incidentele'.","Vaste lasten, huishoudelijke of dagelijkse uitgaven en incidentele uitgaven. Geef bij elk een voorbeeld."]});
 rk("r1_a","Je krijgt €20 zakgeld per week. Hoeveel is dat per maand? Rond af op 2 decimalen.",
-   "(Bedrag per week x 52) : 12", () => (20*52)/12, 2, "€",
-   ["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 52 weken en 12 maanden.","(20 x 52) : 12, rond af op 2 decimalen."]);
+   "", () => (20*52)/12, 2, "€",
+   ["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 52 weken en 12 maanden: (bedrag per week x 52) : 12.","(20 x 52) : 12, rond af op 2 decimalen."]);
 rk("r1_b","Je verdient €47,50 per week met je bijbaantje. Hoeveel is dat per maand? Rond af op 2 decimalen.",
-   "(Bedrag per week x 52) : 12", () => (47.5*52)/12, 2, "€",
-   ["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 52 weken en 12 maanden.","(47,50 x 52) : 12."]);
+   "", () => (47.5*52)/12, 2, "€",
+   ["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 52 weken en 12 maanden: (bedrag per week x 52) : 12.","(47,50 x 52) : 12."]);
 rk("r1_c","Je ontvangt €275 per maand. Hoeveel is dat per week? Rond af op 2 decimalen.",
-   "(Bedrag per maand x 12) : 52", () => (275*12)/52, 2, "€",
-   ["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 12 maanden en 52 weken.","(275 x 12) : 52."]);
+   "", () => (275*12)/52, 2, "€",
+   ["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 12 maanden en 52 weken: (bedrag per maand x 12) : 52.","(275 x 12) : 52."]);
+rk("r1_f","Je krijgt €35 zakgeld per twee weken. Hoeveel is dat per maand? Rond af op 2 decimalen.",
+   "", () => (35*26)/12, 2, "€",
+   ["Een jaar heeft 52 weken. Hoeveel periodes van twee weken zitten er in een jaar?","Er zijn 26 periodes van twee weken in een jaar. Reken eerst om naar een bedrag per jaar en deel dan door 12.","(35 x 26) : 12, rond af op 2 decimalen."]);
+rk("r1_g","Een abonnement kost €56 per kwartaal. Hoeveel is dat per maand? Rond af op 2 decimalen.",
+   "", () => 56/3, 2, "€",
+   ["Een kwartaal is een periode van een aantal maanden.","Een kwartaal is 3 maanden. Deel het bedrag door het aantal maanden.","56 : 3, rond af op 2 decimalen."]);
 rk("r1_d","Je saldo was €650 en is nu €720. Wat is de procentuele stijging? Rond af op 1 decimaal.",
-   "(Nieuw - oud) : oud x 100", () => ((720-650)/650)*100, 1, "%",
-   ["Het oude bedrag is €650, het nieuwe €720.","Bereken eerst het verschil tussen nieuw en oud.","(720 - 650) : 650 x 100."]);
+   "", () => ((720-650)/650)*100, 1, "%",
+   ["Het oude bedrag is €650, het nieuwe €720.","De formule is (Nieuw - oud) : oud x 100. Bereken eerst het verschil.","(720 - 650) : 650 x 100, rond af op 1 decimaal."]);
 rk("r1_e","Filip verdiende €9,30 per uur en nu €10,90. Hoeveel procent stijgt zijn loon? Rond af op een heel getal.",
-   "(Nieuw - oud) : oud x 100", () => ((10.9-9.3)/9.3)*100, 0, "%",
-   ["Het oude loon is €9,30, het nieuwe loon €10,90.","Bereken eerst het verschil tussen nieuw en oud.","(10,90 - 9,30) : 9,30 x 100."]);
+   "", () => ((10.9-9.3)/9.3)*100, 0, "%",
+   ["Het oude loon is €9,30, het nieuwe loon €10,90.","De formule is (Nieuw - oud) : oud x 100. Bereken eerst het verschil.","(10,90 - 9,30) : 9,30 x 100, rond af op een heel getal."]);
 
-const uitgaanMnd = () => (25*52)/12;
-const BOX1 = [["Telefoonabonnement", () => eur(15) + " per maand"], ["Sportclub", () => eur(30) + " per maand"], ["Kleding", () => eur(80) + " per maand"], ["Uitgaan", () => eur(25) + " per week"]];
+const uitgaanMnd = () => (50*26)/12;      // €50 per twee weken
+const sportMnd = () => 90/3;              // €90 per kwartaal
+const BOX1 = [["Telefoonabonnement", () => eur(15) + " per maand"], ["Sportclub", () => eur(90) + " per kwartaal"], ["Kleding", () => eur(80) + " per maand"], ["Uitgaan", () => eur(50) + " per twee weken"]];
 add({id:"y0", type:"kaartjes", pts:0, label:"Zoekopdracht",
-  q:"Een begroting maak je met de juiste bedragen. Vier bonnetjes van Lisa zijn verstopt in het lokaal. Zoek ze op en typ het bedrag van elk bonnetje in.",
-  velden:[{k:"tel",lab:"Telefoonabonnement per maand (€)",ph:"bijvoorbeeld 10",want:15},{k:"sport",lab:"Sportclub per maand (€)",ph:"bijvoorbeeld 10",want:30},{k:"kl",lab:"Kleding per maand (€)",ph:"bijvoorbeeld 10",want:80},{k:"uit",lab:"Uitgaan per week (€)",ph:"bijvoorbeeld 10",want:25}],
-  model:"Telefoonabonnement €15 per maand, sportclub €30 per maand, kleding €80 per maand en uitgaan €25 per week. Zoek de bonnetjes de volgende keer eerst op.",
+  q:"Lisa (15) wil een begroting maken, maar ze weet niet precies wat ze uitgeeft. Haar vier bonnetjes zijn verstopt in het lokaal. Zoek ze op. Typ per bonnetje het bedrag in en kies per welke periode ze dat betaalt.",
+  velden:[{k:"tel",lab:"Telefoonabonnement",ph:"bedrag in €",want:15,per:"maand"},{k:"sport",lab:"Sportclub",ph:"bedrag in €",want:90,per:"kwartaal"},{k:"kl",lab:"Kleding",ph:"bedrag in €",want:80,per:"maand"},{k:"uit",lab:"Uitgaan",ph:"bedrag in €",want:50,per:"twee weken"}],
+  model:"Telefoonabonnement €15 per maand, sportclub €90 per kwartaal, kleding €80 per maand en uitgaan €50 per twee weken. Zoek de bonnetjes de volgende keer eerst op.",
   hints:[CONFIG.ZOEK_PLEKKEN_1[0], CONFIG.ZOEK_PLEKKEN_1[1], CONFIG.ZOEK_PLEKKEN_1[2]]});
 add({id:"y1", type:"reken", pts:20, label:"Zoekopdracht", box:BOX1,
-  q:"Lisa geeft elke week €25 uit aan uitgaan. Hoeveel is dat per maand? Rond af op 2 decimalen.", formule:"(Bedrag per week x 52) : 12",
+  q:"Lisa geeft elke twee weken €50 uit aan uitgaan. Hoeveel is dat per maand? Rond af op 2 decimalen.",
   raw:() => uitgaanMnd(), dec:2, unit:"€",
-  hints:["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 52 weken en 12 maanden.","(25 x 52) : 12."]});
-add({id:"y2", type:"reken", pts:20, label:"Zoekopdracht", box:BOX1,
-  q:"Wat zijn de totale uitgaven van Lisa per maand? Tel alle bonnetjes bij elkaar op. Rond af op 2 decimalen.", formule:"Telefoon + sport + kleding + uitgaan (alles per maand)",
+  hints:["Een jaar heeft 52 weken. Hoeveel periodes van twee weken zitten er in een jaar?","Er zijn 26 periodes van twee weken in een jaar. Reken eerst om naar een bedrag per jaar en deel dan door 12.","(50 x 26) : 12, rond af op 2 decimalen."]});
+add({id:"y1b", type:"reken", pts:20, label:"Zoekopdracht", box:BOX1,
+  q:"Lisa betaalt €90 per kwartaal voor de sportclub. Hoeveel is dat per maand?",
   vorige:[["Uitgaan per maand", () => eur2(uitgaanMnd())]],
-  raw:() => 15+30+80+uitgaanMnd(), dec:2, unit:"€",
-  hints:["Alle bedragen moeten per maand zijn voordat je optelt.","Uitgaan per maand heb je net uitgerekend.","15 + 30 + 80 + het bedrag voor uitgaan per maand."]});
-add({id:"c_begroting", type:"open", creatief:true, pts:60, label:"Creatieve opdracht", box:BOX1,
-  vorige:[["Uitgaan per maand", () => eur2(uitgaanMnd())], ["Totale uitgaven per maand", () => eur2(15+30+80+uitgaanMnd())]],
-  q:"Lisa (15) wil weten of ze rond kan komen. Haar inkomsten zijn €12 zakgeld per week en €40 per week van haar bijbaantje. Maak een begroting per maand: reken haar inkomsten om naar een bedrag per maand, verdeel haar uitgaven in de drie groepen (vaste lasten, huishoudelijke uitgaven, incidentele uitgaven), bereken of ze een tekort of overschot heeft en geef Lisa een tip.",
-  crit:[
-   {label:"Inkomsten per maand", tekst:"Rekent de inkomsten om naar een bedrag per maand: (12 + 40) x 52 : 12 = ongeveer €225,33.", rx:/225[,.]3/},
-   {label:"Uitgaven in drie groepen", tekst:"Verdeelt de uitgaven in vaste lasten (telefoon en sportclub), huishoudelijke uitgaven (uitgaan) en incidentele uitgaven (kleding).", rx:/vaste[\s\S]*(incident|huishoud)|incident[\s\S]*vaste/i},
-   {label:"Tekort of overschot", tekst:"Trekt de uitgaven (€233,33) af van de inkomsten (€225,33) en concludeert dat Lisa een tekort heeft van ongeveer €8.", rx:/tekort|\b8[,.]?0*\b/i},
-   {label:"Tip voor Lisa", tekst:"Geeft een passende tip, bijvoorbeeld minder uitgeven aan uitgaan of kleding, of meer verdienen.", rx:/tip|minder|meer verdien|bezuinig|beter/i}],
-  model:"Inkomsten: (12 + 40) x 52 : 12 = €225,33 per maand. Uitgaven: €233,33 per maand. Dat is een tekort van €8,00. Vaste lasten: telefoon en sportclub. Huishoudelijk: uitgaan. Incidenteel: kleding. Tip: bijvoorbeeld minder uitgaan.",
-  hints:["Zakgeld en bijbaantje zijn allebei per week. Reken ze om naar een bedrag per maand.","Telefoon en sportclub zijn vaste lasten, uitgaan is huishoudelijk en kleding is incidenteel.","Inkomsten min uitgaven. Is het getal negatief, dan is er een tekort."]});
+  raw:() => sportMnd(), dec:2, unit:"€",
+  hints:["Een kwartaal is een periode van een aantal maanden.","Een kwartaal is 3 maanden. Deel het bedrag door het aantal maanden.","90 : 3."]});
+add({id:"y2", type:"reken", pts:20, label:"Zoekopdracht", box:BOX1,
+  q:"Wat zijn de totale uitgaven van Lisa per maand? Tel alle uitgaven bij elkaar op. Rond af op 2 decimalen.",
+  vorige:[["Uitgaan per maand", () => eur2(uitgaanMnd())], ["Sportclub per maand", () => eur2(sportMnd())]],
+  raw:() => 15+sportMnd()+80+uitgaanMnd(), dec:2, unit:"€",
+  hints:["Alle bedragen moeten per maand zijn voordat je optelt.","Telefoon en kleding zijn al per maand. Uitgaan en sportclub heb je net uitgerekend.","15 + 30 + 80 + het bedrag voor uitgaan per maand."]});
+
+/* ---- creatieve opdracht met invultabel ---- */
+const BEGR = {
+  ink:   {label:"Inkomsten per maand", pts:15, cells:{zak:52, baan:173.33, totin:225.33}},
+  uit:   {label:"Uitgaven per maand", pts:15, cells:{tel:15, spo:30, kle:80, uit:108.33}},
+  soort: {label:"Soort uitgave", pts:10, sel:{tel:"vast", spo:"vast", kle:"incid", uit:"huis"}},
+  tot:   {label:"Totaal en tekort of overschot", pts:10, cells:{totuit:233.33, saldo:8}, sel:{saldosoort:"tekort"}},
+  tip:   {label:"Tip voor Lisa", pts:10}
+};
+const SOORTEN = [["vast","Vaste lasten"],["huis","Huishoudelijke uitgaven"],["incid","Incidentele uitgaven"]];
+const BEGR_ROWS = [
+  {grp:"Inkomsten"},
+  {k:"zak", lab:"Zakgeld"},
+  {k:"baan", lab:"Bijbaantje"},
+  {k:"totin", lab:"Totaal inkomsten", tot:true},
+  {grp:"Uitgaven"},
+  {k:"tel", lab:"Telefoonabonnement", soort:true},
+  {k:"spo", lab:"Sportclub", soort:true},
+  {k:"kle", lab:"Kleding", soort:true},
+  {k:"uit", lab:"Uitgaan", soort:true},
+  {k:"totuit", lab:"Totaal uitgaven", tot:true},
+  {k:"saldo", lab:"Tekort of overschot", tot:true, saldo:true}
+];
+add({id:"c_begroting", type:"begroting", creatief:true, pts:60, label:"Creatieve opdracht", box:BOX1,
+  q:"Lisa (15) wil weten of ze rond kan komen. Ze krijgt €12 zakgeld per week en verdient €80 per twee weken met haar bijbaantje. Haar uitgaven staan hierboven. Vul de begroting per maand in, kies bij elke uitgave de juiste soort en schrijf onderaan een tip voor Lisa.",
+  crit:[{label:"Tip voor Lisa", tekst:"Geeft een passende tip voor Lisa, bijvoorbeeld minder uitgeven aan uitgaan of kleding, of meer verdienen. Spelfouten zijn niet erg.", kw:["tip","minder","uitgaan","kleding","verdienen","bezuinigen","besparen","sparen","beter"]}],
+  model:"Zakgeld (12 x 52) : 12 = €52. Bijbaantje (80 x 26) : 12 = €173,33. Totaal inkomsten €225,33. Uitgaven: telefoon €15 (vaste lasten), sportclub €30 (vaste lasten), kleding €80 (incidenteel), uitgaan €108,33 (huishoudelijk). Totaal €233,33. Dat is een tekort van €8,00. Tip: bijvoorbeeld minder uitgaan.",
+  hints:["Zakgeld is per week en het bijbaantje per twee weken. Reken beide om naar een bedrag per maand.","Telefoon en sportclub zijn vaste lasten, uitgaan is huishoudelijk en kleding is incidenteel. Inkomsten min uitgaven geeft het saldo.","Zakgeld: (12 x 52) : 12. Bijbaantje: (80 x 26) : 12. Is de uitkomst van inkomsten min uitgaven negatief, dan is er een tekort."]});
+
+const KW = {
+  o_manieren:[["ouders","ouder","familie","vader","moeder"],["persoonlijke","persoonlijk"],["hypotheek"]],
+  o_termijn:[["aflossing","aflossen"],["rente"]],
+  o_waarom:[["korter","kortere","sneller"],["goedkoper","minder"]],
+  o_inkomsten:[["loon","salaris"],["winst"],["uitkering","kinderbijslag","werkloos"]],
+  o_uitgaven:[["vaste","vastelasten"],["huishoudelijke","huishoudelijk","dagelijkse"],["incidentele","incidenteel"]]
+};
+Object.keys(KW).forEach(id => KW[id].forEach((kw,i) => { Q[id].crit[i].kw = kw; }));
 
 function bouwRij(k){
   const pick = a => a[Math.floor(Math.random()*a.length)];
   if (k === 1) {
     return ["m_vast", pick(["m_begroting","m_uitkering"]), "k_inkomen", pick(["m_incid","m_periode"]),
-            pick(["o_inkomsten","o_uitgaven"]), pick(["r1_a","r1_b","r1_c","r1_d","r1_e"]),
-            "y0","y1","y2","c_begroting"];
+            pick(["o_inkomsten","o_uitgaven"]), pick(["r1_a","r1_b","r1_c","r1_f","r1_g"]), pick(["r1_d","r1_e"]),
+            "y0","y1","y1b","y2","c_begroting"];
   }
   if (k === 3) {
     return ["m_delen", pick(["m_tf","m_leeftijd"]), "k_lenen", pick(["m_hyp","m_waarom"]),
@@ -480,6 +532,22 @@ function parseNum(str){
   else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g,"");
   return /^-?\d+(\.\d+)?$/.test(s) ? Number(s) : NaN;
 }
+
+/* Spelfouten tellen niet mee: woorden mogen een paar letters afwijken */
+function lev(a, b){
+  const m = a.length, n = b.length, d = Array.from({length:m+1}, (_,i) => [i].concat(Array(n).fill(0)));
+  for (let j=1;j<=n;j++) d[0][j] = j;
+  for (let i=1;i<=m;i++) for (let j=1;j<=n;j++) d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return d[m][n];
+}
+function fuzzyHas(words, text){
+  const toks = String(text).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").split(/[^a-z0-9]+/).filter(Boolean);
+  return words.some(w => {
+    const ww = w.toLowerCase(), lim = ww.length <= 3 ? 0 : Math.max(1, Math.floor(ww.length/4));
+    return toks.some(t => Math.abs(t.length-ww.length) <= lim && lev(t, ww) <= lim) || (ww.length >= 5 && toks.some(t => t.includes(ww)));
+  });
+}
+function critMatch(c, text){ return (c.rx && c.rx.test(text)) || (c.kw && fuzzyHas(c.kw, text)); }
 
 /* =========================================================
    KOP (saldo + cijfers)
@@ -597,9 +665,11 @@ function startQ(){
   } else if (def.type === "reken") {
     cur.val = ""; cur.ber = ""; cur.berFb = null; cur.berBusy = false;
   } else if (def.type === "kaartjes") {
-    cur.f = {}; def.velden.forEach(v => cur.f[v.k] = ""); cur.fok = {};
+    cur.f = {}; cur.per = {}; def.velden.forEach(v => { cur.f[v.k] = ""; cur.per[v.k] = ""; }); cur.fok = {};
   } else if (def.type === "open") {
     cur.met = {}; cur.text = "";
+  } else if (def.type === "begroting") {
+    cur.cell = {}; cur.sel = {}; cur.cok = {}; cur.met = {}; cur.text = "";
   }
 }
 
@@ -660,13 +730,30 @@ function vBody(d){
     <div class="inl">${d.unit==="€"?'<span class="unit">€</span>':""}<input id="ans" type="text" inputmode="decimal" autocomplete="off" placeholder="Typ je antwoord" value="${esc(cur.val)}" ${cur.done?"disabled":""}>${d.unit==="%"?'<span class="unit">%</span>':""}</div>`;
   }
   if (d.type === "kaartjes") {
-    const f = v => `<label class="fl" for="f_${v.k}">${v.lab}<input id="f_${v.k}" data-f="${v.k}" type="text" inputmode="decimal" autocomplete="off" placeholder="${v.ph}" value="${esc(cur.f[v.k])}" class="${cur.fok[v.k]===true?"good-field":cur.fok[v.k]===false?"bad-field":""}" ${cur.done?"disabled":""}></label>`;
+    const PER = [["week","week"],["twee weken","twee weken"],["maand","maand"],["kwartaal","kwartaal"]];
+    const f = v => `<div class="fl">${v.lab}<div class="pr"><input id="f_${v.k}" data-f="${v.k}" type="text" inputmode="decimal" autocomplete="off" placeholder="${v.ph}" value="${esc(cur.f[v.k])}" class="${cur.fok[v.k]===true?"good-field":cur.fok[v.k]===false?"bad-field":""}" ${cur.done?"disabled":""}>` +
+      (v.per ? `<select id="p_${v.k}" data-p="${v.k}" aria-label="Per welke periode" class="${cur.fok[v.k]===true?"good-field":cur.fok[v.k]===false?"bad-field":""}" ${cur.done?"disabled":""}><option value="">per...</option>${PER.map(o => `<option value="${o[0]}" ${cur.per[v.k]===o[0]?"selected":""}>per ${o[1]}</option>`).join("")}</select>` : "") + `</div></div>`;
     return `<div class="stack">${d.velden.map(f).join("")}</div>`;
   }
   if (d.type === "open") {
     const res = d.crit.map((c,i) => cur.met[i] ? `<li><span class="k" style="color:var(--good)">✓</span><span>${esc(c.label)}</span></li>` : `<li><span class="k" style="color:var(--bad)">${cur.att?"✗":"·"}</span><span style="color:var(--muted)">${cur.att?"Onderdeel "+(i+1)+" ontbreekt of klopt nog niet":"Onderdeel "+(i+1)}</span></li>`).join("");
     return `<textarea id="txt" placeholder="Typ hier je antwoord..." ${cur.done?"disabled":""} ${d.creatief?'style="min-height:220px"':""}>${esc(cur.text)}</textarea>
       <ul class="crit">${res}</ul>`;
+  }
+  if (d.type === "begroting") {
+    const cls = ok => ok === true ? "good-field" : ok === false ? "bad-field" : "";
+    const rows = BEGR_ROWS.map(r => {
+      if (r.grp) return `<tr class="grp"><th colspan="3">${r.grp}</th></tr>`;
+      const inp = `<input id="c_${r.k}" data-c="${r.k}" type="text" inputmode="decimal" autocomplete="off" placeholder="€" value="${esc(cur.cell[r.k]||"")}" class="${cls(cur.cok[r.k])}" ${cur.done?"disabled":""}>`;
+      let third = "";
+      if (r.soort) third = `<select id="s_${r.k}" data-s="${r.k}" class="${cls(cur.cok["s_"+r.k])}" aria-label="Soort uitgave" ${cur.done?"disabled":""}><option value="">Kies de soort</option>${SOORTEN.map(o => `<option value="${o[0]}" ${cur.sel[r.k]===o[0]?"selected":""}>${o[1]}</option>`).join("")}</select>`;
+      if (r.saldo) third = `<select id="s_saldosoort" data-s="saldosoort" class="${cls(cur.cok["s_saldosoort"])}" aria-label="Tekort of overschot" ${cur.done?"disabled":""}><option value="">Kies</option><option value="tekort" ${cur.sel.saldosoort==="tekort"?"selected":""}>Tekort</option><option value="overschot" ${cur.sel.saldosoort==="overschot"?"selected":""}>Overschot</option></select>`;
+      return `<tr class="${r.tot?"tot":""}"><td>${r.lab}</td><td>${inp}</td><td>${third}</td></tr>`;
+    }).join("");
+    const secs = Object.keys(BEGR).map((id,n) => cur.met[id] ? `<li><span class="k" style="color:var(--good)">✓</span><span>${esc(BEGR[id].label)}</span></li>` : `<li><span class="k" style="color:var(--bad)">${cur.att?"✗":"·"}</span><span style="color:var(--muted)">${cur.att?"Onderdeel "+(n+1)+" ontbreekt of klopt nog niet":"Onderdeel "+(n+1)}</span></li>`).join("");
+    return `<div class="tw"><table class="begr"><thead><tr><th>Omschrijving</th><th>Bedrag per maand (€)</th><th>Soort</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <label class="fl" for="txt">Schrijf een tip voor Lisa (en eventueel je berekeningen)<textarea id="txt" ${cur.done?"disabled":""}>${esc(cur.text)}</textarea></label>
+      <ul class="crit">${secs}</ul>`;
   }
   return "";
 }
@@ -678,7 +765,7 @@ function vActions(d){
   let b = "";
   if (d.type === "mc") b = `<button class="btn gold" data-act="check" ${cur.sel.length?"":"disabled"}>Controleer</button>`;
   else if (d.type === "koppel") b = `<button class="btn gold" data-act="check" ${Object.keys(cur.link).length === d.pairs.length ? "" : "disabled"}>Controleer</button>`;
-  else if (d.type === "open") b = `<button class="btn gold" data-act="check" ${cur.busy?"disabled":""}>${cur.busy ? "Aan het nakijken..." : "Laat nakijken"}</button>`;
+  else if (d.type === "open" || d.type === "begroting") b = `<button class="btn gold" data-act="check" ${cur.busy?"disabled":""}>${cur.busy ? "Aan het nakijken..." : "Laat nakijken"}</button>`;
   else b = `<button class="btn gold" data-act="check">Controleer</button>`;
   const give = (cur.att >= 3 || cur.fails >= 3) ? `<button class="btn ghost" data-act="geefop">Toon het antwoord (€0)</button>` : "";
   return `<div class="row">${b}${give}</div>`;
@@ -762,7 +849,7 @@ async function berekeningFeedback(goed, exp){
 }
 function checkKaartjes(){
   let all = true; cur.att++;
-  for (const v of cur.def.velden) { const ok = parseNum(cur.f[v.k]) === v.want; cur.fok[v.k] = ok; if (!ok) all = false; }
+  for (const v of cur.def.velden) { const ok = parseNum(cur.f[v.k]) === v.want && (!v.per || cur.per[v.k] === v.per); cur.fok[v.k] = ok; if (!ok) all = false; }
   if (all) { finishGood(0); cur.msg = `<div class="fb good"><b>Gevonden!</b> Met deze gegevens kun je de lening uitrekenen.</div>`; render(); }
   else { cur.fails++; cur.msg = `<div class="fb bad"><b>Nog niet alles klopt.</b> De rode velden kloppen niet. Kijk nog eens goed op de kaartjes. Een hint kan helpen.</div>`; render(); }
 }
@@ -779,27 +866,34 @@ function checkKoppel(){
 }
 
 /* ---- open vragen: AI of demo ---- */
-async function checkOpen(){
-  const d = cur.def, text = (cur.text || "").trim();
-  if (text.length < 6) { cur.msg = `<div class="fb info">Schrijf eerst je antwoord op.</div>`; render(); return; }
-  cur.busy = true; render();
-  let res = null, viaAI = false;
+async function beoordeelAI(vraag, crit, text){
   if (CONFIG.WORKER_URL && (cur.aiFails||0) < 2) {
     try {
       const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 25000);
       const r = await fetch(CONFIG.WORKER_URL, {method:"POST", headers:{"Content-Type":"application/json"}, signal:ctl.signal,
-        body: JSON.stringify({vraag:d.q, criteria:d.crit.map((c,i)=>({id:i, tekst:c.tekst})), antwoord:text.slice(0,1500)})});
+        body: JSON.stringify({vraag, criteria:crit.map((c,i)=>({id:i, tekst:c.tekst})), antwoord:text.slice(0,1500)})});
       clearTimeout(to);
       if (!r.ok) throw new Error("status " + r.status);
       const j = await r.json();
-      res = {ok: d.crit.map((_,i) => !!(j.resultaten && (j.resultaten[i] === true || j.resultaten[String(i)] === true))), fb: String(j.feedback || "")};
-      viaAI = true;
+      return {ok: crit.map((_,i) => !!(j.resultaten && (j.resultaten[i] === true || j.resultaten[String(i)] === true))), fb:String(j.feedback || ""), viaAI:true};
     } catch(e) {
-      cur.aiFails = (cur.aiFails||0) + 1; cur.busy = false;
-      if (cur.aiFails < 2) { cur.msg = `<div class="fb info">De nakijkhulp reageert niet. Probeer het nog een keer.</div>`; render(); return; }
+      cur.aiFails = (cur.aiFails||0) + 1;
+      if (cur.aiFails < 2) return {retry:true};
     }
   }
-  if (!res) res = {ok: d.crit.map(c => c.rx.test(text)), fb: ""};
+  return {ok: crit.map(c => !!critMatch(c, text)), fb:"", viaAI:false};
+}
+function gratisHint(){
+  const d = cur.def;
+  if (!cur.freeUsed && cur.hints < d.hints.length) { cur.freeUsed = true; cur.hints++; return ` <b>Je krijgt een gratis hint.</b> Lees hem goed onder de opdracht en denk zelf na over wat je kunt verbeteren.`; }
+  return "";
+}
+async function checkOpen(){
+  const d = cur.def, text = (cur.text || "").trim();
+  if (text.length < 6) { cur.msg = `<div class="fb info">Schrijf eerst je antwoord op.</div>`; render(); return; }
+  cur.busy = true; render();
+  const res = await beoordeelAI(d.q, d.crit, text);
+  if (res.retry) { cur.busy = false; cur.msg = `<div class="fb info">De nakijkhulp reageert niet. Probeer het nog een keer.</div>`; render(); return; }
   cur.busy = false; cur.att++;
   let got = 0; const share = d.pts / d.crit.length;
   res.ok.forEach((ok,i) => { if (ok && !cur.met[i]) { cur.met[i] = true; got += Math.round(share * factor(cur.att)); } });
@@ -810,9 +904,40 @@ async function checkOpen(){
   else {
     cur.fails++;
     const n = d.crit.filter((_,i)=>cur.met[i]).length;
-    let gratis = "";
-    if (!cur.freeUsed && cur.hints < d.hints.length) { cur.freeUsed = true; cur.hints++; gratis = ` <b>Je krijgt een gratis hint.</b> Lees hem goed onder de opdracht en denk zelf na over wat je kunt verbeteren.`; }
-    cur.msg = `<div class="fb bad"><b>${n} van de ${d.crit.length} onderdelen kloppen.</b>${gratis} ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Verbeter je antwoord en laat opnieuw nakijken.${fbTxt}${viaAI ? "" : '<div style="margin-top:6px;color:var(--muted);font-size:15px">(demo-nakijker)</div>'}</div>`;
+    cur.msg = `<div class="fb bad"><b>${n} van de ${d.crit.length} onderdelen kloppen.</b>${gratisHint()} ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Verbeter je antwoord en laat opnieuw nakijken.${fbTxt}${res.viaAI ? "" : '<div style="margin-top:6px;color:var(--muted);font-size:15px">(demo-nakijker)</div>'}</div>`;
+  }
+  tweenAfter();
+}
+async function checkBegroting(){
+  const d = cur.def, tip = (cur.text || "").trim();
+  cur.busy = true; render();
+  let res = null;
+  if (tip.length >= 4) {
+    res = await beoordeelAI(d.q, d.crit, tip);
+    if (res.retry) { cur.busy = false; cur.msg = `<div class="fb info">De nakijkhulp reageert niet. Probeer het nog een keer.</div>`; render(); return; }
+  }
+  cur.busy = false; cur.att++;
+  const f = factor(cur.att); let got = 0; cur.cok = {};
+  for (const id of ["ink","uit","soort","tot"]) {
+    const sec = BEGR[id]; let ok = true;
+    for (const [k,want] of Object.entries(sec.cells || {})) {
+      const v = parseNum(cur.cell[k] || "");
+      const good = !isNaN(v) && (k === "saldo" ? Math.abs(Math.abs(v) - want) < 1e-9 : Math.abs(v - want) < 1e-9);
+      cur.cok[k] = good; if (!good) ok = false;
+    }
+    for (const [k,want] of Object.entries(sec.sel || {})) {
+      const good = cur.sel[k] === want; cur.cok["s_"+k] = good; if (!good) ok = false;
+    }
+    if (ok && !cur.met[id]) { cur.met[id] = true; got += Math.round(sec.pts * f); }
+  }
+  if (res && res.ok[0] && !cur.met.tip) { cur.met.tip = true; got += Math.round(BEGR.tip.pts * f); }
+  S.saldo += got; cur.earned += got;
+  const ids = Object.keys(BEGR), n = ids.filter(id => cur.met[id]).length;
+  const fbTxt = res && res.fb ? `<div style="margin-top:6px">${esc(res.fb)}</div>` : "";
+  if (n === ids.length) { cur.done = true; cur.msg = `<div class="fb good"><b>Compleet!</b> In totaal verdiend: <span class="pay">${eur(cur.earned)}</span>.${fbTxt}</div>`; }
+  else {
+    cur.fails++;
+    cur.msg = `<div class="fb bad"><b>${n} van de ${ids.length} onderdelen kloppen.</b>${gratisHint()} ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Rode vakjes kloppen nog niet. Verbeter ze en laat opnieuw nakijken.${fbTxt}${res && !res.viaAI ? '<div style="margin-top:6px;color:var(--muted);font-size:15px">(demo-nakijker)</div>' : ""}</div>`;
   }
   tweenAfter();
 }
@@ -822,7 +947,7 @@ function geefOp(){
   if (d.type === "mc") ans = d.correct.map(i => d.opts[i]).join(" en ");
   else if (d.type === "reken") ans = (d.unit==="€"?"€":"") + nf(Number(d.raw().toFixed(d.dec)), d.dec) + (d.unit==="%"?"%":"");
   else if (d.type === "koppel") ans = d.pairs.map(p => p[0] + " = " + p[1]).join("; ");
-  else if (d.type === "open") ans = d.model;
+  else if (d.type === "open" || d.type === "begroting") ans = d.model;
   else if (d.type === "kaartjes") ans = d.model;
   if (d.type === "koppel") d.pairs.forEach((_,i) => { cur.link[i] = i; cur.locked[i] = true; });
   if (d.type === "mc") cur.sel = d.correct.slice();
@@ -945,7 +1070,7 @@ const A = {
   check(){
     const t = cur.def.type;
     if (t === "mc") checkMC(); else if (t === "reken") checkReken(); else if (t === "koppel") checkKoppel();
-    else if (t === "kaartjes") checkKaartjes(); else if (t === "open") checkOpen();
+    else if (t === "kaartjes") checkKaartjes(); else if (t === "open") checkOpen(); else if (t === "begroting") checkBegroting();
   },
   geefop: geefOp,
   hint(){
@@ -971,6 +1096,9 @@ document.addEventListener("input", e => {
   else if (t.id === "txt" && cur) cur.text = t.value;
   else if (t.id === "ber" && cur) cur.ber = t.value;
   else if (t.dataset && t.dataset.f && cur) cur.f[t.dataset.f] = t.value;
+  else if (t.dataset && t.dataset.p && cur) cur.per[t.dataset.p] = t.value;
+  else if (t.dataset && t.dataset.c && cur) cur.cell[t.dataset.c] = t.value;
+  else if (t.dataset && t.dataset.s && cur) cur.sel[t.dataset.s] = t.value;
 });
 document.addEventListener("keydown", e => {
   if (e.key === "Enter" && e.target.id === "ans") { e.preventDefault(); A.check(); }
