@@ -137,6 +137,17 @@ select:focus{border-color:var(--gold);outline:none}
 .pr{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}
 .pr input{flex:1 1 140px;width:auto}
 .tw{overflow-x:auto}
+.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){.bgrid{grid-template-columns:1fr}}
+.bcol{background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:14px}
+.bcol h4{margin:0 0 8px;font-family:var(--display);font-size:22px;color:var(--gold)}
+.brow{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line)}
+.brow:last-child{border-bottom:0}
+.brow .bl{flex:1 1 120px}
+.brow .bv{font-weight:700;color:var(--fg)}
+.brow input{width:140px;padding:10px 12px;font-size:19px}
+.brow select{min-height:48px;font-size:17px;padding:8px 10px;max-width:100%}
+.btot{margin-top:14px}
 table.begr{width:100%;border-collapse:collapse;font-size:18px}
 .begr th,.begr td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
 .begr thead th{color:var(--muted);font-size:14px;text-transform:uppercase;letter-spacing:.05em}
@@ -223,6 +234,11 @@ const CONFIG = {
     "Twee bonnetjes hangen dicht bij elkaar, in de buurt van het bord.",
     "Het laatste bonnetje ligt onder of achter iets in het lokaal."
   ],
+  ZOEK_PLEKKEN_2: [                            // hints bij het zoeken van de 2 kaartjes in kamer 2
+    "Het eerste kaartje zit achter iets waar je de tijd op kunt aflezen.",
+    "Het tweede kaartje zit in de buurt van een kast of een lade.",
+    "Kijk ook eens onder of achter het bureau van de docent."
+  ],
   ZOEK_PLEKKEN: [                              // hints bij het zoeken van de 3 kaartjes in kamer 3
     "Het eerste kaartje hangt op een plek waar je naar buiten kijkt.",
     "Het tweede kaartje zit in de buurt van de deur.",
@@ -235,7 +251,7 @@ const CONFIG = {
    ========================================================= */
 const KAMERS = {
   1: {naam: "Het kantoor", par: "2.1 Inkomen en uitgaven", beschikbaar: true},
-  2: {naam: "De spaarkamer", par: "2.2 Wat levert sparen op?", beschikbaar: false},
+  2: {naam: "De spaarkamer", par: "2.2 Wat levert sparen op?", beschikbaar: true},
   3: {naam: "De bank", par: "2.3 Waarom zou je lenen?", beschikbaar: true},
   4: {naam: "De verzekeraar", par: "2.4 Verzekeren, hoezo?", beschikbaar: false}
 };
@@ -453,33 +469,19 @@ add({id:"y2", type:"reken", pts:20, label:"Zoekopdracht", box:BOX1,
   raw:() => 15+sportMnd()+80+uitgaanMnd(), dec:2, unit:"€",
   hints:["Alle bedragen moeten per maand zijn voordat je optelt.","Telefoon en kleding zijn al per maand. Uitgaan en sportclub heb je net uitgerekend.","15 + 30 + 80 + het bedrag voor uitgaan per maand."]});
 
-/* ---- creatieve opdracht met invultabel ---- */
+/* ---- creatieve opdracht met invulschema: inkomsten links, uitgaven rechts ---- */
 const BEGR = {
-  ink:   {label:"Inkomsten per maand", pts:15, cells:{zak:52, baan:173.33, totin:225.33}},
-  uit:   {label:"Uitgaven per maand", pts:15, cells:{tel:15, spo:30, kle:80, uit:108.33}},
-  soort: {label:"Soort uitgave", pts:10, sel:{tel:"vast", spo:"vast", kle:"incid", uit:"huis"}},
-  tot:   {label:"Totaal en tekort of overschot", pts:10, cells:{totuit:233.33, saldo:8}, sel:{saldosoort:"tekort"}},
-  tip:   {label:"Tip voor Lisa", pts:10}
+  ink:   {label:"Inkomsten per maand uitgerekend", pts:15, cells:{zak:52, baan:173.33}},
+  soort: {label:"Soort uitgave bij elke uitgave", pts:20, sel:{tel:"vast", spo:"vast", kle:"incid", uit:"huis"}},
+  tot:   {label:"Totaal inkomsten en totaal uitgaven", pts:15, cells:{totin:225.33, totuit:233.33}},
+  saldo: {label:"Tekort of overschot", pts:10, cells:{saldo:8}, sel:{saldosoort:"tekort"}}
 };
 const SOORTEN = [["vast","Vaste lasten"],["huis","Huishoudelijke uitgaven"],["incid","Incidentele uitgaven"]];
-const BEGR_ROWS = [
-  {grp:"Inkomsten"},
-  {k:"zak", lab:"Zakgeld"},
-  {k:"baan", lab:"Bijbaantje"},
-  {k:"totin", lab:"Totaal inkomsten", tot:true},
-  {grp:"Uitgaven"},
-  {k:"tel", lab:"Telefoonabonnement", soort:true},
-  {k:"spo", lab:"Sportclub", soort:true},
-  {k:"kle", lab:"Kleding", soort:true},
-  {k:"uit", lab:"Uitgaan", soort:true},
-  {k:"totuit", lab:"Totaal uitgaven", tot:true},
-  {k:"saldo", lab:"Tekort of overschot", tot:true, saldo:true}
-];
+const BEGR_UIT = [["tel","Telefoonabonnement",15],["spo","Sportclub",30],["kle","Kleding",80],["uit","Uitgaan",108.33]];
 add({id:"c_begroting", type:"begroting", creatief:true, pts:60, label:"Creatieve opdracht", box:BOX1,
-  q:"Lisa (15) wil weten of ze rond kan komen. Ze krijgt €12 zakgeld per week en verdient €80 per twee weken met haar bijbaantje. Haar uitgaven staan hierboven. Vul de begroting per maand in, kies bij elke uitgave de juiste soort en schrijf onderaan een tip voor Lisa.",
-  crit:[{label:"Tip voor Lisa", tekst:"Geeft een passende tip voor Lisa, bijvoorbeeld minder uitgeven aan uitgaan of kleding, of meer verdienen. Spelfouten zijn niet erg.", kw:["tip","minder","uitgaan","kleding","verdienen","bezuinigen","besparen","sparen","beter"]}],
-  model:"Zakgeld (12 x 52) : 12 = €52. Bijbaantje (80 x 26) : 12 = €173,33. Totaal inkomsten €225,33. Uitgaven: telefoon €15 (vaste lasten), sportclub €30 (vaste lasten), kleding €80 (incidenteel), uitgaan €108,33 (huishoudelijk). Totaal €233,33. Dat is een tekort van €8,00. Tip: bijvoorbeeld minder uitgaan.",
-  hints:["Zakgeld is per week en het bijbaantje per twee weken. Reken beide om naar een bedrag per maand.","Telefoon en sportclub zijn vaste lasten, uitgaan is huishoudelijk en kleding is incidenteel. Inkomsten min uitgaven geeft het saldo.","Zakgeld: (12 x 52) : 12. Bijbaantje: (80 x 26) : 12. Is de uitkomst van inkomsten min uitgaven negatief, dan is er een tekort."]});
+  q:"Lisa (15) wil weten of ze rond kan komen. Ze krijgt €12 zakgeld per week en verdient €80 per twee weken met haar bijbaantje. Haar uitgaven per maand heb je al uitgerekend. Maak de begroting af: reken de inkomsten per maand uit, kies bij elke uitgave de juiste soort, vul de totalen in en bereken het tekort of overschot.",
+  model:"Zakgeld (12 x 52) : 12 = €52. Bijbaantje (80 x 26) : 12 = €173,33. Totaal inkomsten €225,33. Uitgaven: telefoon €15 (vaste lasten), sportclub €30 (vaste lasten), kleding €80 (incidenteel), uitgaan €108,33 (huishoudelijk). Totaal uitgaven €233,33. Inkomsten min uitgaven = €8,00 tekort.",
+  hints:["Zakgeld is per week en het bijbaantje per twee weken. Reken beide om naar een bedrag per maand.","Telefoon en sportclub zijn vaste lasten, uitgaan is huishoudelijk en kleding is incidenteel. Tel daarna alles op.","Zakgeld: (12 x 52) : 12. Bijbaantje: (80 x 26) : 12. Is de uitkomst van inkomsten min uitgaven negatief, dan is er een tekort."]});
 
 const KW = {
   o_manieren:[["ouders","ouder","familie","vader","moeder"],["persoonlijke","persoonlijk"],["hypotheek"]],
@@ -490,12 +492,120 @@ const KW = {
 };
 Object.keys(KW).forEach(id => KW[id].forEach((kw,i) => { Q[id].crit[i].kw = kw; }));
 
+/* =========================================================
+   KAMER 2: DE SPAARKAMER (2.2)
+   ========================================================= */
+add({id:"m_functies", type:"mc", pts:10, multi:true, label:"Meerkeuze",
+  q:"Welke drie functies heeft geld? (meerdere antwoorden goed)",
+  opts:["Ruilmiddel","Spaarmiddel","Waardemeter","Verzekeringsmiddel"], correct:[0,1,2],
+  hints:["Je betaalt ermee, je bewaart het en je drukt er prijzen mee uit.","Een verzekering is iets anders dan een functie van geld.","Drie goede antwoorden: ruilmiddel, spaarmiddel en waardemeter."]});
+add({id:"m_tf2", type:"mc", pts:10, label:"Juist of onjuist",
+  q:"Juist of onjuist: rente is het bedrag dat de bank jou betaalt omdat je geld bij de bank laat staan.",
+  opts:["Juist","Onjuist"], correct:[0], fixedOrder:true,
+  hints:["De bank gebruikt jouw geld en betaalt daarvoor.","Bij lenen betaal jij rente, bij sparen krijg je rente.","Het antwoord is: juist."]});
+add({id:"m_rente", type:"mc", pts:10, label:"Begrijpen",
+  q:"Je hebt €1.000 op een spaarrekening met 2% rente per jaar. Wat gebeurt er met je spaargeld als je niets opneemt?",
+  opts:["Het groeit elk jaar met de rente","Het blijft precies hetzelfde bedrag","Het wordt elk jaar minder waard","Het gaat op aan kosten van de bank"], correct:[0],
+  hints:["Je krijgt rente over je spaargeld.","Rente wordt bij je saldo bijgeschreven.","Elk jaar komt er rente bij."]});
+add({id:"m_voorzorg", type:"mc", pts:10, label:"Welke hoort bij...",
+  q:"Welk voorbeeld hoort bij sparen uit voorzorg?",
+  opts:["Je spaart voor het geval je telefoon kapotgaat","Je spaart voor een nieuwe game volgende maand","Je spaart voor een vakantie in de zomer","Je spaart omdat de bank mooie rente geeft"], correct:[0],
+  hints:["Voorzorg betekent: je bereidt je voor op onverwachte kosten.","Je weet niet zeker of je het geld nodig hebt.","Het gaat om geld achter de hand voor als er iets misgaat."]});
+add({id:"m_uitgesteld", type:"mc", pts:10, label:"Welke hoort bij...",
+  q:"Welk voorbeeld hoort bij sparen voor een uitgestelde besteding?",
+  opts:["Je spaart acht maanden voor een nieuwe scooter","Je spaart voor het geval je ziek wordt","Je spaart omdat je altijd een reserve wilt","Je spaart omdat je rente wilt ontvangen"], correct:[0],
+  hints:["Je weet al waaraan je het geld later wilt uitgeven.","Je koopt iets later, niet nu.","Sparen voor een bepaald doel in de toekomst."]});
+
+add({id:"k_sparen", type:"koppel", pts:20, label:"Koppelen",
+  q:"Koppel elk begrip aan de juiste uitleg. Tik links op een begrip en daarna rechts op de uitleg.",
+  pairs:[["Ruilmiddel","Je betaalt ermee in de winkel"],
+         ["Spaarmiddel","Je bewaart waarde voor later"],
+         ["Waardemeter","Je drukt de prijs van iets uit in euro's"],
+         ["Voorzorg","Sparen voor onverwachte uitgaven"],
+         ["Uitgestelde besteding","Sparen voor iets dat je later koopt"],
+         ["Rente","Wat de bank je betaalt voor je spaargeld"]],
+  hints:["Begin met de rente en het ruilmiddel.","Drie begrippen zijn functies van geld, twee zijn spaarmotieven.","Voorzorg gaat over onverwachte kosten, uitgestelde besteding over een doel."]});
+
+add({id:"o_functies", type:"open", pts:30, label:"Open vraag",
+  q:"Noem de drie functies van geld en leg bij elke functie kort uit wat het betekent.",
+  crit:[
+   {label:"Ruilmiddel", tekst:"Noemt ruilmiddel en legt uit dat je met geld goederen en diensten kunt kopen of betalen.", rx:/ruil|betaalmiddel|betalen/i, kw:["ruilmiddel","betaalmiddel","ruil"]},
+   {label:"Spaarmiddel", tekst:"Noemt spaarmiddel en legt uit dat je met geld waarde kunt bewaren voor later.", rx:/spaar|bewaar/i, kw:["spaarmiddel","sparen","bewaren"]},
+   {label:"Waardemeter", tekst:"Noemt waardemeter (of rekeneenheid) en legt uit dat je de waarde of prijs van dingen in geld uitdrukt.", rx:/waardemeter|rekeneenheid|prijs|waarde/i, kw:["waardemeter","rekeneenheid","prijs"]}],
+  model:"Ruilmiddel: je betaalt ermee voor spullen. Spaarmiddel: je bewaart het voor later. Waardemeter: je drukt de waarde of prijs van iets uit in euro's.",
+  hints:["Eén functie gaat over betalen, één over bewaren en één over prijzen.","De functies eindigen op 'middel', 'middel' en 'meter'.","Ruilmiddel, spaarmiddel en waardemeter. Leg bij elk uit wat het is."]});
+add({id:"o_motieven", type:"open", pts:30, label:"Open vraag",
+  q:"Noem de drie spaarmotieven en geef bij elk motief een voorbeeld.",
+  crit:[
+   {label:"Voorzorg", tekst:"Noemt voorzorg (sparen voor onverwachte uitgaven) en geeft een passend voorbeeld.", rx:/voorzorg|onverwacht|reserve|noodgeval/i, kw:["voorzorg","onverwachte","reserve","noodgeval"]},
+   {label:"Uitgestelde besteding", tekst:"Noemt uitgestelde besteding (sparen voor iets dat je later wilt kopen) en geeft een passend voorbeeld.", rx:/uitgesteld|later kopen|doel|iets kopen/i, kw:["uitgestelde","uitgesteld","doelsparen"]},
+   {label:"Rente", tekst:"Noemt sparen om rente te ontvangen of geld te laten groeien en geeft een passend voorbeeld.", rx:/rente|laten groeien|vermogen|beleg/i, kw:["rente","groeien","vermogen","beleggen"]}],
+  model:"Voorzorg: sparen voor als er iets onverwachts gebeurt. Uitgestelde besteding: sparen voor iets dat je later wilt kopen, zoals een scooter. Rente: sparen omdat je geld dan groeit.",
+  hints:["Eén motief gaat over onverwachte kosten, één over een doel en één over geld laten groeien.","De motieven beginnen met 'voor...', 'uitgestelde...' en 'ren...'.","Voorzorg, uitgestelde besteding en rente. Bedenk bij elk een voorbeeld."]});
+add({id:"o_bram", type:"open", pts:30, label:"Open vraag",
+  q:"Bram spaart elke maand voor een nieuwe brommer. Sanne spaart elke maand een bedrag voor het geval er onverwacht iets kapotgaat. Noem het spaarmotief van Bram en van Sanne en leg uit waarom.",
+  crit:[
+   {label:"Bram: uitgestelde besteding", tekst:"Zegt dat Bram spaart voor een uitgestelde besteding (iets dat hij later wil kopen) en legt uit waarom.", rx:/uitgesteld|later (kopen|aanschaffen)|doel|brommer/i, kw:["uitgestelde","uitgesteld","brommer","doel"]},
+   {label:"Sanne: voorzorg", tekst:"Zegt dat Sanne spaart uit voorzorg (voor onverwachte uitgaven) en legt uit waarom.", rx:/voorzorg|onverwacht|kapot|reserve/i, kw:["voorzorg","onverwacht","onverwachte","reserve"]}],
+  model:"Bram spaart voor een uitgestelde besteding: hij wil later een brommer kopen. Sanne spaart uit voorzorg: ze wil geld hebben voor onverwachte uitgaven.",
+  hints:["Bram heeft een doel waaraan hij later geld uitgeeft.","Sanne weet niet wat er kapot zal gaan.","Bram: uitgestelde besteding. Sanne: voorzorg. Leg uit waarom."]});
+
+rk("s_a","Je zet €800 op een spaarrekening met 1,5% rente per jaar. Hoeveel rente krijg je na een jaar? Rond af op 2 decimalen.",
+   "", () => (1.5/100)*800, 2, "€",
+   ["Je weet het percentage en het spaarbedrag.","De formule is (Percentage : 100) x totaal.","(1,5 : 100) x 800."]);
+rk("s_b","Je spaart €1.250 tegen 2% rente per jaar. Hoeveel rente krijg je na een jaar? Rond af op 2 decimalen.",
+   "", () => (2/100)*1250, 2, "€",
+   ["Het spaarbedrag is het totaal waar je het percentage van neemt.","De formule is (Percentage : 100) x totaal.","(2 : 100) x 1250."]);
+rk("s_c","Je spaart €500 en krijgt na een jaar €7,50 rente. Hoeveel procent rente krijg je? Rond af op 1 decimaal.",
+   "", () => (7.5/500)*100, 1, "%",
+   ["De rente is het deel, het spaarbedrag is het geheel.","De formule is (Deel : geheel) x 100.","(7,50 : 500) x 100."]);
+rk("s_d","Je zet €2.000 op een spaarrekening met 1,2% rente per jaar. Hoeveel staat er na een jaar op je rekening? Rond af op 2 decimalen.",
+   "", () => 2000 + (1.2/100)*2000, 2, "€",
+   ["Bereken eerst hoeveel rente je krijgt.","De rente is (Percentage : 100) x totaal. Tel die daarna op bij je spaarbedrag.","2000 + (1,2 : 100) x 2000."]);
+
+const SP = {bedrag:2450, pct:1.4};
+const spRente = () => Math.round((SP.pct/100)*SP.bedrag);
+const BOXS = [["Spaarbedrag", () => eur(SP.bedrag)], ["Rente per jaar", () => "1,4%"]];
+add({id:"sa0", type:"kaartjes", pts:0, label:"Zoekopdracht",
+  q:"Een spaarplan maak je met de juiste gegevens. Twee kaartjes zijn verstopt in het lokaal: op het ene staat het spaarbedrag, op het andere het rentepercentage per jaar. Zoek ze op en typ de getallen in.",
+  velden:[{k:"b",lab:"Spaarbedrag (€)",ph:"bijvoorbeeld 1000",want:2450},{k:"p",lab:"Rente per jaar (%)",ph:"bijvoorbeeld 1,2",want:1.4}],
+  model:"Spaarbedrag €2.450 en rente 1,4% per jaar. Zoek de kaartjes de volgende keer eerst op.",
+  hints:[CONFIG.ZOEK_PLEKKEN_2[0], CONFIG.ZOEK_PLEKKEN_2[1], CONFIG.ZOEK_PLEKKEN_2[2]]});
+add({id:"sa1", type:"reken", pts:20, label:"Zoekopdracht", box:BOXS,
+  q:"Hoeveel rente krijg je na een jaar? Rond af op hele euro's.",
+  raw:() => (SP.pct/100)*SP.bedrag, dec:0, unit:"€",
+  hints:["Gebruik het spaarbedrag en het rentepercentage van je kaartjes.","De formule is (Percentage : 100) x totaal.","(1,4 : 100) x 2450, rond af op hele euro's."]});
+add({id:"sa2", type:"reken", pts:20, label:"Zoekopdracht", box:BOXS,
+  q:"Hoeveel staat er na een jaar op de spaarrekening? Gebruik de afgeronde rente.",
+  vorige:[["Rente na een jaar", () => eur(spRente())]],
+  raw:() => SP.bedrag + spRente(), dec:0, unit:"€",
+  hints:["Je spaarbedrag blijft staan en de rente komt erbij.","Tel de rente op bij het spaarbedrag.","2450 + de rente die je net berekende."]});
+add({id:"sa3", type:"reken", pts:20, label:"Zoekopdracht", box:BOXS,
+  q:"Je wilt na een jaar €2.600 hebben voor een nieuwe scooter. Hoeveel euro moet je dan nog extra bijsparen?",
+  vorige:[["Rente na een jaar", () => eur(spRente())], ["Saldo na een jaar", () => eur(SP.bedrag + spRente())]],
+  raw:() => 2600 - (SP.bedrag + spRente()), dec:0, unit:"€",
+  hints:["Vergelijk wat je wilt hebben met wat er na een jaar op je rekening staat.","Trek het saldo na een jaar af van het bedrag dat je wilt hebben.","2600 min het saldo na een jaar."]});
+add({id:"c_spaarplan", type:"open", creatief:true, pts:60, label:"Creatieve opdracht",
+  q:"Sanne (14) wil over 6 maanden €300 hebben voor een nieuwe telefoon. Schrijf een spaarplan voor Sanne. Zeg welk spaarmotief dit is, hoeveel ze per maand moet sparen, waar ze haar spaargeld bewaart en waarom, en wat ze nog meer kan doen om te zorgen dat ze niet in de problemen komt.",
+  crit:[
+   {label:"Spaarmotief", tekst:"Noemt het juiste spaarmotief: uitgestelde besteding (Sanne spaart voor iets dat ze later wil kopen).", rx:/uitgesteld|later (kopen|aanschaffen)/i, kw:["uitgestelde","uitgesteld"]},
+   {label:"Bedrag per maand", tekst:"Berekent dat Sanne €50 per maand moet sparen (300 : 6).", rx:/\b50\b/},
+   {label:"Waar bewaren en waarom", tekst:"Noemt een plek om te sparen (bijvoorbeeld een spaarrekening bij de bank) en geeft een reden, bijvoorbeeld dat je rente krijgt of dat het veilig is.", rx:/spaarrekening|bank|rente|veilig|spaarpot/i, kw:["spaarrekening","bank","rente","veilig","spaarpot"]},
+   {label:"Extra advies", tekst:"Geeft een passend extra advies, bijvoorbeeld ook een reserve houden voor onverwachte uitgaven (voorzorg), extra bijverdienen of minder uitgeven.", rx:/voorzorg|reserve|onverwacht|bijverdien|minder uitgeven|bezuinig|zakgeld/i, kw:["voorzorg","reserve","onverwachte","bijverdienen","bezuinigen"]}],
+  model:"Het motief is uitgestelde besteding. Sanne moet 300 : 6 = €50 per maand sparen. Ze kan het geld bewaren op een spaarrekening, want dan is het veilig en krijgt ze rente. Daarnaast kan ze een kleine reserve houden voor onverwachte uitgaven (voorzorg).",
+  hints:["Je spaart voor iets dat je later wilt kopen. Welk motief is dat?","Deel het bedrag dat ze wil hebben door het aantal maanden.","Denk aan een spaarrekening bij de bank en aan een reserve voor onverwachte kosten."]});
+
 function bouwRij(k){
   const pick = a => a[Math.floor(Math.random()*a.length)];
   if (k === 1) {
     return ["m_vast", pick(["m_begroting","m_uitkering"]), "k_inkomen", pick(["m_incid","m_periode"]),
             pick(["o_inkomsten","o_uitgaven"]), pick(["r1_a","r1_b","r1_c","r1_f","r1_g"]), pick(["r1_d","r1_e"]),
             "y0","y1","y1b","y2","c_begroting"];
+  }
+  if (k === 2) {
+    return ["m_functies", pick(["m_tf2","m_rente"]), "k_sparen", pick(["m_voorzorg","m_uitgesteld"]),
+            pick(["o_functies","o_motieven","o_bram"]), pick(["s_a","s_b","s_c","s_d"]),
+            "sa0","sa1","sa2","sa3","c_spaarplan"];
   }
   if (k === 3) {
     return ["m_delen", pick(["m_tf","m_leeftijd"]), "k_lenen", pick(["m_hyp","m_waarom"]),
@@ -682,7 +792,7 @@ function vKamer(){
     <div><span class="tag">${d.label}</span></div>
     ${d.box ? kaartBox(d) : ""}
     <p class="q">${esc(d.q)}</p>
-    ${d.formule ? `<div><span class="formula">${esc(d.formule)}</span></div>` : ""}
+
     ${vBody(d)}
     ${cur.msg ? cur.msg : ""}
     ${cur.berBusy ? `<div class="fb info">De AI kijkt naar je berekening...</div>` : ""}
@@ -742,17 +852,16 @@ function vBody(d){
   }
   if (d.type === "begroting") {
     const cls = ok => ok === true ? "good-field" : ok === false ? "bad-field" : "";
-    const rows = BEGR_ROWS.map(r => {
-      if (r.grp) return `<tr class="grp"><th colspan="3">${r.grp}</th></tr>`;
-      const inp = `<input id="c_${r.k}" data-c="${r.k}" type="text" inputmode="decimal" autocomplete="off" placeholder="€" value="${esc(cur.cell[r.k]||"")}" class="${cls(cur.cok[r.k])}" ${cur.done?"disabled":""}>`;
-      let third = "";
-      if (r.soort) third = `<select id="s_${r.k}" data-s="${r.k}" class="${cls(cur.cok["s_"+r.k])}" aria-label="Soort uitgave" ${cur.done?"disabled":""}><option value="">Kies de soort</option>${SOORTEN.map(o => `<option value="${o[0]}" ${cur.sel[r.k]===o[0]?"selected":""}>${o[1]}</option>`).join("")}</select>`;
-      if (r.saldo) third = `<select id="s_saldosoort" data-s="saldosoort" class="${cls(cur.cok["s_saldosoort"])}" aria-label="Tekort of overschot" ${cur.done?"disabled":""}><option value="">Kies</option><option value="tekort" ${cur.sel.saldosoort==="tekort"?"selected":""}>Tekort</option><option value="overschot" ${cur.sel.saldosoort==="overschot"?"selected":""}>Overschot</option></select>`;
-      return `<tr class="${r.tot?"tot":""}"><td>${r.lab}</td><td>${inp}</td><td>${third}</td></tr>`;
-    }).join("");
+    const dis = cur.done ? "disabled" : "";
+    const inp = k => `<input id="c_${k}" data-c="${k}" type="text" inputmode="decimal" autocomplete="off" placeholder="€" value="${esc(cur.cell[k]||"")}" class="${cls(cur.cok[k])}" ${dis}>`;
+    const links = ["zak","baan"].map(k => `<div class="brow"><span class="bl">${k==="zak"?"Zakgeld per maand":"Bijbaantje per maand"}</span>${inp(k)}</div>`).join("");
+    const rechts = BEGR_UIT.map(r => `<div class="brow"><span class="bl">${r[1]}: <span class="bv">${eur2(r[2])}</span></span><select id="s_${r[0]}" data-s="${r[0]}" class="${cls(cur.cok["s_"+r[0]])}" aria-label="Soort uitgave" ${dis}><option value="">Kies de soort</option>${SOORTEN.map(o => `<option value="${o[0]}" ${cur.sel[r[0]]===o[0]?"selected":""}>${o[1]}</option>`).join("")}</select></div>`).join("");
     const secs = Object.keys(BEGR).map((id,n) => cur.met[id] ? `<li><span class="k" style="color:var(--good)">✓</span><span>${esc(BEGR[id].label)}</span></li>` : `<li><span class="k" style="color:var(--bad)">${cur.att?"✗":"·"}</span><span style="color:var(--muted)">${cur.att?"Onderdeel "+(n+1)+" ontbreekt of klopt nog niet":"Onderdeel "+(n+1)}</span></li>`).join("");
-    return `<div class="tw"><table class="begr"><thead><tr><th>Omschrijving</th><th>Bedrag per maand (€)</th><th>Soort</th></tr></thead><tbody>${rows}</tbody></table></div>
-      <label class="fl" for="txt">Schrijf een tip voor Lisa (en eventueel je berekeningen)<textarea id="txt" ${cur.done?"disabled":""}>${esc(cur.text)}</textarea></label>
+    return `<div class="bgrid">
+        <div class="bcol"><h4>Inkomsten</h4>${links}<div class="brow btot"><span class="bl"><b>Totaal inkomsten</b></span>${inp("totin")}</div></div>
+        <div class="bcol"><h4>Uitgaven</h4>${rechts}<div class="brow btot"><span class="bl"><b>Totaal uitgaven</b></span>${inp("totuit")}</div></div>
+      </div>
+      <div class="bcol"><div class="brow"><span class="bl"><b>Inkomsten min uitgaven</b></span>${inp("saldo")}<select id="s_saldosoort" data-s="saldosoort" class="${cls(cur.cok["s_saldosoort"])}" aria-label="Tekort of overschot" ${dis}><option value="">Kies</option><option value="tekort" ${cur.sel.saldosoort==="tekort"?"selected":""}>Tekort</option><option value="overschot" ${cur.sel.saldosoort==="overschot"?"selected":""}>Overschot</option></select></div></div>
       <ul class="crit">${secs}</ul>`;
   }
   return "";
@@ -765,7 +874,8 @@ function vActions(d){
   let b = "";
   if (d.type === "mc") b = `<button class="btn gold" data-act="check" ${cur.sel.length?"":"disabled"}>Controleer</button>`;
   else if (d.type === "koppel") b = `<button class="btn gold" data-act="check" ${Object.keys(cur.link).length === d.pairs.length ? "" : "disabled"}>Controleer</button>`;
-  else if (d.type === "open" || d.type === "begroting") b = `<button class="btn gold" data-act="check" ${cur.busy?"disabled":""}>${cur.busy ? "Aan het nakijken..." : "Laat nakijken"}</button>`;
+  else if (d.type === "begroting") b = `<button class="btn gold" data-act="check">Controleer</button>`;
+  else if (d.type === "open") b = `<button class="btn gold" data-act="check" ${cur.busy?"disabled":""}>${cur.busy ? "Aan het nakijken..." : "Laat nakijken"}</button>`;
   else b = `<button class="btn gold" data-act="check">Controleer</button>`;
   const give = (cur.att >= 3 || cur.fails >= 3) ? `<button class="btn ghost" data-act="geefop">Toon het antwoord (€0)</button>` : "";
   return `<div class="row">${b}${give}</div>`;
@@ -877,7 +987,7 @@ async function beoordeelAI(vraag, crit, text){
       const j = await r.json();
       return {ok: crit.map((_,i) => !!(j.resultaten && (j.resultaten[i] === true || j.resultaten[String(i)] === true))), fb:String(j.feedback || ""), viaAI:true};
     } catch(e) {
-      cur.aiFails = (cur.aiFails||0) + 1;
+      cur.aiFails = (cur.aiFails||0) + 1; cur.aiErr = String(e && e.message || e);
       if (cur.aiFails < 2) return {retry:true};
     }
   }
@@ -893,7 +1003,7 @@ async function checkOpen(){
   if (text.length < 6) { cur.msg = `<div class="fb info">Schrijf eerst je antwoord op.</div>`; render(); return; }
   cur.busy = true; render();
   const res = await beoordeelAI(d.q, d.crit, text);
-  if (res.retry) { cur.busy = false; cur.msg = `<div class="fb info">De nakijkhulp reageert niet. Probeer het nog een keer.</div>`; render(); return; }
+  if (res.retry) { cur.busy = false; cur.msg = `<div class="fb info">De nakijkhulp reageert niet. Probeer het nog een keer.<div style="margin-top:6px;color:var(--muted);font-size:14px">Foutcode: ${esc(cur.aiErr||"")}</div></div>`; render(); return; }
   cur.busy = false; cur.att++;
   let got = 0; const share = d.pts / d.crit.length;
   res.ok.forEach((ok,i) => { if (ok && !cur.met[i]) { cur.met[i] = true; got += Math.round(share * factor(cur.att)); } });
@@ -908,21 +1018,15 @@ async function checkOpen(){
   }
   tweenAfter();
 }
-async function checkBegroting(){
-  const d = cur.def, tip = (cur.text || "").trim();
-  cur.busy = true; render();
-  let res = null;
-  if (tip.length >= 4) {
-    res = await beoordeelAI(d.q, d.crit, tip);
-    if (res.retry) { cur.busy = false; cur.msg = `<div class="fb info">De nakijkhulp reageert niet. Probeer het nog een keer.</div>`; render(); return; }
-  }
-  cur.busy = false; cur.att++;
+function checkBegroting(){
+  const d = cur.def;
+  cur.att++;
   const f = factor(cur.att); let got = 0; cur.cok = {};
-  for (const id of ["ink","uit","soort","tot"]) {
+  for (const id of Object.keys(BEGR)) {
     const sec = BEGR[id]; let ok = true;
     for (const [k,want] of Object.entries(sec.cells || {})) {
       const v = parseNum(cur.cell[k] || "");
-      const good = !isNaN(v) && (k === "saldo" ? Math.abs(Math.abs(v) - want) < 1e-9 : Math.abs(v - want) < 1e-9);
+      const good = !isNaN(v) && Math.abs((k === "saldo" ? Math.abs(v) : v) - want) < 1e-9;
       cur.cok[k] = good; if (!good) ok = false;
     }
     for (const [k,want] of Object.entries(sec.sel || {})) {
@@ -930,14 +1034,12 @@ async function checkBegroting(){
     }
     if (ok && !cur.met[id]) { cur.met[id] = true; got += Math.round(sec.pts * f); }
   }
-  if (res && res.ok[0] && !cur.met.tip) { cur.met.tip = true; got += Math.round(BEGR.tip.pts * f); }
   S.saldo += got; cur.earned += got;
   const ids = Object.keys(BEGR), n = ids.filter(id => cur.met[id]).length;
-  const fbTxt = res && res.fb ? `<div style="margin-top:6px">${esc(res.fb)}</div>` : "";
-  if (n === ids.length) { cur.done = true; cur.msg = `<div class="fb good"><b>Compleet!</b> In totaal verdiend: <span class="pay">${eur(cur.earned)}</span>.${fbTxt}</div>`; }
+  if (n === ids.length) { cur.done = true; cur.msg = `<div class="fb good"><b>Compleet!</b> In totaal verdiend: <span class="pay">${eur(cur.earned)}</span>.</div>`; }
   else {
     cur.fails++;
-    cur.msg = `<div class="fb bad"><b>${n} van de ${ids.length} onderdelen kloppen.</b>${gratisHint()} ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Rode vakjes kloppen nog niet. Verbeter ze en laat opnieuw nakijken.${fbTxt}${res && !res.viaAI ? '<div style="margin-top:6px;color:var(--muted);font-size:15px">(demo-nakijker)</div>' : ""}</div>`;
+    cur.msg = `<div class="fb bad"><b>${n} van de ${ids.length} onderdelen kloppen.</b>${gratisHint()} ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Rode vakjes kloppen nog niet. Verbeter ze en controleer opnieuw.</div>`;
   }
   tweenAfter();
 }
