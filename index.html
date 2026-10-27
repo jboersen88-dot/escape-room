@@ -227,8 +227,9 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
    ========================================================= */
 const CONFIG = {
   WORKER_URL: "https://escape-room-ai.nakijker-worker.workers.dev",                       // Cloudflare Worker-adres voor AI-nakijken. Leeg = demo-nakijker (zoekt trefwoorden).
-  START_GELD: 500,
-  HINT_KOSTEN: [10, 20, 40],
+  PUNT: 1000,   // vermenigvuldigingsfactor voor alle bedragen (punten x PUNT = euro's)
+  START_GELD: 50000,
+  HINT_KOSTEN: [10000, 20000, 40000],
   KAMER_CIJFERS: {1: 3, 2: 5, 3: 7, 4: 9},   // cijfer dat elke kamer oplevert
   KLUISCODE: [7, 3, 9, 5],                    // de juiste volgorde in de kluis
   KAMERCODES: {1: "KANTOOR", 2: "SPAARPOT", 3: "BANKIER", 4: "POLIS"}, // code onder de QR-code
@@ -266,7 +267,7 @@ const KAMERS = {
 };
 
 const Q = {};
-const add = q => { Q[q.id] = q; return q; };
+const add = q => { if (q.pts) q.pts = q.pts * CONFIG.PUNT; Q[q.id] = q; return q; };
 
 /* ---- meerkeuze ---- */
 add({id:"m_delen", type:"mc", pts:10, multi:true, label:"Meerkeuze",
@@ -332,7 +333,7 @@ rk("r_besp","Een lening van €12.000 kost in 36 maanden in totaal €13.248 en 
 const KAART = {bedrag:5400, termijn:250, maanden:24};
 const BOX3 = [["Geleend bedrag", () => eur(KAART.bedrag)], ["Maandtermijn", () => eur(KAART.termijn)], ["Aantal maanden", () => KAART.maanden]];
 add({id:"z0", type:"kaartjes", pts:0, label:"Zoekopdracht",
-  q:"Een lening uitrekenen kan alleen met de juiste gegevens. Drie kaartjes met een getal zijn verstopt in het lokaal. Zoek ze op en typ de getallen hieronder in.",
+  q:"Een lening uitrekenen kan alleen met de juiste gegevens. Drie kaartjes van het leningcontract van Sam Visser zijn verstopt in het lokaal. Pas op: er hangen ook nepkaartjes van andere mensen. Zoek ze op en typ de getallen hieronder in.",
   velden:[{k:"b",lab:"Geleend bedrag (€)",ph:"bijvoorbeeld 1500",want:5400},{k:"t",lab:"Maandtermijn (€)",ph:"bijvoorbeeld 100",want:250},{k:"m",lab:"Aantal maanden",ph:"bijvoorbeeld 12",want:24}],
   model:"Geleend bedrag €5.400, maandtermijn €250, aantal maanden 24. Zoek de kaartjes de volgende keer eerst op.",
   hints:[CONFIG.ZOEK_PLEKKEN[0], CONFIG.ZOEK_PLEKKEN[1], CONFIG.ZOEK_PLEKKEN[2]]});
@@ -394,7 +395,7 @@ add({id:"m_uitkering", type:"mc", pts:10, label:"Meerkeuze",
   hints:["Een uitkering krijg je van de overheid.","Zakgeld en loon komen niet van de overheid.","Het gaat om geld dat ouders voor hun kinderen ontvangen."]});
 add({id:"m_vast", type:"mc", pts:10, multi:true, label:"Meerkeuze",
   q:"Welke twee uitgaven zijn vaste lasten? (meerdere antwoorden goed)",
-  opts:["Contributie van de sportclub","Boodschappen voor de week","Huur van een huis","Een nieuwe telefoon kopen"], correct:[0,2],
+  opts:["Contributie sportclub","Boodschappen voor de week","Huur van een woning","Een nieuwe telefoon kopen"], correct:[0,2],
   hints:["Vaste lasten betaal je met een vaste regelmaat.","Boodschappen en een telefoon koop je niet op een vast moment.","Een abonnement en huur zijn vaste lasten."]});
 add({id:"m_begroting", type:"mc", pts:10, label:"Juist of onjuist", fixedOrder:true,
   q:"Juist of onjuist: een begroting is een overzicht van je verwachte inkomsten en uitgaven voor de komende periode.",
@@ -459,7 +460,7 @@ const uitgaanMnd = () => (50*26)/12;      // €50 per twee weken
 const sportMnd = () => 90/3;              // €90 per kwartaal
 const BOX1 = [["Telefoonabonnement", () => eur(15) + " per maand"], ["Sportclub", () => eur(90) + " per kwartaal"], ["Kleding", () => eur(80) + " per maand"], ["Uitgaan", () => eur(50) + " per twee weken"]];
 add({id:"y0", type:"kaartjes", pts:0, label:"Zoekopdracht",
-  q:"Lisa (15) wil een begroting maken, maar ze weet niet precies wat ze uitgeeft. Haar vier bonnetjes zijn verstopt in het lokaal. Zoek ze op. Typ per bonnetje het bedrag in en kies per welke periode ze dat betaalt.",
+  q:"Lisa (15) wil een begroting maken, maar ze weet niet precies wat ze uitgeeft. Haar vier bonnetjes zijn verstopt in het lokaal (op naam van Lisa Bakker). Pas op: er hangen ook nepbonnetjes van andere mensen. Zoek de juiste bonnetjes op. Typ per bonnetje het bedrag in en kies per welke periode ze dat betaalt.",
   velden:[{k:"tel",lab:"Telefoonabonnement",ph:"bedrag in €",want:15,per:"maand"},{k:"sport",lab:"Sportclub",ph:"bedrag in €",want:90,per:"kwartaal"},{k:"kl",lab:"Kleding",ph:"bedrag in €",want:80,per:"maand"},{k:"uit",lab:"Uitgaan",ph:"bedrag in €",want:50,per:"twee weken"}],
   model:"Telefoonabonnement €15 per maand, sportclub €90 per kwartaal, kleding €80 per maand en uitgaan €50 per twee weken. Zoek de bonnetjes de volgende keer eerst op.",
   hints:[CONFIG.ZOEK_PLEKKEN_1[0], CONFIG.ZOEK_PLEKKEN_1[1], CONFIG.ZOEK_PLEKKEN_1[2]]});
@@ -481,16 +482,16 @@ add({id:"y2", type:"reken", pts:20, label:"Zoekopdracht", box:BOX1,
 /* ---- creatieve opdracht met invulschema: inkomsten links, uitgaven rechts ---- */
 const BEGR = {
   ink:   {label:"Inkomsten per maand uitgerekend", pts:15, cells:{zak:52, baan:173.33}},
-  soort: {label:"Soort uitgave bij elke uitgave", pts:20, sel:{tel:"vast", spo:"vast", kle:"incid", uit:"huis"}},
-  tot:   {label:"Totaal inkomsten en totaal uitgaven", pts:15, cells:{totin:225.33, totuit:233.33}},
+  soort: {label:"Soort uitgave bij elke uitgave", pts:20, sel:{tel:"vast", spo:"vast", kle:"incid", uit:"incid"}},
+  tot:   {label:"Totaal inkomsten", pts:15, cells:{totin:225.33}},
   saldo: {label:"Tekort of overschot", pts:10, cells:{saldo:8}, sel:{saldosoort:"tekort"}}
 };
 const SOORTEN = [["vast","Vaste lasten"],["huis","Huishoudelijke uitgaven"],["incid","Incidentele uitgaven"]];
 const BEGR_UIT = [["tel","Telefoonabonnement",15],["spo","Sportclub",30],["kle","Kleding",80],["uit","Uitgaan",108.33]];
 add({id:"c_begroting", type:"begroting", creatief:true, pts:60, label:"Creatieve opdracht", box:BOX1,
   q:"Lisa (15) wil weten of ze rond kan komen. Ze krijgt €12 zakgeld per week en verdient €80 per twee weken met haar bijbaantje. Haar uitgaven per maand heb je al uitgerekend. Maak de begroting af: reken de inkomsten per maand uit, kies bij elke uitgave de juiste soort, vul de totalen in en bereken het tekort of overschot.",
-  model:"Zakgeld (12 x 52) : 12 = €52. Bijbaantje (80 x 26) : 12 = €173,33. Totaal inkomsten €225,33. Uitgaven: telefoon €15 (vaste lasten), sportclub €30 (vaste lasten), kleding €80 (incidenteel), uitgaan €108,33 (huishoudelijk). Totaal uitgaven €233,33. Inkomsten min uitgaven = €8,00 tekort.",
-  hints:["Zakgeld is per week en het bijbaantje per twee weken. Reken beide om naar een bedrag per maand.","Telefoon en sportclub zijn vaste lasten, uitgaan is huishoudelijk en kleding is incidenteel. Tel daarna alles op.","Zakgeld: (12 x 52) : 12. Bijbaantje: (80 x 26) : 12. Is de uitkomst van inkomsten min uitgaven negatief, dan is er een tekort."]});
+  model:"Zakgeld (12 x 52) : 12 = €52. Bijbaantje (80 x 26) : 12 = €173,33. Totaal inkomsten €225,33. Uitgaven: telefoon €15 (vaste lasten), sportclub €30 (vaste lasten), kleding €80 (incidenteel), uitgaan €108,33 (incidenteel). Totaal uitgaven €233,33. Inkomsten min uitgaven = €8,00 tekort.",
+  hints:["Zakgeld is per week en het bijbaantje per twee weken. Reken beide om naar een bedrag per maand.","Telefoon en sportclub zijn vaste lasten, uitgaan en kleding zijn incidenteel. Tel daarna alles op.","Zakgeld: (12 x 52) : 12. Bijbaantje: (80 x 26) : 12. Is de uitkomst van inkomsten min uitgaven negatief, dan is er een tekort."]});
 
 const KW = {
   o_manieren:[["ouders","ouder","familie","vader","moeder"],["persoonlijke","persoonlijk"],["hypotheek"]],
@@ -507,7 +508,7 @@ Object.keys(KW).forEach(id => KW[id].forEach((kw,i) => { Q[id].crit[i].kw = kw; 
 add({id:"m_functies", type:"mc", pts:10, multi:true, label:"Meerkeuze",
   q:"Welke drie functies heeft geld? (meerdere antwoorden goed)",
   opts:["Ruilmiddel","Spaarmiddel","Rekenmiddel","Verzekeringsmiddel"], correct:[0,1,2],
-  hints:["Je betaalt ermee, je bewaart het en je drukt er prijzen mee uit.","Een verzekering is iets anders dan een functie van geld.","Drie goede antwoorden: ruilmiddel, spaarmiddel en rekenmiddel."]});
+  hints:["Je betaalt ermee, je bewaart het en je rekent er prijzen en korting mee uit.","Een verzekering is iets anders dan een functie van geld.","Drie goede antwoorden: ruilmiddel, spaarmiddel en rekenmiddel."]});
 add({id:"m_tf2", type:"mc", pts:10, label:"Juist of onjuist",
   q:"Juist of onjuist: rente is het bedrag dat de bank jou betaalt omdat je geld bij de bank laat staan.",
   opts:["Juist","Onjuist"], correct:[0], fixedOrder:true,
@@ -518,7 +519,7 @@ add({id:"m_rente", type:"mc", pts:10, label:"Begrijpen",
   hints:["Je krijgt rente over je spaargeld.","Rente wordt bij je saldo bijgeschreven.","Elk jaar komt er rente bij."]});
 add({id:"m_voorzorg", type:"mc", pts:10, label:"Welke hoort bij...",
   q:"Welk voorbeeld hoort bij sparen uit voorzorg?",
-  opts:["Je spaart voor het geval je telefoon kapotgaat","Je spaart voor een nieuwe game volgende maand","Je spaart voor een vakantie in de zomer","Je spaart omdat de bank mooie rente geeft"], correct:[0],
+  opts:["Je spaart voor als je telefoon kapotgaat","Je spaart voor een nieuwe game volgende maand","Je spaart voor een vakantie in de zomer","Je spaart omdat de bank mooie rente geeft"], correct:[0],
   hints:["Voorzorg betekent: je bereidt je voor op onverwachte kosten.","Je weet niet zeker of je het geld nodig hebt.","Het gaat om geld achter de hand voor als er iets misgaat."]});
 add({id:"m_uitgesteld", type:"mc", pts:10, label:"Welke hoort bij...",
   q:"Welk voorbeeld hoort bij sparen voor een uitgestelde besteding?",
@@ -529,7 +530,7 @@ add({id:"k_sparen", type:"koppel", pts:20, label:"Koppelen",
   q:"Koppel elk begrip aan de juiste uitleg. Tik links op een begrip en daarna rechts op de uitleg.",
   pairs:[["Ruilmiddel","Je betaalt ermee in de winkel"],
          ["Spaarmiddel","Je bewaart waarde voor later"],
-         ["Rekenmiddel","Je drukt de waarde van iets uit in euro's"],
+         ["Rekenmiddel","Je rekent uit hoeveel euro iets kost, bijvoorbeeld de korting"],
          ["Voorzorg","Sparen voor onverwachte uitgaven"],
          ["Uitgestelde besteding","Sparen voor iets dat je later koopt"],
          ["Rente","Wat de bank je betaalt voor je spaargeld"]],
@@ -540,8 +541,8 @@ add({id:"o_functies", type:"open", pts:30, label:"Open vraag",
   crit:[
    {label:"Ruilmiddel", tekst:"Noemt ruilmiddel en legt uit dat je met geld goederen en diensten kunt kopen of betalen.", rx:/ruil|betaalmiddel|betalen/i, kw:["ruilmiddel","betaalmiddel","ruil"]},
    {label:"Spaarmiddel", tekst:"Noemt spaarmiddel en legt uit dat je met geld waarde kunt bewaren voor later.", rx:/spaar|bewaar/i, kw:["spaarmiddel","sparen","bewaren"]},
-   {label:"Rekenmiddel", tekst:"Noemt rekenmiddel en legt uit dat je met geld de waarde of prijs van dingen uitdrukt en kunt vergelijken.", rx:/rekenmiddel|rekeneenheid|waardemeter|prijs|waarde/i, kw:["rekenmiddel","rekeneenheid","waardemeter","prijs"]}],
-  model:"Ruilmiddel: je betaalt ermee voor spullen. Spaarmiddel: je bewaart het voor later. Rekenmiddel: je drukt de waarde of prijs van iets uit in euro's.",
+   {label:"Rekenmiddel", tekst:"Noemt rekenmiddel en legt uit dat je met geld kunt uitrekenen wat iets kost, bijvoorbeeld hoeveel euro korting je krijgt.", rx:/rekenmiddel|rekeneenheid|waardemeter|prijs|waarde/i, kw:["rekenmiddel","rekeneenheid","waardemeter","prijs"]}],
+  model:"Ruilmiddel: je betaalt ermee voor spullen. Spaarmiddel: je bewaart het voor later. Rekenmiddel: je kunt uitrekenen hoeveel euro iets kost of hoeveel korting je krijgt.",
   hints:["Eén functie gaat over betalen, één over bewaren en één over prijzen.","Alle drie de functies eindigen op 'middel'.","Ruilmiddel, spaarmiddel en rekenmiddel. Leg bij elk uit wat het is."]});
 add({id:"o_motieven", type:"open", pts:30, label:"Open vraag",
   q:"Noem de drie spaarmotieven en geef bij elk motief een voorbeeld.",
@@ -576,7 +577,7 @@ const SP = {bedrag:2450, pct:1.4};
 const spRente = () => Math.round((SP.pct/100)*SP.bedrag);
 const BOXS = [["Spaarbedrag", () => eur(SP.bedrag)], ["Rente per jaar", () => "1,4%"]];
 add({id:"sa0", type:"kaartjes", pts:0, label:"Zoekopdracht",
-  q:"Een spaarplan maak je met de juiste gegevens. Twee kaartjes zijn verstopt in het lokaal: op het ene staat het spaarbedrag, op het andere het rentepercentage per jaar. Zoek ze op en typ de getallen in.",
+  q:"Een spaarplan maak je met de juiste gegevens. Twee kaartjes van Sanne de Boer zijn verstopt in het lokaal: op het ene staat het spaarbedrag, op het andere het rentepercentage per jaar. Pas op: er hangen ook nepkaartjes van anderen. Zoek ze op en typ de getallen in.",
   velden:[{k:"b",lab:"Spaarbedrag (€)",ph:"bijvoorbeeld 1000",want:2450},{k:"p",lab:"Rente per jaar (%)",ph:"bijvoorbeeld 1,2",want:1.4}],
   model:"Spaarbedrag €2.450 en rente 1,4% per jaar. Zoek de kaartjes de volgende keer eerst op.",
   hints:[CONFIG.ZOEK_PLEKKEN_2[0], CONFIG.ZOEK_PLEKKEN_2[1], CONFIG.ZOEK_PLEKKEN_2[2]]});
@@ -625,7 +626,7 @@ add({id:"m_inboedel", type:"mc", pts:10, label:"Welke hoort bij...",
   hints:["Inboedel zijn de spullen in je huis.","Het huis zelf valt onder een andere verzekering.","Denk aan je tv, bank en laptop."]});
 add({id:"m_werkt", type:"mc", pts:10, label:"Begrijpen",
   q:"Waarom kan een verzekeraar de schade van een paar mensen betalen?",
-  opts:["Veel mensen betalen premie, maar maar weinig mensen hebben schade","Elke verzekerde krijgt zijn premie aan het einde terug","De overheid betaalt alle schades van verzekerden","De verzekeraar betaalt alles uit zijn eigen spaargeld"], correct:[0],
+  opts:["Veel mensen betalen premie en weinig mensen hebben schade","Elke verzekerde krijgt aan het eind van het jaar zijn premie terug","De overheid betaalt alle schades van verzekerden","De verzekeraar betaalt alles uit zijn eigen spaargeld"], correct:[0],
   hints:["Denk aan alle mensen die premie betalen.","Samen betalen veel mensen voor de schade van een paar mensen.","Veel premie-betalers, weinig schademelders."]});
 
 add({id:"k_verzeker", type:"koppel", pts:20, label:"Koppelen",
@@ -677,7 +678,7 @@ rk("v_d","Je betaalt 3 jaar lang €9 premie per maand. In die tijd heb je één
 const VZ = {schade:480, er:75, premie:9};
 const BOXV = [["Schade", () => eur(VZ.schade)], ["Eigen risico", () => eur(VZ.er)], ["Premie", () => eur(VZ.premie) + " per maand"]];
 add({id:"x0", type:"kaartjes", pts:0, label:"Zoekopdracht",
-  q:"Een schade uitrekenen kan alleen met de juiste gegevens. Drie kaartjes zijn verstopt in het lokaal: de schade aan een fiets, het eigen risico en de premie per maand. Zoek ze op en typ de getallen in.",
+  q:"Een schade uitrekenen kan alleen met de juiste gegevens. Drie kaartjes van Tim de Groot zijn verstopt in het lokaal: de schade aan zijn fiets, het eigen risico en de premie per maand. Pas op: er hangen ook nepkaartjes van anderen. Zoek ze op en typ de getallen in.",
   velden:[{k:"s",lab:"Schade aan de fiets (€)",ph:"bijvoorbeeld 300",want:480},{k:"e",lab:"Eigen risico (€)",ph:"bijvoorbeeld 50",want:75},{k:"p",lab:"Premie per maand (€)",ph:"bijvoorbeeld 5",want:9}],
   model:"Schade €480, eigen risico €75 en premie €9 per maand. Zoek de kaartjes de volgende keer eerst op.",
   hints:[CONFIG.ZOEK_PLEKKEN_4[0], CONFIG.ZOEK_PLEKKEN_4[1], CONFIG.ZOEK_PLEKKEN_4[2]]});
@@ -724,10 +725,10 @@ mc("m_winst","Welke hoort bij...","Welk voorbeeld hoort bij het inkomen 'winst'?
 tf("m_ink_tf","Juist of onjuist: kinderbijslag is een voorbeeld van een uitkering.",true,
   ["Denk aan wie de kinderbijslag betaalt.","Een uitkering krijg je van de overheid.","Het antwoord is: juist."]);
 mc("m_meerdere","Meerkeuze","Welke twee voorbeelden zijn soorten inkomen? (meerdere antwoorden goed)",
-  ["Loon van een bijbaantje","Een uitkering van de overheid","Boodschappen doen","Contributie van de sportclub"],[0,1],
+  ["Loon van een bijbaantje","Uitkering van de overheid","Boodschappen doen","Contributie van de sportclub"],[0,1],
   ["Inkomen is geld dat je ontvangt.","Boodschappen en contributie zijn uitgaven.","Loon en uitkering zijn inkomen."],{multi:true});
 mc("m_ink_3","Begrijpen","Wat is een uitkering?",
-  ["Geld dat je van de overheid ontvangt, bijvoorbeeld bij werkloosheid","Geld dat je verdient omdat je in dienst bent bij een bedrijf","Geld dat je overhoudt van je eigen bedrijf","Geld dat je op een spaarrekening zet"],[0],
+  ["Geld van de overheid, bijvoorbeeld bij werkloosheid","Geld dat je verdient omdat je in dienst bent bij een bedrijf","Geld dat je overhoudt van je eigen bedrijf","Geld dat je op een spaarrekening zet"],[0],
   ["Er zijn drie soorten inkomen: loon, winst en uitkering.","Loon krijg je van een werkgever, winst van je eigen bedrijf.","Een uitkering komt van de overheid."]);
 mc("m_huis","Welke hoort bij...","Welke uitgave hoort bij de huishoudelijke uitgaven?",
   ["Boodschappen voor de week","Contributie van de sportclub","Een nieuwe laptop kopen","Een vakantie naar Spanje"],[0],
@@ -738,7 +739,7 @@ mc("m_gym","Welke hoort bij...","De contributie van de sportclub hoort bij welke
   ["Vaste lasten","Huishoudelijke uitgaven","Incidentele uitgaven","Inkomsten"],[0],
   ["Je betaalt contributie met een vaste regelmaat.","Incidenteel is af en toe en groot.","Vaste lasten betaal je met een vaste regelmaat."]);
 mc("m_nut","Begrijpen","Waarom maak je een begroting?",
-  ["Zo zie je of je rond kunt komen en voorkom je geldproblemen","Zo krijg je meer zakgeld van je ouders","Zo hoef je minder belasting te betalen","Zo worden je rekeningen automatisch betaald"],[0],
+  ["Zo zie je of je rond kunt komen","Zo krijg je meer zakgeld van je ouders","Zo hoef je minder belasting te betalen","Zo worden je rekeningen automatisch betaald"],[0],
   ["Een begroting is een overzicht van je inkomsten en uitgaven.","Het helpt je om je geld te plannen.","Je ziet of je een tekort of overschot hebt."]);
 mc("m_budget","Begrijpen","Wat is je budget?",
   ["Het bedrag dat je kunt uitgeven","Het bedrag dat je hebt gespaard","Het bedrag dat je moet terugbetalen","Het bedrag dat je per jaar verdient"],[0],
@@ -765,8 +766,8 @@ op("o_nut","Wat is een begroting en wat is het nut ervan? Noem twee voordelen.",
   "Een begroting is een overzicht van je verwachte inkomsten en uitgaven voor de komende periode. Het nut is dat je ziet of je rond kunt komen en dat je geldproblemen voorkomt.",
   ["Denk aan wat er in een begroting staat.","Wat kun je zien als je inkomsten en uitgaven naast elkaar zet?","Een overzicht van inkomsten en uitgaven. Je voorkomt geldproblemen."]);
 op("o_vastelasten","Energiekosten zijn vaste lasten. Leg uit waarom je daarop moeilijk kunt bezuinigen. Noem ook een manier waarop je toch kunt besparen op energiekosten.",
-  [cr("Waarom moeilijk","Legt uit dat vaste lasten met een vaste regelmaat betaald moeten worden of dat je het nodig hebt, dus lastig te veranderen zijn.",/vast|elke maand|moet|verplicht|nodig|regelmaat|niet zomaar/i,["vaste","regelmaat","moeten","nodig"]),
-   cr("Manier om te besparen","Noemt een passende manier om te besparen op energie, bijvoorbeeld licht uitdoen, korter douchen of de thermostaat lager zetten.",/licht|douch|thermostaat|verwarming|lager|zuinig|uitzetten|uitdoen|overstap|zonne|stekker|led/i,["licht","douchen","thermostaat","verwarming","zuinig","overstappen"])],
+  [cr("Waarom moeilijk","Legt uit dat vaste lasten met een vaste regelmaat betaald moeten worden of dat je het nodig hebt, dus lastig te veranderen zijn.",/vast|elke maand|moet|verplicht|nodig|regelmaat|niet zomaar|contract|afgesloten|afspraak/i,["vaste","regelmaat","moeten","nodig","contract","afgesloten"]),
+   cr("Manier om te besparen","Noemt een passende manier om te besparen op energie, bijvoorbeeld licht uitdoen, korter douchen of de thermostaat lager zetten.",/licht|lampen|stroom|douch|thermostaat|verwarming|lager|zuinig|uitzetten|uitdoen|uit te zetten|overstap|nieuw(e)? contract|ander(e)? (contract|leverancier)|vergelijk|zonne|stekker|led|isolatie/i,["licht","lampen","stroom","douchen","thermostaat","verwarming","zuinig","overstappen","contract"])],
   "Vaste lasten moet je met een vaste regelmaat betalen, dus je kunt er niet zomaar iets aan veranderen. Je kunt wel besparen door bijvoorbeeld het licht uit te doen of korter te douchen.",
   ["Denk aan wat vaste lasten betekent.","Hoe kun je zelf minder energie gebruiken?","Vaste lasten liggen vast. Besparen kan door minder energie te gebruiken."]);
 op("o_weekmaand","Je verdient €9 per week met een bijbaantje. Leg stap voor stap uit hoe je dat omrekent naar een bedrag per maand en waarom je dat doet.",
@@ -804,11 +805,11 @@ mc("m_f1","Toepassen","Je koopt een broodje en betaalt met een briefje van €5.
 mc("m_f2","Toepassen","Je legt elke maand €10 opzij voor later. Welke functie heeft geld hier?",
   ["Spaarmiddel","Ruilmiddel","Rekenmiddel"],[0],
   ["Je geeft het geld nu niet uit.","Je bewaart het voor later.","Bewaren voor later: spaarmiddel."]);
-mc("m_f3","Toepassen","Een jas kost €50 en een tas €30. Je vergelijkt de prijzen. Welke functie heeft geld hier?",
+mc("m_f3","Toepassen","Een jas kost €50 en je krijgt 20% korting. Je rekent uit hoeveel euro korting dat is. Welke functie heeft geld hier?",
   ["Rekenmiddel","Ruilmiddel","Spaarmiddel"],[0],
-  ["Je drukt de waarde van iets uit in geld.","Je betaalt of bewaart niets.","Waarde uitdrukken in geld: rekenmiddel."]);
+  ["Je rekent uit hoeveel euro korting je krijgt of wat iets kost.","Je betaalt of bewaart niets.","Prijzen en korting uitrekenen: rekenmiddel."]);
 mc("m_rm","Welke hoort bij...","Welk voorbeeld hoort bij sparen voor de rente?",
-  ["Je zet geld op een spaarrekening om extra geld te krijgen","Je spaart voor een nieuwe fiets die je wilt kopen","Je houdt geld over voor als je laptop kapotgaat","Je geeft al je geld uit aan kleding"],[0],
+  ["Je zet geld op een spaarrekening voor extra geld","Je spaart voor een nieuwe fiets die je wilt kopen","Je houdt geld over voor als je laptop kapotgaat","Je geeft al je geld uit aan kleding"],[0],
   ["Rente krijg je van de bank voor je spaargeld.","Een nieuwe fiets is een doel, een kapotte laptop is voorzorg.","Het gaat om extra geld van de bank."]);
 mc("m_rwaarom","Begrijpen","Waarom geeft de bank je rente over je spaargeld?",
   ["De bank kan jouw spaargeld gebruiken om uit te lenen","De bank wil dat je meer geld gaat uitgeven","De overheid dwingt de bank elk jaar rente te betalen","De bank heeft te veel geld en wil het kwijt"],[0],
@@ -823,7 +824,7 @@ add({id:"k_sparen2", type:"koppel", pts:20, label:"Koppelen",
   q:"Koppel elke situatie aan de juiste functie of reden om te sparen. Tik links op een situatie en daarna rechts op het antwoord.",
   pairs:[["Je betaalt met je pinpas bij de kapper","Ruilmiddel"],
          ["Je legt elke maand €10 opzij","Spaarmiddel"],
-         ["Je ziet dat een jas €50 kost","Rekenmiddel"],
+         ["Je rekent uit hoeveel korting je op een jas krijgt","Rekenmiddel"],
          ["Je spaart voor een nieuwe laptop","Sparen voor een doel"],
          ["Je spaart voor als je fiets kapotgaat","Sparen uit voorzorg"],
          ["Je zet geld op een spaarrekening voor extra geld","Sparen voor de rente"]],
@@ -852,13 +853,13 @@ rk2("s_f","Je hebt €2.840 op een spaarrekening met 1,5% rente per jaar. Hoevee
 /* kamer 2: terminologie uit het boek (sparen voor een doel, uit voorzorg, voor de rente) */
 add({id:"m_uitgesteld", type:"mc", pts:10, label:"Welke hoort bij...",
   q:"Welk voorbeeld hoort bij sparen voor een doel?",
-  opts:["Je spaart acht maanden voor een nieuwe scooter","Je spaart voor het geval je ziek wordt","Je spaart omdat je altijd een reserve wilt","Je spaart omdat de bank rente geeft"], correct:[0],
+  opts:["Je spaart maandenlang voor een scooter","Je spaart voor het geval je ziek wordt","Je spaart omdat je altijd een reserve wilt","Je spaart omdat de bank rente geeft"], correct:[0],
   hints:["Je wilt iets kopen en hebt daar nog te weinig geld voor.","Je weet al waaraan je het geld later wilt uitgeven.","Sparen voor een bepaald doel in de toekomst."]});
 add({id:"k_sparen", type:"koppel", pts:20, label:"Koppelen",
   q:"Koppel elk begrip aan de juiste uitleg. Tik links op een begrip en daarna rechts op de uitleg.",
   pairs:[["Ruilmiddel","Je betaalt ermee in de winkel"],
          ["Spaarmiddel","Je bewaart geld voor later"],
-         ["Rekenmiddel","Je drukt de waarde van iets uit in euro's"],
+         ["Rekenmiddel","Je rekent uit hoeveel euro iets kost, bijvoorbeeld de korting"],
          ["Sparen voor een doel","Je wilt iets kopen, maar hebt nog te weinig geld"],
          ["Sparen uit voorzorg","Je zorgt dat je geld hebt voor onverwachte kosten"],
          ["Rente","Een vergoeding die je van de bank krijgt voor je spaargeld"]],
@@ -893,10 +894,10 @@ mc("m_reden1","Toepassen","Je laptop gaat kapot en je hebt voor school meteen ee
   ["Onverwacht dringend geld nodig hebben","Niet willen wachten tot je genoeg gespaard hebt","Je wilt rente ontvangen over je geld","Je wilt minder belasting betalen"],[0],
   ["De laptop gaat onverwacht kapot.","Je hebt het geld meteen nodig.","Onverwacht dringend geld nodig hebben."]);
 mc("m_reden2","Toepassen","De ouders van een vriend lenen geld voor een dure vakantiereis die ze nu willen. Welke reden om te lenen past hierbij?",
-  ["Niet willen wachten tot je genoeg gespaard hebt","Onverwacht dringend geld nodig hebben","Je wilt rente ontvangen over je geld","Je moet een verzekering afsluiten"],[0],
+  ["Niet willen wachten tot je gespaard hebt","Onverwacht heel snel geld nodig hebben","Je wilt graag rente ontvangen over je geld","Je moet een verzekering afsluiten"],[0],
   ["Een vakantie is niet onverwacht.","Ze willen iets duurs nu al doen.","Niet willen wachten tot je genoeg gespaard hebt."]);
 mc("m_kosten","Begrijpen","Wat zijn de kosten van een lening?",
-  ["Alles wat je méér terugbetaalt dan je hebt geleend","Het bedrag dat je hebt geleend","Het bedrag van één maandtermijn","Alleen de aflossing van de lening"],[0],
+  ["Wat je méér terugbetaalt dan je leende","Het totale bedrag dat je van de bank hebt geleend","Het bedrag dat je elke maand moet terugbetalen","Alleen het deel dat je aflost van de lening"],[0],
   ["Je betaalt in totaal meer terug dan je leende.","Aflossing is het terugbetalen van het geleende bedrag zelf.","Het verschil tussen terugbetaald en geleend bedrag."]);
 mc("m_risico","Begrijpen","Wat is een risico van geld lenen?",
   ["Je kunt het geld later misschien niet terugbetalen","Je krijgt automatisch meer geld terug dan je leende","De bank betaalt jou elk jaar rente","Je hoeft pas na tien jaar iets terug te betalen"],[0],
@@ -939,7 +940,7 @@ rk2("t_d","Gebruik de tabel. Je wilt €8.000 lenen. Hoeveel euro schelt het in 
 /* ---------- KAMER 4: verzekeren (termen uit het boek) ---------- */
 add({id:"m_premie", type:"mc", pts:10, multi:true, label:"Meerkeuze",
   q:"Waar hangt het van af of je een verzekering afsluit? (meerdere antwoorden goed)",
-  opts:["De kans dat je schade hebt","De hoogte van het bedrag waar het om gaat","Of je de schade zelf zou kunnen betalen","De naam van de verzekeraar"], correct:[0,1,2],
+  opts:["De kans dat je schade hebt","De hoogte van het bedrag","Of je de schade zelf kunt betalen","De naam en het logo van de verzekeraar"], correct:[0,1,2],
   hints:["Je kijkt naar het risico en naar het bedrag.","De naam van de verzekeraar bepaalt niet of je een verzekering nodig hebt.","Risico, hoogte van het bedrag en zelf kunnen betalen."]});
 add({id:"o_premie", type:"open", pts:30, label:"Open vraag",
   q:"Waar hangt het van af of je een verzekering afsluit? Noem drie dingen en leg ze kort uit.",
@@ -991,6 +992,52 @@ rk2("v_f","Je fiets van €600 wordt gestolen. In de polisvoorwaarden staat: eig
 rk2("v_g","Salima heeft een loon van €1.890 per maand. Ze betaalt €140 aan verzekeringen. Hoeveel procent van haar inkomsten geeft ze uit aan verzekeringen? Rond af op 1 decimaal.",() => (140/1890)*100,1,"%",
   ["De verzekeringen zijn het deel, het loon is het geheel.","De formule is (Deel : geheel) x 100.","(140 : 1890) x 100."]);
 
+
+/* ---------- Rekenvragen met echte afronding (overschrijven eerdere versies) ---------- */
+rk2("r1_h","Je wast elke week de auto van de buren en krijgt €8,35 per keer. Hoeveel is dat per maand? Rond af op 2 decimalen.",() => (8.35*52)/12,2,"€",
+  ["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 52 weken en 12 maanden.","(8,35 x 52) : 12, rond af op 2 decimalen."]);
+rk2("r1_i","Tess geeft €61,40 per maand uit aan hobby's. Hoeveel is dat per week? Rond af op 2 decimalen.",() => (61.4*12)/52,2,"€",
+  ["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 12 maanden en 52 weken.","(61,40 x 12) : 52, rond af op 2 decimalen."]);
+rk2("r1_j","Micha werkt in een pretpark en verdient €694 per maand. Hoeveel verdient Micha per week? Rond af op 2 decimalen.",() => (694*12)/52,2,"€",
+  ["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 12 maanden en 52 weken.","(694 x 12) : 52, rond af op 2 decimalen."]);
+rk2("r1_k","Kai verdient €395 per week. Roxan verdient €19.800 per jaar. Hoeveel verdient Kai per maand meer dan Roxan? Rond af op 2 decimalen.",() => (395*52)/12 - 19800/12,2,"€",
+  ["Reken beide bedragen om naar een bedrag per maand.","Kai: (395 x 52) : 12. Roxan: 19.800 : 12.","Trek het bedrag van Roxan af van dat van Kai en rond af op 2 decimalen."]);
+rk2("r1_l","Een abonnement kost €47 per kwartaal. Hoeveel is dat per week? Rond af op 2 decimalen.",() => (47*4)/52,2,"€",
+  ["Een kwartaal is een periode van drie maanden. Hoeveel kwartalen zitten er in een jaar?","Een jaar heeft 4 kwartalen en 52 weken. Reken eerst om naar een bedrag per jaar.","(47 x 4) : 52, rond af op 2 decimalen."]);
+rk2("r1_m","Je betaalt elke vier weken €28 voor een fitnessabonnement. Hoeveel is dat per maand? Rond af op 2 decimalen.",() => (28*13)/12,2,"€",
+  ["Hoeveel periodes van vier weken zitten er in een jaar van 52 weken?","Een jaar heeft 13 periodes van vier weken en 12 maanden. Reken eerst om naar een bedrag per jaar.","(28 x 13) : 12, rond af op 2 decimalen."]);
+rk2("r1_p","Je betaalt €120 per half jaar voor een tijdschrift. Hoeveel is dat per week? Rond af op 2 decimalen.",() => (120*2)/52,2,"€",
+  ["Een half jaar is de helft van een jaar. Hoeveel keer betaal je dus per jaar?","Je betaalt 2 keer per jaar en een jaar heeft 52 weken. Reken eerst om naar een bedrag per jaar.","(120 x 2) : 52, rond af op 2 decimalen."]);
+rk2("r1_n","Op een jas van €139 krijg je €30 korting. Hoeveel procent is de korting? Rond af op 1 decimaal.",() => (30/139)*100,1,"%",
+  ["De korting is het deel, de prijs van de jas is het geheel.","De formule is (Deel : geheel) x 100.","(30 : 139) x 100, rond af op 1 decimaal."]);
+rk2("r1_o","Je leent €780. In totaal betaal je €843 terug. Hoeveel procent meer heb je terugbetaald dan het geleende bedrag? Rond af op 1 decimaal.",() => ((843-780)/780)*100,1,"%",
+  ["Bereken eerst hoeveel je méér terugbetaalt.","De formule is (Deel : geheel) x 100.","(63 : 780) x 100, rond af op 1 decimaal."]);
+rk2("r1_ramon","Ramon verdient €61,85 per week met klusjes. Hoeveel is dat per maand? Rond af op 2 decimalen.",() => (61.85*52)/12,2,"€",
+  ["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 52 weken en 12 maanden.","(61,85 x 52) : 12, rond af op 2 decimalen."]);
+
+rk2("s_a","Je zet €845 op een spaarrekening met 1,35% rente per jaar. Hoeveel rente krijg je na een jaar? Rond af op 2 decimalen.",() => (1.35/100)*845,2,"€",
+  ["Het spaarbedrag is het totaal waar je het percentage van neemt.","De formule is (Percentage : 100) x totaal.","(1,35 : 100) x 845, rond af op 2 decimalen."]);
+rk2("s_b","Je spaart €1.377 tegen 2,1% rente per jaar. Hoeveel rente krijg je na een jaar? Rond af op 2 decimalen.",() => (2.1/100)*1377,2,"€",
+  ["Gebruik het spaarbedrag en het rentepercentage.","De formule is (Percentage : 100) x totaal.","(2,1 : 100) x 1377, rond af op 2 decimalen."]);
+rk2("s_c","Je spaart €640 en krijgt na een jaar €11,30 rente. Hoeveel procent rente krijg je? Rond af op 1 decimaal.",() => (11.3/640)*100,1,"%",
+  ["De rente is het deel, het spaarbedrag is het geheel.","De formule is (Deel : geheel) x 100.","(11,30 : 640) x 100, rond af op 1 decimaal."]);
+rk2("s_d","Je zet €2.386 op een spaarrekening met 1,3% rente per jaar. Hoeveel staat er na een jaar op de rekening? Rond af op 2 decimalen.",() => 2386 + (1.3/100)*2386,2,"€",
+  ["Bereken eerst de rente over een jaar.","Rente = (Percentage : 100) x spaarbedrag. Tel de rente daarna op bij het spaarbedrag.","2386 + ((1,3 : 100) x 2386), rond af op 2 decimalen."]);
+rk2("s_e","Je hebt €1.347 op een spaarrekening en krijgt 2,3% rente per jaar. Bereken de rente die je na een jaar ontvangt. Rond af op 2 decimalen.",() => (2.3/100)*1347,2,"€",
+  ["Het spaarbedrag is het totaal waar je het percentage van neemt.","De formule is (Percentage : 100) x totaal.","(2,3 : 100) x 1347, rond af op 2 decimalen."]);
+rk2("s_f","Je hebt €2.795 op een spaarrekening met 1,6% rente per jaar. Hoeveel rente krijg je na 7 maanden? Rond af op 2 decimalen.",() => ((1.6/100)*2795*7)/12,2,"€",
+  ["Rente wordt per jaar berekend. Reken eerst de rente over een jaar uit.","Een jaar heeft 12 maanden. Deel daarna door 12 en vermenigvuldig met 7.","((1,6 : 100) x 2795 x 7) : 12, rond af op 2 decimalen."]);
+
+rk2("t_c","Gebruik de tabel. Je leent €5.000 en betaalt het in 6 maanden terug. Hoeveel zijn de kosten van deze lening gemiddeld per maand? Rond af op 2 decimalen.",() => (858*6-5000)/6,2,"€",
+  ["Bereken eerst de totale kosten: totaal terugbetaald min geleend bedrag.","Totaal terugbetaald = maandtermijn x aantal maanden. Deel de kosten daarna door het aantal maanden.","(858 x 6 - 5000) : 6, rond af op 2 decimalen."],{tabel:CREDI});
+rk2("t_e","Gebruik de tabel. Je leent €5.000 en betaalt het in 6 maanden terug. Hoeveel procent van het totaal terugbetaalde bedrag zijn de kosten? Rond af op 1 decimaal.",() => ((858*6-5000)/(858*6))*100,1,"%",
+  ["Bereken eerst de kosten en het totaal dat je terugbetaalt.","De formule is (Deel : geheel) x 100. De kosten zijn het deel, het totaal terugbetaald is het geheel.","(148 : 5148) x 100, rond af op 1 decimaal."],{tabel:CREDI});
+
+rk2("v_h","Je betaalt €38,95 premie per kwartaal voor een fietsverzekering. Hoeveel is dat per maand? Rond af op 2 decimalen.",() => 38.95/3,2,"€",
+  ["Een kwartaal is een periode van drie maanden.","Deel het bedrag per kwartaal door het aantal maanden in een kwartaal.","38,95 : 3, rond af op 2 decimalen."]);
+rk2("v_i","De premie stijgt van €9,45 naar €10,20 per maand. Met hoeveel procent stijgt de premie? Rond af op 1 decimaal.",() => ((10.2-9.45)/9.45)*100,1,"%",
+  ["Het oude bedrag is €9,45, het nieuwe bedrag €10,20.","De formule is (Nieuw - oud) : oud x 100.","(10,20 - 9,45) : 9,45 x 100, rond af op 1 decimaal."]);
+
 function bouwRij(k){
   const used = new Set();
   const pick = a => { const b = a.filter(x => !used.has(x)); const c = b.length ? b : a; const r = c[Math.floor(Math.random()*c.length)]; used.add(r); return r; };
@@ -1000,7 +1047,7 @@ function bouwRij(k){
             pick(["k_inkomen","k_begrippen1"]),
             pick(["m_nut","m_bezuinig","m_tekort","m_incid","m_periode"]),
             pick(["o_inkomsten","o_uitgaven","o_nut","o_vastelasten","o_weekmaand","o_meerdere"]),
-            pick(["r1_a","r1_b","r1_c","r1_f","r1_g","r1_h","r1_i","r1_j","r1_k","r1_l","r1_ramon"]),
+            pick(["r1_a","r1_b","r1_c","r1_f","r1_g","r1_h","r1_i","r1_j","r1_k","r1_l","r1_m","r1_p","r1_ramon"]),
             pick(["r1_d","r1_e","r1_n","r1_o"]),
             "y0","y1","y1b","y2","c_begroting"];
   }
@@ -1019,7 +1066,7 @@ function bouwRij(k){
             pick(["k_verzeker"]),
             pick(["m_inboedel","m_werkt","m_polis","m_eigenrisico"]),
             pick(["o_premie","o_eigenrisico","o_mila","o_waarom_verz","o_zorg"]),
-            pick(["v_a","v_b","v_c","v_d","v_e","v_f","v_g"]),
+            pick(["v_a","v_b","v_c","v_d","v_e","v_f","v_g","v_h","v_i"]),
             "x0","x1","x2","x3","c_scooter2"];
   }
   if (k === 3) {
@@ -1028,7 +1075,7 @@ function bouwRij(k){
             "k_lenen",
             pick(["m_waarom","m_reden1","m_reden2","m_kosten"]),
             pick(["o_waarom","o_termijn","o_reden2","o_risico","o_kosten"]),
-            pick(["r_totaal","r_perc1","r_perc2","r_besp","t_a","t_b","t_c","t_d"]),
+            pick(["r_totaal","r_perc1","r_perc2","r_besp","t_a","t_b","t_c","t_d","t_e"]),
             "z0","z1","z2","z3","c_scooter"];
   }
   return [];
@@ -1283,7 +1330,7 @@ function vBody(d){
     const secs = Object.keys(BEGR).map((id,n) => cur.met[id] ? `<li><span class="k" style="color:var(--good)">✓</span><span>${esc(BEGR[id].label)}</span></li>` : `<li><span class="k" style="color:var(--bad)">${cur.att?"✗":"·"}</span><span style="color:var(--muted)">${cur.att?"Onderdeel "+(n+1)+" ontbreekt of klopt nog niet":"Onderdeel "+(n+1)}</span></li>`).join("");
     return `<div class="bgrid">
         <div class="bcol"><h4>Inkomsten</h4>${links}<div class="brow btot"><span class="bl"><b>Totaal inkomsten</b></span>${inp("totin")}</div></div>
-        <div class="bcol"><h4>Uitgaven</h4>${rechts}<div class="brow btot"><span class="bl"><b>Totaal uitgaven</b></span>${inp("totuit")}</div></div>
+        <div class="bcol"><h4>Uitgaven</h4>${rechts}<div class="brow btot"><span class="bl"><b>Totaal uitgaven</b></span><b class="fx">${eur2(uitgaanMnd()+sportMnd()+15+80)}</b></div></div>
       </div>
       <div class="bcol"><div class="brow"><span class="bl"><b>Inkomsten min uitgaven</b></span>${inp("saldo")}<select id="s_saldosoort" data-s="saldosoort" class="${cls(cur.cok["s_saldosoort"])}" aria-label="Tekort of overschot" ${dis}><option value="">Kies</option><option value="tekort" ${cur.sel.saldosoort==="tekort"?"selected":""}>Tekort</option><option value="overschot" ${cur.sel.saldosoort==="overschot"?"selected":""}>Overschot</option></select></div></div>
       <ul class="crit">${secs}</ul>`;
@@ -1400,19 +1447,22 @@ function checkKoppel(){
 }
 
 /* ---- open vragen: AI of demo ---- */
-async function beoordeelAI(vraag, crit, text){
-  if (CONFIG.WORKER_URL && (cur.aiFails||0) < 2) {
-    try {
-      const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 25000);
-      const r = await fetch(CONFIG.WORKER_URL, {method:"POST", headers:{"Content-Type":"application/json"}, signal:ctl.signal,
-        body: JSON.stringify({vraag, criteria:crit.map((c,i)=>({id:i, tekst:c.tekst})), antwoord:text.slice(0,1500)})});
-      clearTimeout(to);
-      if (!r.ok) throw new Error("status " + r.status);
-      const j = await r.json();
-      return {ok: crit.map((_,i) => !!(j.resultaten && (j.resultaten[i] === true || j.resultaten[String(i)] === true))), fb:String(j.feedback || ""), viaAI:true};
-    } catch(e) {
-      cur.aiFails = (cur.aiFails||0) + 1; cur.aiErr = String(e && e.message || e);
-      if (cur.aiFails < 2) return {retry:true};
+async function beoordeelAI(vraag, crit, text, voorbeeld){
+  if (CONFIG.WORKER_URL) {
+    for (let poging = 0; poging < 3; poging++) {
+      try {
+        const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 20000);
+        const r = await fetch(CONFIG.WORKER_URL, {method:"POST", headers:{"Content-Type":"application/json"}, signal:ctl.signal,
+          body: JSON.stringify({vraag, voorbeeld:voorbeeld||"", criteria:crit.map((c,i)=>({id:i, tekst:c.tekst})), antwoord:text.slice(0,1500)})});
+        clearTimeout(to);
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error("status " + r.status + (j.status ? "/" + j.status : "") + (j.detail ? " " + String(j.detail).slice(0,120) : ""));
+        cur.aiErr = "";
+        return {ok: crit.map((_,i) => !!(j.resultaten && (j.resultaten[i] === true || j.resultaten[String(i)] === true))), fb:String(j.feedback || ""), viaAI:true};
+      } catch(e) {
+        cur.aiErr = String(e && e.message || e);
+        await new Promise(r => setTimeout(r, 700 * (poging + 1)));
+      }
     }
   }
   return {ok: crit.map(c => !!critMatch(c, text)), fb:"", viaAI:false};
@@ -1426,8 +1476,7 @@ async function checkOpen(){
   const d = cur.def, text = (cur.text || "").trim();
   if (text.length < 6) { cur.msg = `<div class="fb info">Schrijf eerst je antwoord op.</div>`; render(); return; }
   cur.busy = true; render();
-  const res = await beoordeelAI(d.q, d.crit, text);
-  if (res.retry) { cur.busy = false; cur.msg = `<div class="fb info">De nakijkhulp reageert niet. Probeer het nog een keer.<div style="margin-top:6px;color:var(--muted);font-size:14px">Foutcode: ${esc(cur.aiErr||"")}</div></div>`; render(); return; }
+  const res = await beoordeelAI(d.q, d.crit, text, d.model);
   cur.busy = false; cur.att++;
   let got = 0; const share = d.pts / d.crit.length;
   res.ok.forEach((ok,i) => { if (ok && !cur.met[i]) { cur.met[i] = true; got += Math.round(share * factor(cur.att)); } });
@@ -1438,7 +1487,7 @@ async function checkOpen(){
   else {
     cur.fails++;
     const n = d.crit.filter((_,i)=>cur.met[i]).length;
-    cur.msg = `<div class="fb bad"><b>${n} van de ${d.crit.length} onderdelen kloppen.</b>${gratisHint()} ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Verbeter je antwoord en laat opnieuw nakijken.${fbTxt}${res.viaAI ? "" : '<div style="margin-top:6px;color:var(--muted);font-size:15px">(demo-nakijker)</div>'}</div>`;
+    cur.msg = `<div class="fb bad"><b>${n} van de ${d.crit.length} onderdelen kloppen.</b>${gratisHint()} ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Verbeter je antwoord en laat opnieuw nakijken.${fbTxt}${res.viaAI ? "" : '<div style="margin-top:6px;color:var(--muted);font-size:15px">(demo-nakijker' + (cur.aiErr ? ' - foutcode: ' + esc(cur.aiErr) : '') + ')</div>'}</div>`;
   }
   tweenAfter();
 }
@@ -1456,7 +1505,7 @@ function checkBegroting(){
     for (const [k,want] of Object.entries(sec.sel || {})) {
       const good = cur.sel[k] === want; cur.cok["s_"+k] = good; if (!good) ok = false;
     }
-    if (ok && !cur.met[id]) { cur.met[id] = true; got += Math.round(sec.pts * f); }
+    if (ok && !cur.met[id]) { cur.met[id] = true; got += Math.round(sec.pts * CONFIG.PUNT * f); }
   }
   S.saldo += got; cur.earned += got;
   const ids = Object.keys(BEGR), n = ids.filter(id => cur.met[id]).length;
