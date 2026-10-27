@@ -239,6 +239,11 @@ const CONFIG = {
     "Het tweede kaartje zit in de buurt van een kast of een lade.",
     "Kijk ook eens onder of achter het bureau van de docent."
   ],
+  ZOEK_PLEKKEN_4: [                            // hints bij het zoeken van de 3 kaartjes in kamer 4
+    "Het eerste kaartje zit onder iets waar je op kunt zitten.",
+    "Het tweede kaartje ligt onder een voorwerp dat op een tafel of vensterbank staat.",
+    "Het derde kaartje zit in de buurt van de deur, onder of achter iets."
+  ],
   ZOEK_PLEKKEN: [                              // hints bij het zoeken van de 3 kaartjes in kamer 3
     "Het eerste kaartje hangt op een plek waar je naar buiten kijkt.",
     "Het tweede kaartje zit in de buurt van de deur.",
@@ -253,7 +258,7 @@ const KAMERS = {
   1: {naam: "Het kantoor", par: "2.1 Inkomen en uitgaven", beschikbaar: true},
   2: {naam: "De spaarkamer", par: "2.2 Wat levert sparen op?", beschikbaar: true},
   3: {naam: "De bank", par: "2.3 Waarom zou je lenen?", beschikbaar: true},
-  4: {naam: "De verzekeraar", par: "2.4 Verzekeren, hoezo?", beschikbaar: false}
+  4: {naam: "De verzekeraar", par: "2.4 Verzekeren, hoezo?", beschikbaar: true}
 };
 
 const Q = {};
@@ -595,6 +600,106 @@ add({id:"c_spaarplan", type:"open", creatief:true, pts:60, label:"Creatieve opdr
   model:"Het motief is uitgestelde besteding. Sanne moet 300 : 6 = €50 per maand sparen. Ze kan het geld bewaren op een spaarrekening, want dan is het veilig en krijgt ze rente. Daarnaast kan ze een kleine reserve houden voor onverwachte uitgaven (voorzorg).",
   hints:["Je spaart voor iets dat je later wilt kopen. Welk motief is dat?","Deel het bedrag dat ze wil hebben door het aantal maanden.","Denk aan een spaarrekening bij de bank en aan een reserve voor onverwachte kosten."]});
 
+/* =========================================================
+   KAMER 4: DE VERZEKERAAR (2.4)
+   ========================================================= */
+add({id:"m_premie", type:"mc", pts:10, multi:true, label:"Meerkeuze",
+  q:"Waar hangt de hoogte van de premie van af? (meerdere antwoorden goed)",
+  opts:["De kans dat er schade ontstaat","De hoogte van de mogelijke schade","De naam van de verzekeraar","Het weer bij het afsluiten"], correct:[0,1],
+  hints:["Een verzekeraar kijkt naar hoe vaak en hoe duur schade is.","De naam van het bedrijf en het weer bepalen de premie niet.","Twee antwoorden gaan over schade: de kans en de hoogte."]});
+add({id:"m_tf4", type:"mc", pts:10, label:"Juist of onjuist",
+  q:"Juist of onjuist: een hoger eigen risico zorgt meestal voor een lagere premie.",
+  opts:["Juist","Onjuist"], correct:[0], fixedOrder:true,
+  hints:["Bij een hoger eigen risico betaal jij meer van de schade zelf.","De verzekeraar betaalt dan minder uit.","Het antwoord is: juist."]});
+add({id:"m_verplicht", type:"mc", pts:10, label:"Meerkeuze",
+  q:"Welke van deze verzekeringen is verplicht voor iedereen die in Nederland woont?",
+  opts:["Een zorgverzekering","Een fietsverzekering","Een reisverzekering","Een inboedelverzekering"], correct:[0],
+  hints:["Het gaat om kosten van de dokter en het ziekenhuis.","De andere verzekeringen kies je zelf.","De verzekering voor je gezondheid is verplicht."]});
+add({id:"m_inboedel", type:"mc", pts:10, label:"Welke hoort bij...",
+  q:"Welke omschrijving hoort bij een inboedelverzekering?",
+  opts:["Schade aan spullen in je huis","Schade aan je auto of scooter","Schade aan het huis zelf","Kosten van een ziekenhuisopname"], correct:[0],
+  hints:["Inboedel zijn de spullen in je huis.","Het huis zelf valt onder een andere verzekering.","Denk aan je tv, bank en laptop."]});
+add({id:"m_werkt", type:"mc", pts:10, label:"Begrijpen",
+  q:"Waarom kan een verzekeraar de schade van een paar mensen betalen?",
+  opts:["Veel mensen betalen premie, maar maar weinig mensen hebben schade","Elke verzekerde krijgt zijn premie aan het einde terug","De overheid betaalt alle schades van verzekerden","De verzekeraar betaalt alles uit zijn eigen spaargeld"], correct:[0],
+  hints:["Denk aan alle mensen die premie betalen.","Samen betalen veel mensen voor de schade van een paar mensen.","Veel premie-betalers, weinig schademelders."]});
+
+add({id:"k_verzeker", type:"koppel", pts:20, label:"Koppelen",
+  q:"Koppel elk begrip aan de juiste uitleg. Tik links op een begrip en daarna rechts op de uitleg.",
+  pairs:[["Premie","Het bedrag dat je betaalt voor je verzekering"],
+         ["Eigen risico","Het deel van de schade dat je zelf betaalt"],
+         ["Schade","Wat je kwijt bent door bijvoorbeeld diefstal"],
+         ["Verzekeraar","Het bedrijf dat de schade vergoedt"],
+         ["Polis","Het bewijs van je verzekering"],
+         ["Verzekeringnemer","Degene die de verzekering afsluit"]],
+  hints:["Begin met de premie en de schade.","De verzekeraar is het bedrijf, de verzekeringnemer is de klant.","De polis is het papier of document met de afspraken."]});
+
+add({id:"o_premie", type:"open", pts:30, label:"Open vraag",
+  q:"Noem drie dingen waar de hoogte van de premie van afhangt en leg bij elk uit hoe dat werkt.",
+  crit:[
+   {label:"Kans op schade", tekst:"Noemt de kans op schade en legt uit dat een grotere kans op schade een hogere premie geeft.", rx:/kans/i, kw:["kans","vaak","risico"]},
+   {label:"Hoogte van de schade", tekst:"Noemt de hoogte van de mogelijke schade en legt uit dat duurdere schade een hogere premie geeft.", rx:/hoogte|duur|bedrag van de schade|grote schade/i, kw:["hoogte","duurder","duur","groter"]},
+   {label:"Eigen risico", tekst:"Noemt het eigen risico en legt uit dat een hoger eigen risico een lagere premie geeft.", rx:/eigen risico/i, kw:["eigenrisico","risico"]}],
+  model:"De kans op schade: meer kans betekent een hogere premie. De hoogte van de schade: duurdere schade betekent een hogere premie. Het eigen risico: een hoger eigen risico betekent een lagere premie.",
+  hints:["Een verzekeraar kijkt naar schade, en naar wat jij zelf betaalt.","Twee factoren gaan over schade, één over wat jij zelf betaalt.","Kans op schade, hoogte van de schade en eigen risico."]});
+add({id:"o_eigenrisico", type:"open", pts:30, label:"Open vraag",
+  q:"Leg uit wat het eigen risico is en waarom je een lagere premie betaalt als je een hoger eigen risico kiest.",
+  crit:[
+   {label:"Wat is eigen risico", tekst:"Legt uit dat het eigen risico het deel van de schade is dat je zelf betaalt.", rx:/zelf (betaal|bet)|eigen deel|deel van de schade/i, kw:["zelf","eigen deel"]},
+   {label:"Hoger eigen risico, lagere premie", tekst:"Legt uit dat de verzekeraar dan minder hoeft te betalen en daarom een lagere premie rekent.", rx:/minder (betalen|uit|schade)|lagere premie|goedkoper/i, kw:["minder","lagere","goedkoper"]}],
+  model:"Het eigen risico is het deel van de schade dat je zelf betaalt. Bij een hoger eigen risico betaalt de verzekeraar minder uit, dus hoef jij minder premie te betalen.",
+  hints:["Denk aan wie welk deel van de schade betaalt.","Als jij meer zelf betaalt, hoeft de verzekeraar minder te betalen.","Eigen risico = je betaalt zelf een deel. Dan is de premie lager."]});
+add({id:"o_mila", type:"open", pts:30, label:"Open vraag",
+  q:"Mila heeft een dure fiets en geen verzekering. Jesse heeft dezelfde fiets met een verzekering met eigen risico. Beide fietsen worden gestolen. Leg uit wat dit voor Mila en wat dit voor Jesse betekent.",
+  crit:[
+   {label:"Mila betaalt alles zelf", tekst:"Legt uit dat Mila de hele schade zelf moet betalen omdat ze niet verzekerd is.", rx:/mila[\s\S]*(alles|hele|zelf)/i, kw:["alles","hele","zelf"]},
+   {label:"Jesse krijgt vergoeding minus eigen risico", tekst:"Legt uit dat Jesse de schade vergoed krijgt, maar het eigen risico zelf betaalt (en premie heeft betaald).", rx:/jesse[\s\S]*(vergoed|eigen risico|verzekeraar)/i, kw:["vergoed","vergoeding","eigen risico","verzekeraar"]}],
+  model:"Mila betaalt de hele schade zelf. Jesse krijgt de schade vergoed door de verzekeraar, maar betaalt zelf het eigen risico en heeft eerder premie betaald.",
+  hints:["Wat gebeurt er als je geen verzekering hebt?","Wie betaalt bij Jesse een deel van de schade?","Mila: alles zelf. Jesse: verzekeraar betaalt, behalve het eigen risico."]});
+
+rk("v_a","Je betaalt €9 premie per maand voor een fietsverzekering. Hoeveel premie betaal je per jaar?",
+   "", () => 9*12, 0, "€",
+   ["Een jaar heeft 12 maanden.","Vermenigvuldig het maandbedrag met het aantal maanden.","9 x 12."]);
+rk("v_b","Je betaalt €216 premie per jaar voor een verzekering. Hoeveel is dat per maand?",
+   "", () => 216/12, 0, "€",
+   ["Een jaar heeft 12 maanden.","Deel het jaarbedrag door het aantal maanden.","216 : 12."]);
+rk("v_c","De premie stijgt van €9,00 naar €10,80 per maand. Met hoeveel procent stijgt de premie?",
+   "", () => ((10.8-9)/9)*100, 0, "%",
+   ["Het oude bedrag is €9,00 en het nieuwe €10,80.","De formule is (Nieuw - oud) : oud x 100.","(10,80 - 9,00) : 9,00 x 100."]);
+rk("v_d","Je betaalt 3 jaar lang €9 premie per maand. In die tijd heb je één schade van €480 met een eigen risico van €75. Hoeveel euro heb je in totaal zelf betaald (premie en eigen risico)?",
+   "", () => 9*36 + 75, 0, "€",
+   ["Reken eerst uit hoeveel maanden 3 jaar is.","Premie in totaal: €9 x 36 maanden. Tel daar het eigen risico bij op.","9 x 36 + 75."]);
+
+const VZ = {schade:480, er:75, premie:9};
+const BOXV = [["Schade", () => eur(VZ.schade)], ["Eigen risico", () => eur(VZ.er)], ["Premie", () => eur(VZ.premie) + " per maand"]];
+add({id:"x0", type:"kaartjes", pts:0, label:"Zoekopdracht",
+  q:"Een schade uitrekenen kan alleen met de juiste gegevens. Drie kaartjes zijn verstopt in het lokaal: de schade aan een fiets, het eigen risico en de premie per maand. Zoek ze op en typ de getallen in.",
+  velden:[{k:"s",lab:"Schade aan de fiets (€)",ph:"bijvoorbeeld 300",want:480},{k:"e",lab:"Eigen risico (€)",ph:"bijvoorbeeld 50",want:75},{k:"p",lab:"Premie per maand (€)",ph:"bijvoorbeeld 5",want:9}],
+  model:"Schade €480, eigen risico €75 en premie €9 per maand. Zoek de kaartjes de volgende keer eerst op.",
+  hints:[CONFIG.ZOEK_PLEKKEN_4[0], CONFIG.ZOEK_PLEKKEN_4[1], CONFIG.ZOEK_PLEKKEN_4[2]]});
+add({id:"x1", type:"reken", pts:20, label:"Zoekopdracht", box:BOXV,
+  q:"Hoeveel euro vergoedt de verzekeraar bij deze schade?",
+  raw:() => VZ.schade - VZ.er, dec:0, unit:"€",
+  hints:["Het eigen risico betaal je zelf.","Trek het eigen risico af van de schade.","480 min 75."]});
+add({id:"x2", type:"reken", pts:20, label:"Zoekopdracht", box:BOXV,
+  q:"Hoeveel premie betaal je in een jaar?",
+  raw:() => VZ.premie*12, dec:0, unit:"€",
+  hints:["De premie is per maand. Een jaar heeft 12 maanden.","Vermenigvuldig de premie met het aantal maanden.","9 x 12."]});
+add({id:"x3", type:"reken", pts:20, label:"Zoekopdracht", box:BOXV,
+  q:"Stel dat deze schade in het jaar gebeurt. Hoeveel euro scheelt de verzekering je dan in dat jaar, vergeleken met geen verzekering? Reken met de premie voor een jaar en het eigen risico.",
+  vorige:[["Vergoeding van de verzekeraar", () => eur(VZ.schade - VZ.er)], ["Premie per jaar", () => eur(VZ.premie*12)]],
+  raw:() => VZ.schade - (VZ.premie*12 + VZ.er), dec:0, unit:"€",
+  hints:["Zonder verzekering betaal je de hele schade zelf.","Met verzekering betaal je premie voor een jaar plus het eigen risico.","480 min (108 + 75)."]});
+add({id:"c_scooter2", type:"open", creatief:true, pts:60, label:"Creatieve opdracht",
+  q:"Jesse (16) koopt een scooter van €2.400 en wil hem verzekeren. Verzekering A: premie €15 per maand en €100 eigen risico. Verzekering B: premie €10 per maand en €250 eigen risico. Schrijf een advies voor Jesse. Reken de premie per jaar van A en B uit. Reken ook uit wat Jesse in een jaar in totaal zelf betaalt (premie plus eigen risico) als er in dat jaar één keer schade van €800 is. Kies een verzekering en leg uit waarom.",
+  crit:[
+   {label:"Premie per jaar van A en B", tekst:"Noemt de premie per jaar: A €180 (15 x 12) en B €120 (10 x 12).", rx:/180[\s\S]*120|120[\s\S]*180/},
+   {label:"Totaal bij schade: A", tekst:"Noemt dat Jesse bij verzekering A in totaal €280 betaalt (180 + 100).", rx:/\b280\b/},
+   {label:"Totaal bij schade: B", tekst:"Noemt dat Jesse bij verzekering B in totaal €370 betaalt (120 + 250).", rx:/\b370\b/},
+   {label:"Keuze met uitleg", tekst:"Kiest een verzekering en legt dat uit, bijvoorbeeld A is goedkoper bij schade, B is goedkoper zonder schade.", rx:/kies|raad|advies|beter|goedkoper|verzekering [ab]/i, kw:["kies","adviseer","advies","goedkoper","beter"]}],
+  model:"A kost €180 premie per jaar, B €120. Bij een schade van €800 betaalt Jesse bij A €180 + €100 = €280 en bij B €120 + €250 = €370. A is goedkoper als er schade is, B is goedkoper als er geen schade is. Een goed advies kiest één verzekering en legt uit waarom.",
+  hints:["Premie per jaar = premie per maand x 12. Doe dat voor A en B.","Totaal bij schade = premie per jaar + eigen risico.","A: 180 + 100 en B: 120 + 250. Kies en leg uit waarom."]});
+
 function bouwRij(k){
   const pick = a => a[Math.floor(Math.random()*a.length)];
   if (k === 1) {
@@ -606,6 +711,11 @@ function bouwRij(k){
     return ["m_functies", pick(["m_tf2","m_rente"]), "k_sparen", pick(["m_voorzorg","m_uitgesteld"]),
             pick(["o_functies","o_motieven","o_bram"]), pick(["s_a","s_b","s_c","s_d"]),
             "sa0","sa1","sa2","sa3","c_spaarplan"];
+  }
+  if (k === 4) {
+    return ["m_premie", pick(["m_tf4","m_verplicht"]), "k_verzeker", pick(["m_inboedel","m_werkt"]),
+            pick(["o_premie","o_eigenrisico","o_mila"]), pick(["v_a","v_b","v_c","v_d"]),
+            "x0","x1","x2","x3","c_scooter2"];
   }
   if (k === 3) {
     return ["m_delen", pick(["m_tf","m_leeftijd"]), "k_lenen", pick(["m_hyp","m_waarom"]),
