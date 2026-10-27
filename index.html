@@ -167,6 +167,12 @@ table.begr{width:100%;border-collapse:collapse;font-size:18px}
 .hints{display:flex;flex-direction:column;gap:8px}
 .hint{background:var(--bg);border-left:4px solid var(--gold);border-radius:6px 12px 12px 6px;padding:10px 14px;font-size:17px}
 .cards{background:var(--bg);border:1px dashed var(--gold);border-radius:12px;padding:12px 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 18px;font-size:17px}
+.tw{background:var(--bg);border:1px solid var(--gold);border-radius:12px;padding:10px 12px;margin:0 0 10px;overflow-x:auto}
+.tt{color:var(--gold);font-weight:700;margin-bottom:6px}
+.tb{border-collapse:collapse;width:100%;font-size:16px;font-variant-numeric:tabular-nums}
+.tb th,.tb td{padding:6px 8px;text-align:right;border-bottom:1px solid rgba(255,255,255,.12)}
+.tb th:first-child,.tb td.f{text-align:left}
+.tb th{color:var(--muted);font-weight:600}
 .cards b{color:var(--gold);font-variant-numeric:tabular-nums}
 .sc{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-size:18px}
 .pay{font-family:var(--display);font-weight:800;color:var(--good)}
@@ -206,8 +212,6 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
 }
 </style>
 
-</head>
-<body>
 <div class="top"><div class="wrap">
   <div class="brand">MILLIONAIR WORDEN<small id="sub">Economie jaar 2 · Hoofdstuk 2</small></div>
   <div class="chips" id="chips"></div>
@@ -700,26 +704,331 @@ add({id:"c_scooter2", type:"open", creatief:true, pts:60, label:"Creatieve opdra
   model:"A kost €180 premie per jaar, B €120. Bij een schade van €800 betaalt Jesse bij A €180 + €100 = €280 en bij B €120 + €250 = €370. A is goedkoper als er schade is, B is goedkoper als er geen schade is. Een goed advies kiest één verzekering en legt uit waarom.",
   hints:["Premie per jaar = premie per maand x 12. Doe dat voor A en B.","Totaal bij schade = premie per jaar + eigen risico.","A: 180 + 100 en B: 120 + 250. Kies en leg uit waarom."]});
 
+
+/* =========================================================
+   VRAGENBANK (uitbreiding, afgestemd op het boek Pincode)
+   ========================================================= */
+const mc = (id, label, q, opts, correct, hints, extra) => add(Object.assign({id, type:"mc", pts:10, label, q, opts, correct, hints}, extra || {}));
+const tf = (id, q, juist, hints) => add({id, type:"mc", pts:10, label:"Juist of onjuist", q, opts:["Juist","Onjuist"], correct:[juist ? 0 : 1], fixedOrder:true, hints});
+const cr = (label, tekst, rx, kw) => ({label, tekst, rx, kw});
+const op = (id, q, crit, model, hints) => add({id, type:"open", pts:30, label:"Open vraag", q, crit, model, hints});
+const rk2 = (id, q, raw, dec, unit, hints, extra) => add(Object.assign({id, type:"reken", pts:20, label:"Rekenen", q, raw, dec, unit, hints}, extra || {}));
+
+/* ---------- KAMER 1: inkomsten en uitgaven ---------- */
+mc("m_loon","Welke hoort bij...","Welk voorbeeld hoort bij het inkomen 'loon of salaris'?",
+  ["Je verdient geld met een bijbaantje in de supermarkt","Je krijgt kinderbijslag omdat je ouders kinderen hebben","Je houdt geld over van je eigen webshop","Je krijgt geld van de gemeente omdat je werkloos bent"],[0],
+  ["Loon of salaris krijg je als je in dienst bent bij een bedrijf.","Kinderbijslag en geld bij werkloosheid komen van de overheid.","Een bijbaantje bij een supermarkt betekent dat je in dienst bent."]);
+mc("m_winst","Welke hoort bij...","Welk voorbeeld hoort bij het inkomen 'winst'?",
+  ["Je houdt geld over van je eigen webshop","Je krijgt salaris van je baas","Je ontvangt een uitkering van de overheid","Je krijgt korting op een nieuwe jas"],[0],
+  ["Winst heb je als je een eigen bedrijf hebt.","Salaris krijg je als je in dienst bent.","Een eigen webshop is een eigen bedrijf."]);
+tf("m_ink_tf","Juist of onjuist: kinderbijslag is een voorbeeld van een uitkering.",true,
+  ["Denk aan wie de kinderbijslag betaalt.","Een uitkering krijg je van de overheid.","Het antwoord is: juist."]);
+mc("m_meerdere","Meerkeuze","Welke twee voorbeelden zijn soorten inkomen? (meerdere antwoorden goed)",
+  ["Loon van een bijbaantje","Een uitkering van de overheid","Boodschappen doen","Contributie van de sportclub"],[0,1],
+  ["Inkomen is geld dat je ontvangt.","Boodschappen en contributie zijn uitgaven.","Loon en uitkering zijn inkomen."],{multi:true});
+mc("m_ink_3","Begrijpen","Wat is een uitkering?",
+  ["Geld dat je van de overheid ontvangt, bijvoorbeeld bij werkloosheid","Geld dat je verdient omdat je in dienst bent bij een bedrijf","Geld dat je overhoudt van je eigen bedrijf","Geld dat je op een spaarrekening zet"],[0],
+  ["Er zijn drie soorten inkomen: loon, winst en uitkering.","Loon krijg je van een werkgever, winst van je eigen bedrijf.","Een uitkering komt van de overheid."]);
+mc("m_huis","Welke hoort bij...","Welke uitgave hoort bij de huishoudelijke uitgaven?",
+  ["Boodschappen voor de week","Contributie van de sportclub","Een nieuwe laptop kopen","Een vakantie naar Spanje"],[0],
+  ["Huishoudelijke uitgaven zijn dagelijkse uitgaven.","Een laptop of vakantie koop je maar af en toe.","Denk aan eten en persoonlijke verzorging."]);
+tf("m_uit_tf","Juist of onjuist: huishoudelijke uitgaven noem je ook wel dagelijkse uitgaven.",true,
+  ["Huishoudelijke uitgaven doe je vaak.","Denk aan boodschappen.","Het antwoord is: juist."]);
+mc("m_gym","Welke hoort bij...","De contributie van de sportclub hoort bij welke groep uitgaven?",
+  ["Vaste lasten","Huishoudelijke uitgaven","Incidentele uitgaven","Inkomsten"],[0],
+  ["Je betaalt contributie met een vaste regelmaat.","Incidenteel is af en toe en groot.","Vaste lasten betaal je met een vaste regelmaat."]);
+mc("m_nut","Begrijpen","Waarom maak je een begroting?",
+  ["Zo zie je of je rond kunt komen en voorkom je geldproblemen","Zo krijg je meer zakgeld van je ouders","Zo hoef je minder belasting te betalen","Zo worden je rekeningen automatisch betaald"],[0],
+  ["Een begroting is een overzicht van je inkomsten en uitgaven.","Het helpt je om je geld te plannen.","Je ziet of je een tekort of overschot hebt."]);
+mc("m_budget","Begrijpen","Wat is je budget?",
+  ["Het bedrag dat je kunt uitgeven","Het bedrag dat je hebt gespaard","Het bedrag dat je moet terugbetalen","Het bedrag dat je per jaar verdient"],[0],
+  ["Je budget verdeel je over verschillende soorten uitgaven.","Het gaat om wat je mag uitgeven.","Budget is het bedrag dat je kunt uitgeven."]);
+mc("m_tekort","Toepassen","Je inkomsten zijn €250 en je uitgaven zijn €270. Wat heb je?",
+  ["Een tekort van €20","Een overschot van €20","Een tekort van €520","Een overschot van €520"],[0],
+  ["Vergelijk inkomsten met uitgaven.","Geef je meer uit dan je ontvangt, dan heb je een tekort.","270 min 250 is 20, en je geeft meer uit."]);
+mc("m_bezuinig","Begrijpen","Waarom kun je op vaste lasten moeilijk bezuinigen?",
+  ["Je moet ze met een vaste regelmaat betalen","Ze zijn altijd te klein om iets te besparen","Ze veranderen elke dag van bedrag","Je betaalt ze maar één keer in je leven"],[0],
+  ["Denk aan huur, energie en abonnementen.","Het bedrag en het moment liggen vast.","Je moet vaste lasten blijven betalen."]);
+add({id:"k_begrippen1", type:"koppel", pts:20, label:"Koppelen",
+  q:"Koppel elk begrip aan de juiste uitleg. Tik links op een begrip en daarna rechts op de uitleg.",
+  pairs:[["Begroting","Een overzicht van je verwachte inkomsten en uitgaven"],
+         ["Budget","Het bedrag dat je kunt uitgeven"],
+         ["Vaste lasten","Uitgaven die je met een vaste regelmaat betaalt"],
+         ["Huishoudelijke uitgaven","Dagelijkse uitgaven, zoals boodschappen"],
+         ["Incidentele uitgaven","Grote uitgaven die je af en toe doet"],
+         ["Uitkering","Geld van de overheid, bijvoorbeeld kinderbijslag"]],
+  hints:["Begin met de begroting en het budget.","Vaste lasten betaal je vaak, incidentele uitgaven af en toe.","Een uitkering krijg je van de overheid."]});
+
+op("o_nut","Wat is een begroting en wat is het nut ervan? Noem twee voordelen.",
+  [cr("Wat is een begroting","Legt uit dat een begroting een overzicht is van je verwachte inkomsten en uitgaven voor de komende periode.",/overzicht|inkomsten[\s\S]*uitgaven|uitgaven[\s\S]*inkomsten/i,["overzicht","inkomsten","uitgaven"]),
+   cr("Nut van een begroting","Noemt voordelen, zoals zien of je rond kunt komen, een tekort of overschot herkennen of geldproblemen voorkomen.",/rond|tekort|overschot|geldproblem|schuld|plannen|voorkom/i,["geldproblemen","tekort","overschot","rondkomen","voorkomen"])],
+  "Een begroting is een overzicht van je verwachte inkomsten en uitgaven voor de komende periode. Het nut is dat je ziet of je rond kunt komen en dat je geldproblemen voorkomt.",
+  ["Denk aan wat er in een begroting staat.","Wat kun je zien als je inkomsten en uitgaven naast elkaar zet?","Een overzicht van inkomsten en uitgaven. Je voorkomt geldproblemen."]);
+op("o_vastelasten","Energiekosten zijn vaste lasten. Leg uit waarom je daarop moeilijk kunt bezuinigen. Noem ook een manier waarop je toch kunt besparen op energiekosten.",
+  [cr("Waarom moeilijk","Legt uit dat vaste lasten met een vaste regelmaat betaald moeten worden of dat je het nodig hebt, dus lastig te veranderen zijn.",/vast|elke maand|moet|verplicht|nodig|regelmaat|niet zomaar/i,["vaste","regelmaat","moeten","nodig"]),
+   cr("Manier om te besparen","Noemt een passende manier om te besparen op energie, bijvoorbeeld licht uitdoen, korter douchen of de thermostaat lager zetten.",/licht|douch|thermostaat|verwarming|lager|zuinig|uitzetten|uitdoen|overstap|zonne|stekker|led/i,["licht","douchen","thermostaat","verwarming","zuinig","overstappen"])],
+  "Vaste lasten moet je met een vaste regelmaat betalen, dus je kunt er niet zomaar iets aan veranderen. Je kunt wel besparen door bijvoorbeeld het licht uit te doen of korter te douchen.",
+  ["Denk aan wat vaste lasten betekent.","Hoe kun je zelf minder energie gebruiken?","Vaste lasten liggen vast. Besparen kan door minder energie te gebruiken."]);
+op("o_weekmaand","Je verdient €9 per week met een bijbaantje. Leg stap voor stap uit hoe je dat omrekent naar een bedrag per maand en waarom je dat doet.",
+  [cr("Stappen","Noemt de stappen: bedrag per week x 52 (weken in een jaar) en daarna delen door 12 (maanden in een jaar).",/52[\s\S]*12|12[\s\S]*52/),
+   cr("Uitkomst","Noemt het juiste bedrag: €39 per maand ((9 x 52) : 12).",/\b39\b/),
+   cr("Reden","Legt uit dat je bedragen omrekent naar dezelfde periode zodat je ze kunt vergelijken of bij elkaar kunt optellen.",/vergelijk|zelfde periode|dezelfde periode|eerlijk|optellen|bij elkaar/i,["vergelijken","dezelfde","zelfde","optellen"])],
+  "Eerst reken je om naar een bedrag per jaar: 9 x 52 = 468. Daarna deel je door 12 maanden: 468 : 12 = €39 per maand. Je doet dit om bedragen te kunnen vergelijken of bij elkaar op te tellen.",
+  ["Een jaar heeft 52 weken en 12 maanden.","Eerst naar een jaarbedrag, dan naar een maandbedrag.","(9 x 52) : 12. Je doet dit om bedragen te kunnen vergelijken."]);
+op("o_meerdere","Leg met een voorbeeld uit dat je meerdere soorten inkomsten tegelijk kunt hebben.",
+  [cr("Twee soorten inkomsten","Geeft een voorbeeld waarin iemand tegelijk twee soorten inkomsten heeft (bijvoorbeeld loon en een uitkering, of loon en winst).",/(loon|salaris|baan|bijbaan)[\s\S]*(winst|uitkering|kinderbijslag|bedrijf)|(winst|uitkering|kinderbijslag|bedrijf)[\s\S]*(loon|salaris|baan|bijbaan)/i,["loon","salaris","winst","uitkering","kinderbijslag"])],
+  "Iemand heeft een baan (loon) en een eigen bedrijf (winst), of krijgt loon en kinderbijslag (een uitkering) tegelijk.",
+  ["Er zijn drie soorten inkomsten: loon, winst en uitkering.","Combineer twee soorten bij één persoon.","Bijvoorbeeld loon uit een baan en winst uit een eigen bedrijf."]);
+
+rk2("r1_h","Je wast elke week de auto van de buren en krijgt €7,50 per keer. Hoeveel is dat per maand? Rond af op 2 decimalen.",() => (7.5*52)/12,2,"€",
+  ["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 52 weken en 12 maanden.","(7,50 x 52) : 12."]);
+rk2("r1_i","Tess geeft €58,50 per maand uit aan hobby's. Hoeveel is dat per week? Rond af op 2 decimalen.",() => (58.5*12)/52,2,"€",
+  ["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 12 maanden en 52 weken.","(58,50 x 12) : 52."]);
+rk2("r1_j","Micha werkt in een pretpark en verdient €637 per maand. Hoeveel verdient Micha per week? Rond af op 2 decimalen.",() => (637*12)/52,2,"€",
+  ["Reken eerst om naar een bedrag per jaar.","Een jaar heeft 12 maanden en 52 weken.","(637 x 12) : 52."]);
+rk2("r1_k","Kai verdient €420 per week. Roxan verdient €21.600 per jaar. Hoeveel verdient Kai per maand meer dan Roxan?",() => (420*52)/12 - 21600/12,2,"€",
+  ["Reken beide bedragen om naar een bedrag per maand.","Kai: (420 x 52) : 12. Roxan: 21.600 : 12.","Trek het bedrag van Roxan af van dat van Kai."]);
+rk2("r1_l","Een vakantiebaantje levert €372 per jaar op. Hoeveel is dat per maand?",() => 372/12,2,"€",
+  ["Een jaar heeft 12 maanden.","Deel het jaarbedrag door het aantal maanden.","372 : 12."]);
+rk2("r1_n","Op een jas van €125 krijg je €30 korting. Hoeveel procent is de korting? Rond af op 1 decimaal.",() => (30/125)*100,1,"%",
+  ["De korting is het deel, de prijs van de jas is het geheel.","De formule is (Deel : geheel) x 100.","(30 : 125) x 100."]);
+rk2("r1_o","Je leent €750. In totaal betaal je €810 terug. Hoeveel procent meer heb je terugbetaald dan het geleende bedrag? Rond af op 1 decimaal.",() => ((810-750)/750)*100,1,"%",
+  ["Bereken eerst hoeveel je méér terugbetaalt.","De formule is (Deel : geheel) x 100.","(60 : 750) x 100."]);
+rk2("r1_ramon","Ramon krijgt €32,50 zakgeld, verdient €26 met klusjes en krijgt €75 verjaardagsgeld. Zijn uitgaven zijn €18 voor eten en drinken, €21,50 voor sportclub, €17,50 voor cadeautjes en €60 voor kleding. Hoeveel euro houdt Ramon over?",() => (32.5+26+75)-(18+21.5+17.5+60),2,"€",
+  ["Tel eerst alle inkomsten bij elkaar op.","Tel daarna alle uitgaven op en trek ze af van de inkomsten.","133,50 min 117."]);
+
+/* ---------- KAMER 2: geldfuncties, sparen en rente (termen uit het boek) ---------- */
+mc("m_f1","Toepassen","Je koopt een broodje en betaalt met een briefje van €5. Welke functie heeft geld hier?",
+  ["Ruilmiddel","Spaarmiddel","Rekenmiddel"],[0],
+  ["Je ruilt geld voor iets anders.","Je bewaart het geld niet en je vergelijkt geen prijzen.","Je betaalt ermee: ruilmiddel."]);
+mc("m_f2","Toepassen","Je legt elke maand €10 opzij voor later. Welke functie heeft geld hier?",
+  ["Spaarmiddel","Ruilmiddel","Rekenmiddel"],[0],
+  ["Je geeft het geld nu niet uit.","Je bewaart het voor later.","Bewaren voor later: spaarmiddel."]);
+mc("m_f3","Toepassen","Een jas kost €50 en een tas €30. Je vergelijkt de prijzen. Welke functie heeft geld hier?",
+  ["Rekenmiddel","Ruilmiddel","Spaarmiddel"],[0],
+  ["Je drukt de waarde van iets uit in geld.","Je betaalt of bewaart niets.","Waarde uitdrukken in geld: rekenmiddel."]);
+mc("m_rm","Welke hoort bij...","Welk voorbeeld hoort bij sparen voor de rente?",
+  ["Je zet geld op een spaarrekening om extra geld te krijgen","Je spaart voor een nieuwe fiets die je wilt kopen","Je houdt geld over voor als je laptop kapotgaat","Je geeft al je geld uit aan kleding"],[0],
+  ["Rente krijg je van de bank voor je spaargeld.","Een nieuwe fiets is een doel, een kapotte laptop is voorzorg.","Het gaat om extra geld van de bank."]);
+mc("m_rwaarom","Begrijpen","Waarom geeft de bank je rente over je spaargeld?",
+  ["De bank kan jouw spaargeld gebruiken om uit te lenen","De bank wil dat je meer geld gaat uitgeven","De overheid dwingt de bank elk jaar rente te betalen","De bank heeft te veel geld en wil het kwijt"],[0],
+  ["Wat doet een bank met geld dat je bij haar spaart?","Een bank leent geld uit aan anderen.","Daar verdient de bank geld mee, en jij krijgt een vergoeding."]);
+mc("m_rjaar","Meerkeuze","Hoe vaak krijg je normaal gesproken rente van de bank?",
+  ["Eén keer per jaar","Eén keer per week","Eén keer per dag","Eén keer per maand"],[0],
+  ["Rente wordt berekend in procenten per jaar.","Je krijgt hem vaak aan het eind van het jaar.","Het antwoord is: één keer per jaar."]);
+mc("m_verschil","Begrijpen","Welke uitspraak over rente klopt?",
+  ["Bij sparen ontvang je rente, bij lenen betaal je rente","Bij sparen betaal je rente, bij lenen ontvang je rente","Je ontvangt rente bij sparen en bij lenen","Je betaalt rente bij sparen en bij lenen"],[0],
+  ["Denk aan wie het geld gebruikt: jij of de bank.","Bij sparen gebruikt de bank jouw geld.","Sparen: ontvangen. Lenen: betalen."]);
+add({id:"k_sparen2", type:"koppel", pts:20, label:"Koppelen",
+  q:"Koppel elke situatie aan de juiste functie of reden om te sparen. Tik links op een situatie en daarna rechts op het antwoord.",
+  pairs:[["Je betaalt met je pinpas bij de kapper","Ruilmiddel"],
+         ["Je legt elke maand €10 opzij","Spaarmiddel"],
+         ["Je ziet dat een jas €50 kost","Rekenmiddel"],
+         ["Je spaart voor een nieuwe laptop","Sparen voor een doel"],
+         ["Je spaart voor als je fiets kapotgaat","Sparen uit voorzorg"],
+         ["Je zet geld op een spaarrekening voor extra geld","Sparen voor de rente"]],
+  hints:["Begin met de drie geldfuncties.","Een doel is iets dat je wilt kopen. Voorzorg is voor onverwachte kosten.","De rente krijg je van de bank."]});
+op("o_rwaarom","Waarom geeft de bank je rente als je geld op een spaarrekening hebt?",
+  [cr("Bank gebruikt spaargeld","Legt uit dat de bank het spaargeld kan gebruiken, bijvoorbeeld om uit te lenen aan anderen.",/uitle|leent|lenen|gebruik/i,["uitlenen","leent","gebruiken","lenen"]),
+   cr("Bank verdient eraan","Legt uit dat de bank daar geld mee verdient en jou daarvoor een vergoeding geeft.",/verdien|winst|vergoeding|geld mee/i,["verdient","vergoeding","winst"])],
+  "De bank kan jouw spaargeld gebruiken om uit te lenen aan anderen. Daar verdient de bank geld mee, en jij krijgt daarvoor een vergoeding: de rente.",
+  ["Wat doet de bank met jouw spaargeld?","Aan wie kan de bank geld uitlenen?","De bank leent het uit en verdient daaraan. Jij krijgt een vergoeding."]);
+op("o_verschil","Leg uit wat het verschil is tussen rente ontvangen en rente betalen.",
+  [cr("Rente ontvangen bij sparen","Legt uit dat je bij sparen rente ontvangt van de bank.",/(spaar|sparen)[\s\S]*(ontvang|krijg)|(ontvang|krijg)[\s\S]*(spaar|sparen)/i,["sparen","spaarrekening","ontvang","ontvangen","krijg"]),
+   cr("Rente betalen bij lenen","Legt uit dat je bij lenen rente betaalt aan de bank.",/(leen|lenen|lening)[\s\S]*(betaal|betalen)|(betaal|betalen)[\s\S]*(leen|lenen|lening)/i,["lenen","lening","betaal","betalen"])],
+  "Als je spaart, ontvang je rente van de bank voor je spaargeld. Als je geld leent, betaal jij rente aan de bank.",
+  ["Denk aan wie het geld van wie gebruikt.","Sparen en lenen werken precies andersom.","Sparen: je ontvangt. Lenen: je betaalt."]);
+op("o_rrekenen","Op je spaarrekening staat €1.150. De rente is 2,4% per jaar. Leg stap voor stap uit hoe je de rente na een jaar berekent. Rond af op 2 decimalen.",
+  [cr("Juiste berekening","Gebruikt de juiste berekening: (2,4 : 100) x 1150 of 0,024 x 1150.",/2[,.]4\s*[:\/÷]\s*100|0[,.]024/),
+   cr("Uitkomst","Noemt het juiste bedrag: €27,60.",/27[,.]6/),
+   cr("Afgerond op 2 decimalen","Noemt het bedrag met twee decimalen: 27,60.",/27[,.]60/)],
+  "Rente = (2,4 : 100) x 1150 = 0,024 x 1150 = €27,60.",
+  ["Gebruik de formule (Percentage : 100) x spaarbedrag.","Reken eerst 2,4 : 100 uit.","0,024 x 1150, schrijf het bedrag met 2 decimalen."]);
+rk2("s_e","Je hebt €950 op een spaarrekening en krijgt 1,9% rente per jaar. Bereken de rente die je na een jaar ontvangt. Rond af op 2 decimalen.",() => (1.9/100)*950,2,"€",
+  ["Het spaarbedrag is het totaal waar je het percentage van neemt.","De formule is (Percentage : 100) x totaal.","(1,9 : 100) x 950."]);
+rk2("s_f","Je hebt €2.840 op een spaarrekening met 1,5% rente per jaar. Hoeveel rente krijg je na 8 maanden? Rond af op 2 decimalen.",() => ((1.5/100)*2840*8)/12,2,"€",
+  ["Rente wordt per jaar berekend. Reken eerst de rente over een jaar uit.","Een jaar heeft 12 maanden. Deel daarna door 12 en vermenigvuldig met 8.","((1,5 : 100) x 2840 x 8) : 12."]);
+
+/* kamer 2: terminologie uit het boek (sparen voor een doel, uit voorzorg, voor de rente) */
+add({id:"m_uitgesteld", type:"mc", pts:10, label:"Welke hoort bij...",
+  q:"Welk voorbeeld hoort bij sparen voor een doel?",
+  opts:["Je spaart acht maanden voor een nieuwe scooter","Je spaart voor het geval je ziek wordt","Je spaart omdat je altijd een reserve wilt","Je spaart omdat de bank rente geeft"], correct:[0],
+  hints:["Je wilt iets kopen en hebt daar nog te weinig geld voor.","Je weet al waaraan je het geld later wilt uitgeven.","Sparen voor een bepaald doel in de toekomst."]});
+add({id:"k_sparen", type:"koppel", pts:20, label:"Koppelen",
+  q:"Koppel elk begrip aan de juiste uitleg. Tik links op een begrip en daarna rechts op de uitleg.",
+  pairs:[["Ruilmiddel","Je betaalt ermee in de winkel"],
+         ["Spaarmiddel","Je bewaart geld voor later"],
+         ["Rekenmiddel","Je drukt de waarde van iets uit in euro's"],
+         ["Sparen voor een doel","Je wilt iets kopen, maar hebt nog te weinig geld"],
+         ["Sparen uit voorzorg","Je zorgt dat je geld hebt voor onverwachte kosten"],
+         ["Rente","Een vergoeding die je van de bank krijgt voor je spaargeld"]],
+  hints:["Begin met de drie geldfuncties.","Drie begrippen zijn functies van geld, twee zijn redenen om te sparen.","Voorzorg gaat over onverwachte kosten, een doel over iets dat je wilt kopen."]});
+add({id:"o_motieven", type:"open", pts:30, label:"Open vraag",
+  q:"Noem de drie redenen om te sparen en geef bij elke reden een voorbeeld.",
+  crit:[
+   cr("Sparen voor een doel","Noemt sparen voor een doel (iets kopen waarvoor je nog te weinig geld hebt) en geeft een passend voorbeeld.",/doel|iets kopen|later kopen|nieuwe .*kopen/i,["doel","sparen voor"]),
+   cr("Sparen voor de rente","Noemt sparen voor de rente (geld van de bank krijgen over je spaargeld) en geeft een passend voorbeeld.",/rente|spaarrekening|extra geld/i,["rente","spaarrekening"]),
+   cr("Sparen uit voorzorg","Noemt sparen uit voorzorg (geld hebben voor onverwachte kosten) en geeft een passend voorbeeld.",/voorzorg|onverwacht|reserve|noodgeval|kapot/i,["voorzorg","onverwachte","reserve","kapot"])],
+  model:"Sparen voor een doel (bijvoorbeeld een scooter), sparen voor de rente (geld op een spaarrekening zetten) en sparen uit voorzorg (voor onverwachte kosten, zoals een kapotte laptop).",
+  hints:["Eén reden gaat over iets dat je wilt kopen, één over de bank en één over onverwachte kosten.","De redenen: een doel, de rente en voorzorg.","Bedenk bij elke reden een voorbeeld."]});
+add({id:"o_bram", type:"open", pts:30, label:"Open vraag",
+  q:"Bram spaart elke maand voor een nieuwe brommer. Sanne spaart elke maand een bedrag voor het geval er onverwacht iets kapotgaat. Welke reden om te sparen heeft Bram en welke Sanne? Leg uit waarom.",
+  crit:[
+   cr("Bram: sparen voor een doel","Zegt dat Bram spaart voor een doel (hij wil een brommer kopen) en legt uit waarom.",/doel|brommer|kopen/i,["doel","brommer","kopen"]),
+   cr("Sanne: sparen uit voorzorg","Zegt dat Sanne spaart uit voorzorg (voor onverwachte kosten) en legt uit waarom.",/voorzorg|onverwacht|kapot|reserve/i,["voorzorg","onverwacht","onverwachte","reserve"])],
+  model:"Bram spaart voor een doel: hij wil een brommer kopen. Sanne spaart uit voorzorg: ze wil geld hebben voor onverwachte kosten.",
+  hints:["Bram weet waaraan hij het geld wil uitgeven.","Sanne weet niet wat er kapot zal gaan.","Bram: een doel. Sanne: voorzorg. Leg uit waarom."]});
+add({id:"c_spaarplan", type:"open", creatief:true, pts:60, label:"Creatieve opdracht",
+  q:"Sanne (14) wil over 6 maanden €300 hebben voor een nieuwe telefoon. Schrijf een spaarplan voor Sanne. Zeg welke reden om te sparen dit is, hoeveel ze per maand moet sparen, waar ze haar spaargeld bewaart en waarom, en wat ze nog meer kan doen om niet in de problemen te komen.",
+  crit:[
+   cr("Reden om te sparen","Noemt de juiste reden om te sparen: sparen voor een doel (een telefoon kopen).",/doel|telefoon kopen|iets kopen/i,["doel"]),
+   cr("Bedrag per maand","Berekent dat Sanne €50 per maand moet sparen (300 : 6).",/\b50\b/),
+   cr("Waar bewaren en waarom","Noemt een plek om te sparen (bijvoorbeeld een spaarrekening bij de bank) en geeft een reden, bijvoorbeeld dat je rente krijgt of dat het veilig is.",/spaarrekening|bank|rente|veilig|spaarpot/i,["spaarrekening","bank","rente","veilig","spaarpot"]),
+   cr("Extra advies","Geeft een passend extra advies, bijvoorbeeld ook een reserve houden voor onverwachte kosten (voorzorg), bijverdienen of minder uitgeven.",/voorzorg|reserve|onverwacht|bijverdien|minder uitgeven|bezuinig|zakgeld/i,["voorzorg","reserve","onverwachte","bijverdienen","bezuinigen"])],
+  model:"Het is sparen voor een doel. Sanne moet 300 : 6 = €50 per maand sparen. Ze bewaart het op een spaarrekening, want dan is het veilig en krijgt ze rente. Daarnaast kan ze een kleine reserve houden voor onverwachte kosten (voorzorg).",
+  hints:["Je wilt iets kopen. Welke reden om te sparen is dat?","Deel het bedrag dat ze wil hebben door het aantal maanden.","Denk aan een spaarrekening bij de bank en aan een reserve voor onverwachte kosten."]});
+
+/* ---------- KAMER 3: lenen (termen uit het boek) ---------- */
+mc("m_reden1","Toepassen","Je laptop gaat kapot en je hebt voor school meteen een nieuwe nodig. Welke reden om te lenen past hierbij?",
+  ["Onverwacht dringend geld nodig hebben","Niet willen wachten tot je genoeg gespaard hebt","Je wilt rente ontvangen over je geld","Je wilt minder belasting betalen"],[0],
+  ["De laptop gaat onverwacht kapot.","Je hebt het geld meteen nodig.","Onverwacht dringend geld nodig hebben."]);
+mc("m_reden2","Toepassen","De ouders van een vriend lenen geld voor een dure vakantiereis die ze nu willen. Welke reden om te lenen past hierbij?",
+  ["Niet willen wachten tot je genoeg gespaard hebt","Onverwacht dringend geld nodig hebben","Je wilt rente ontvangen over je geld","Je moet een verzekering afsluiten"],[0],
+  ["Een vakantie is niet onverwacht.","Ze willen iets duurs nu al doen.","Niet willen wachten tot je genoeg gespaard hebt."]);
+mc("m_kosten","Begrijpen","Wat zijn de kosten van een lening?",
+  ["Alles wat je méér terugbetaalt dan je hebt geleend","Het bedrag dat je hebt geleend","Het bedrag van één maandtermijn","Alleen de aflossing van de lening"],[0],
+  ["Je betaalt in totaal meer terug dan je leende.","Aflossing is het terugbetalen van het geleende bedrag zelf.","Het verschil tussen terugbetaald en geleend bedrag."]);
+mc("m_risico","Begrijpen","Wat is een risico van geld lenen?",
+  ["Je kunt het geld later misschien niet terugbetalen","Je krijgt automatisch meer geld terug dan je leende","De bank betaalt jou elk jaar rente","Je hoeft pas na tien jaar iets terug te betalen"],[0],
+  ["Geld dat je leent, moet je terugbetalen.","Denk aan wat er gebeurt als je geen geld meer hebt.","Je kunt in problemen komen als je niet kunt terugbetalen."]);
+add({id:"k_lenen", type:"koppel", pts:20, label:"Koppelen",
+  q:"Koppel elk begrip aan de juiste uitleg. Tik links op een begrip en daarna rechts op de uitleg.",
+  pairs:[["Lenen","Geld gebruiken dat van een ander is"],
+         ["Aflossing","Het geleende geld terugbetalen"],
+         ["Rente","Een vergoeding die je aan de bank betaalt voor het lenen"],
+         ["Maandtermijn","Een vast bedrag dat je elke maand terugbetaalt"],
+         ["Kosten van een lening","Alles wat je méér terugbetaalt dan je leende"],
+         ["Niet willen wachten","Een reden om te lenen: je koopt iets duurs nu al"]],
+  hints:["Begin met lenen en aflossing.","Een maandtermijn bestaat uit aflossing en rente.","De kosten van een lening zijn wat je extra betaalt."]});
+op("o_reden2","Noem twee redenen waarom je geld gaat lenen en geef bij elke reden een voorbeeld.",
+  [cr("Niet willen wachten","Noemt: niet willen wachten tot je genoeg gespaard hebt (iets duurs nu willen) en geeft een passend voorbeeld.",/wacht|duur|nu (al )?(kopen|hebben)|niet genoeg gespaard|te weinig geld/i,["wachten","duurs","gespaard","kopen"]),
+   cr("Onverwacht dringend geld","Noemt: onverwacht dringend geld nodig hebben en geeft een passend voorbeeld, zoals een kapotte laptop.",/onverwacht|dringend|kapot|reparatie|spoed/i,["onverwacht","onverwachte","dringend","kapot","reparatie"])],
+  "Je wilt iets duurs hebben maar wilt niet wachten tot je genoeg gespaard hebt (bijvoorbeeld een nieuwe scooter). Of je hebt onverwacht dringend geld nodig (bijvoorbeeld voor een kapotte laptop).",
+  ["Eén reden gaat over iets duurs dat je nu wilt, de ander over iets dat onverwacht gebeurt.","Niet willen wachten en onverwacht dringend geld nodig hebben.","Bedenk bij elke reden een voorbeeld."]);
+op("o_risico","Waarom moet je van tevoren goed bedenken of je het geleende geld later kunt terugbetalen? Noem het risico.",
+  [cr("Je moet terugbetalen","Legt uit dat geleend geld (met rente) terugbetaald moet worden.",/terug ?betal|aflos|moet(en)? (je )?betalen|terug ?geven/i,["terugbetalen","terug","aflossen","betalen"]),
+   cr("Risico","Noemt het risico: als je niet kunt terugbetalen kom je in geldproblemen of krijg je schulden.",/schuld|probleem|niet (kunt|kan|lukt)|niet betalen|geldproblem|tekort/i,["schulden","problemen","geldproblemen","tekort"])],
+  "Geleend geld moet je terugbetalen, met rente. Als je dat niet kunt, kom je in geldproblemen of krijg je schulden.",
+  ["Wat moet je met geleend geld doen?","Wat gebeurt er als je geen geld hebt om terug te betalen?","Je moet terugbetalen. Als dat niet lukt, krijg je geldproblemen."]);
+op("o_kosten","Waaruit bestaan de kosten van een lening bij een bank? Leg uit wat bedoeld wordt met: geld lenen kost geld.",
+  [cr("Rente","Noemt de rente als belangrijkste onderdeel van de kosten.",/rente/i,["rente"]),
+   cr("Meer terugbetalen","Legt uit dat je in totaal meer terugbetaalt dan je hebt geleend.",/meer (terug|betal)|extra|méér|boven het (geleende|bedrag)/i,["meer","extra","méér"])],
+  "De kosten bestaan vooral uit rente, soms met administratiekosten. Geld lenen kost geld, omdat je in totaal meer terugbetaalt dan je hebt geleend.",
+  ["Wat betaal je extra aan de bank?","Vergelijk wat je terugbetaalt met wat je leende.","Rente: je betaalt in totaal meer terug dan je leende."]);
+const CREDI = {titel:"Lenen bij CrediBank: maandtermijn", kop:["Geleend bedrag","6 maanden","12 maanden","36 maanden","48 maanden"],
+  rijen:[["€ 2.000","€ 343","€ 172","€ 58","€ 44"],["€ 5.000","€ 858","€ 429","€ 144","€ 109"],["€ 8.000","€ 1.373","€ 687","€ 231","€ 175"]]};
+rk2("t_a","Gebruik de tabel. Je leent €5.000 en betaalt het in 36 maanden terug. Hoeveel betaal je in totaal terug?",() => 144*36,2,"€",
+  ["Zoek in de tabel de maandtermijn bij €5.000 en 36 maanden.","Totaal terugbetaald = maandtermijn x aantal maanden.","144 x 36."],{tabel:CREDI});
+rk2("t_b","Gebruik de tabel. Je leent €8.000 en betaalt het in 48 maanden terug. Hoeveel zijn de kosten van deze lening?",() => 175*48-8000,2,"€",
+  ["Zoek de maandtermijn en bereken wat je in totaal terugbetaalt.","De kosten zijn wat je terugbetaalt min wat je leende.","175 x 48 min 8000."],{tabel:CREDI});
+rk2("t_c","Gebruik de tabel. Je leent €2.000 en betaalt het in 12 maanden terug. Hoeveel procent zijn de kosten van het geleende bedrag? Rond af op 1 decimaal.",() => ((172*12-2000)/2000)*100,1,"%",
+  ["Bereken eerst de kosten: totaal terugbetaald min geleend bedrag.","De formule is (Deel : geheel) x 100.","(64 : 2000) x 100."],{tabel:CREDI});
+rk2("t_d","Gebruik de tabel. Je wilt €8.000 lenen. Hoeveel euro schelt het in kosten als je in 12 maanden terugbetaalt in plaats van in 48 maanden?",() => (175*48-8000)-(687*12-8000),2,"€",
+  ["Bereken van beide opties de kosten.","Kosten = maandtermijn x aantal maanden min het geleende bedrag.","Trek de kosten van 12 maanden af van de kosten van 48 maanden."],{tabel:CREDI});
+
+/* ---------- KAMER 4: verzekeren (termen uit het boek) ---------- */
+add({id:"m_premie", type:"mc", pts:10, multi:true, label:"Meerkeuze",
+  q:"Waar hangt het van af of je een verzekering afsluit? (meerdere antwoorden goed)",
+  opts:["De kans dat je schade hebt","De hoogte van het bedrag waar het om gaat","Of je de schade zelf zou kunnen betalen","De naam van de verzekeraar"], correct:[0,1,2],
+  hints:["Je kijkt naar het risico en naar het bedrag.","De naam van de verzekeraar bepaalt niet of je een verzekering nodig hebt.","Risico, hoogte van het bedrag en zelf kunnen betalen."]});
+add({id:"o_premie", type:"open", pts:30, label:"Open vraag",
+  q:"Waar hangt het van af of je een verzekering afsluit? Noem drie dingen en leg ze kort uit.",
+  crit:[
+   cr("Kans op schade (risico)","Noemt de kans op schade (het risico) en legt uit dat je eerder verzekert als de kans groter is.",/kans|risico|vaak/i,["kans","risico","vaak"]),
+   cr("Hoogte van het bedrag","Noemt de hoogte van het bedrag waar het om gaat en legt uit dat je eerder verzekert bij een hoog bedrag.",/hoogte|duur|bedrag|groot/i,["hoogte","duur","duurder","bedrag"]),
+   cr("Zelf kunnen betalen","Noemt dat het ervan afhangt of je de schade zelf kunt betalen.",/zelf (kun|kan|betal)|zelf betalen|betalen/i,["zelf","betalen"])],
+  model:"De kans dat je schade hebt (het risico), de hoogte van het bedrag waar het om gaat en of je de schade zelf zou kunnen betalen.",
+  hints:["Je kijkt naar de schade en naar jezelf.","Twee dingen gaan over de schade, één over je eigen geld.","Risico, hoogte van het bedrag en zelf kunnen betalen."]});
+add({id:"k_verzeker", type:"koppel", pts:20, label:"Koppelen",
+  q:"Koppel elk begrip aan de juiste uitleg. Tik links op een begrip en daarna rechts op de uitleg.",
+  pairs:[["Premie","Het bedrag dat je als verzekerde betaalt voor een verzekering"],
+         ["Eigen risico","Het deel van de schade dat je zelf moet betalen"],
+         ["Risico","De kans dat je schade hebt"],
+         ["Verzekeraar","Een verzekeringsmaatschappij waar je een verzekering afsluit"],
+         ["Polis","Een bewijs dat je een verzekering hebt afgesloten"],
+         ["Verzekerde","Degene die een verzekering afsluit"]],
+  hints:["Begin met de premie en het risico.","De verzekeraar is het bedrijf, de verzekerde ben jij.","De polis is het bewijs van je verzekering."]});
+mc("m_polis","Begrijpen","Wat ontvang je als bewijs dat je een verzekering hebt afgesloten?",
+  ["Een polis","Een premie","Een eigen risico","Een schadevergoeding"],[0],
+  ["Het is een document met jouw gegevens.","Premie betaal je, schadevergoeding krijg je bij schade.","Het bewijs heet de polis."]);
+mc("m_eigenrisico","Begrijpen","Wat is het eigen risico?",
+  ["Het deel van de schade dat je zelf moet betalen","Het bedrag dat je elke maand betaalt aan de verzekeraar","De kans dat je schade hebt","Het bedrag dat de verzekeraar uitbetaalt"],[0],
+  ["Je betaalt een deel van de schade zelf.","Het bedrag per maand heet de premie.","Een deel van de schade komt voor jouw rekening."]);
+mc("m_vrijwillig","Welke hoort bij...","Welke verzekering is niet verplicht?",
+  ["Een fietsverzekering","Een zorgverzekering","Een WA-verzekering voor een scooter","Een WA-verzekering voor een auto"],[0],
+  ["Verplicht zijn de zorgverzekering en de WA-verzekering voor voertuigen.","Een fiets mag je zelf verzekeren of niet.","Een fietsverzekering is vrijwillig."]);
+op("o_waarom_verz","Waarom sluit je een verzekering af? Leg uit wat een verzekering voor je doet.",
+  [cr("Risico of schade","Noemt dat je zo geen risico wilt lopen op (grote) schade of geldproblemen door schade.",/risico|schade|pech|geldprobl|kosten/i,["risico","schade","kosten"]),
+   cr("Vergoeding","Legt uit dat de verzekeraar de financiële gevolgen van de schade vergoedt.",/vergoed|betaalt|vergoeding|terug/i,["vergoed","vergoeding","betaalt"])],
+  "Je wilt geen risico lopen op grote schade. Bij een verzekering betaalt de verzekeraar de financiële gevolgen van de schade, zodat jij die niet allemaal zelf hoeft te betalen.",
+  ["Wat gebeurt er als je schade hebt zonder verzekering?","Wie betaalt de schade als je verzekerd bent?","Je loopt minder risico en de verzekeraar vergoedt de schade."]);
+op("o_zorg","Iedere Nederlander moet van de overheid een zorgverzekering hebben. Waarom heeft de overheid dit verplicht gesteld?",
+  [cr("Hoge kosten","Legt uit dat zorg erg duur kan zijn en niet iedereen dat zelf kan betalen.",/duur|hoge kosten|zelf (kunnen )?betalen|niet iedereen|kosten/i,["duur","kosten","betalen"]),
+   cr("Iedereen verzekerd","Legt uit dat iedereen zo zorg kan krijgen wanneer dat nodig is, of dat zorg voor iedereen betaalbaar blijft.",/iedereen|zorg krijgen|verzekerd|betaalbaar|naar de dokter/i,["iedereen","zorg","betaalbaar","dokter"])],
+  "Zorg kan erg duur zijn en niet iedereen kan dat zelf betalen. Door de verplichting is iedereen verzekerd en kan iedereen zorg krijgen als dat nodig is.",
+  ["Wat kost een ziekenhuisopname?","Wat gebeurt er als iemand zorg nodig heeft maar niet verzekerd is?","Zorg is duur. Met een verplichting is iedereen verzekerd."]);
+add({id:"o_eigenrisico", type:"open", pts:30, label:"Open vraag",
+  q:"Leg uit wat het eigen risico is en waarom je minder premie betaalt als je een verzekering met eigen risico kiest.",
+  crit:[
+   cr("Wat is eigen risico","Legt uit dat het eigen risico het deel van de schade is dat je zelf moet betalen.",/zelf (betaal|bet)|eigen deel|deel van de schade/i,["zelf","eigen deel"]),
+   cr("Minder premie","Legt uit dat de verzekeraar dan minder schade hoeft te vergoeden en daarom een lagere premie rekent.",/minder (betalen|uit|schade|vergoed)|lagere premie|goedkoper|minder premie/i,["minder","lagere","goedkoper"])],
+  model:"Het eigen risico is het deel van de schade dat je zelf moet betalen. De verzekeraar hoeft dan minder schade te vergoeden, dus betaal jij minder premie.",
+  hints:["Denk aan wie welk deel van de schade betaalt.","Als jij meer zelf betaalt, hoeft de verzekeraar minder te vergoeden.","Eigen risico = je betaalt zelf een deel. Dan is de premie lager."]});
+rk2("v_e","Je koffers zijn verzekerd voor maximaal €500, met een eigen risico van €75. Je raakt koffers kwijt met €430 schade. Hoeveel schadevergoeding krijg je?",() => 430-75,2,"€",
+  ["Het eigen risico betaal je zelf.","Schadevergoeding = schadebedrag min eigen risico.","430 min 75."]);
+rk2("v_f","Je fiets van €600 wordt gestolen. In de polisvoorwaarden staat: eigen risico bij diefstal is 20% van het verzekerde bedrag. Hoeveel schadevergoeding krijg je?",() => 600-(20/100)*600,2,"€",
+  ["Bereken eerst het eigen risico: 20% van €600.","De formule is (Percentage : 100) x totaal.","600 min ((20 : 100) x 600)."]);
+rk2("v_g","Salima heeft een loon van €1.890 per maand. Ze betaalt €140 aan verzekeringen. Hoeveel procent van haar inkomsten geeft ze uit aan verzekeringen? Rond af op 1 decimaal.",() => (140/1890)*100,1,"%",
+  ["De verzekeringen zijn het deel, het loon is het geheel.","De formule is (Deel : geheel) x 100.","(140 : 1890) x 100."]);
+
 function bouwRij(k){
-  const pick = a => a[Math.floor(Math.random()*a.length)];
+  const used = new Set();
+  const pick = a => { const b = a.filter(x => !used.has(x)); const c = b.length ? b : a; const r = c[Math.floor(Math.random()*c.length)]; used.add(r); return r; };
   if (k === 1) {
-    return ["m_vast", pick(["m_begroting","m_uitkering"]), "k_inkomen", pick(["m_incid","m_periode"]),
-            pick(["o_inkomsten","o_uitgaven"]), pick(["r1_a","r1_b","r1_c","r1_f","r1_g"]), pick(["r1_d","r1_e"]),
+    return [pick(["m_vast","m_loon","m_winst","m_ink_tf","m_meerdere","m_ink_3"]),
+            pick(["m_huis","m_uit_tf","m_gym","m_begroting","m_uitkering","m_budget"]),
+            pick(["k_inkomen","k_begrippen1"]),
+            pick(["m_nut","m_bezuinig","m_tekort","m_incid","m_periode"]),
+            pick(["o_inkomsten","o_uitgaven","o_nut","o_vastelasten","o_weekmaand","o_meerdere"]),
+            pick(["r1_a","r1_b","r1_c","r1_f","r1_g","r1_h","r1_i","r1_j","r1_k","r1_l","r1_ramon"]),
+            pick(["r1_d","r1_e","r1_n","r1_o"]),
             "y0","y1","y1b","y2","c_begroting"];
   }
   if (k === 2) {
-    return ["m_functies", pick(["m_tf2","m_rente"]), "k_sparen", pick(["m_voorzorg","m_uitgesteld"]),
-            pick(["o_functies","o_motieven","o_bram"]), pick(["s_a","s_b","s_c","s_d"]),
+    return [pick(["m_functies","m_f1","m_f2","m_f3"]),
+            pick(["m_tf2","m_rente","m_rwaarom","m_rjaar","m_verschil"]),
+            pick(["k_sparen","k_sparen2"]),
+            pick(["m_voorzorg","m_uitgesteld","m_rm"]),
+            pick(["o_functies","o_motieven","o_bram","o_rwaarom","o_verschil","o_rrekenen"]),
+            pick(["s_a","s_b","s_c","s_d","s_e","s_f"]),
             "sa0","sa1","sa2","sa3","c_spaarplan"];
   }
   if (k === 4) {
-    return ["m_premie", pick(["m_tf4","m_verplicht"]), "k_verzeker", pick(["m_inboedel","m_werkt"]),
-            pick(["o_premie","o_eigenrisico","o_mila"]), pick(["v_a","v_b","v_c","v_d"]),
+    return [pick(["m_premie","m_polis","m_eigenrisico"]),
+            pick(["m_tf4","m_verplicht","m_vrijwillig"]),
+            pick(["k_verzeker"]),
+            pick(["m_inboedel","m_werkt","m_polis","m_eigenrisico"]),
+            pick(["o_premie","o_eigenrisico","o_mila","o_waarom_verz","o_zorg"]),
+            pick(["v_a","v_b","v_c","v_d","v_e","v_f","v_g"]),
             "x0","x1","x2","x3","c_scooter2"];
   }
   if (k === 3) {
-    return ["m_delen", pick(["m_tf","m_leeftijd"]), "k_lenen", pick(["m_hyp","m_waarom"]),
-            pick(["o_manieren","o_termijn","o_waarom"]), pick(["r_totaal","r_perc1","r_perc2","r_besp"]),
+    return [pick(["m_delen","m_reden1","m_reden2","m_kosten","m_risico"]),
+            pick(["m_tf","m_leeftijd","m_risico","m_kosten"]),
+            "k_lenen",
+            pick(["m_waarom","m_reden1","m_reden2","m_kosten"]),
+            pick(["o_waarom","o_termijn","o_reden2","o_risico","o_kosten"]),
+            pick(["r_totaal","r_perc1","r_perc2","r_besp","t_a","t_b","t_c","t_d"]),
             "z0","z1","z2","z3","c_scooter"];
   }
   return [];
@@ -902,7 +1211,7 @@ function vKamer(){
   return `<section class="stack"><div class="meta"><span><b>${K.naam}</b> · opdracht ${S.qi+1} van ${S.rij.length}</span>${pts}</div><div class="prog">${prog}</div></section>
   <section class="card stack">
     <div><span class="tag">${d.label}</span></div>
-    ${d.box ? kaartBox(d) : ""}
+    ${d.tabel ? tabelBox(d.tabel) : ""}${d.box ? kaartBox(d) : ""}
     <p class="q">${esc(d.q)}</p>
 
     ${vBody(d)}
@@ -912,6 +1221,9 @@ function vKamer(){
     ${vActions(d)}
   </section>
   ${vHints(d)}`;
+}
+function tabelBox(t){
+  return `<div class="tw"><div class="tt">${esc(t.titel)}</div><table class="tb"><thead><tr>${t.kop.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${t.rijen.map(r=>`<tr>${r.map((c,i)=>`<td${i===0?' class="f"':''}>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
 }
 function kaartBox(d){
   const items = d.box.map(v => `<span>${v[0]}: <b>${v[1]()}</b></span>`).join("");
@@ -1341,6 +1653,5 @@ addEventListener("hashchange", applyHash);
 })();
 window.__G = {get S(){return S}, get cur(){return cur}, Q, A, CONFIG, KAART};
 </script>
-
 </body>
 </html>
