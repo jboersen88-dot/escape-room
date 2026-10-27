@@ -497,8 +497,8 @@ Object.keys(KW).forEach(id => KW[id].forEach((kw,i) => { Q[id].crit[i].kw = kw; 
    ========================================================= */
 add({id:"m_functies", type:"mc", pts:10, multi:true, label:"Meerkeuze",
   q:"Welke drie functies heeft geld? (meerdere antwoorden goed)",
-  opts:["Ruilmiddel","Spaarmiddel","Waardemeter","Verzekeringsmiddel"], correct:[0,1,2],
-  hints:["Je betaalt ermee, je bewaart het en je drukt er prijzen mee uit.","Een verzekering is iets anders dan een functie van geld.","Drie goede antwoorden: ruilmiddel, spaarmiddel en waardemeter."]});
+  opts:["Ruilmiddel","Spaarmiddel","Rekenmiddel","Verzekeringsmiddel"], correct:[0,1,2],
+  hints:["Je betaalt ermee, je bewaart het en je drukt er prijzen mee uit.","Een verzekering is iets anders dan een functie van geld.","Drie goede antwoorden: ruilmiddel, spaarmiddel en rekenmiddel."]});
 add({id:"m_tf2", type:"mc", pts:10, label:"Juist of onjuist",
   q:"Juist of onjuist: rente is het bedrag dat de bank jou betaalt omdat je geld bij de bank laat staan.",
   opts:["Juist","Onjuist"], correct:[0], fixedOrder:true,
@@ -520,7 +520,7 @@ add({id:"k_sparen", type:"koppel", pts:20, label:"Koppelen",
   q:"Koppel elk begrip aan de juiste uitleg. Tik links op een begrip en daarna rechts op de uitleg.",
   pairs:[["Ruilmiddel","Je betaalt ermee in de winkel"],
          ["Spaarmiddel","Je bewaart waarde voor later"],
-         ["Waardemeter","Je drukt de prijs van iets uit in euro's"],
+         ["Rekenmiddel","Je drukt de waarde van iets uit in euro's"],
          ["Voorzorg","Sparen voor onverwachte uitgaven"],
          ["Uitgestelde besteding","Sparen voor iets dat je later koopt"],
          ["Rente","Wat de bank je betaalt voor je spaargeld"]],
@@ -531,9 +531,9 @@ add({id:"o_functies", type:"open", pts:30, label:"Open vraag",
   crit:[
    {label:"Ruilmiddel", tekst:"Noemt ruilmiddel en legt uit dat je met geld goederen en diensten kunt kopen of betalen.", rx:/ruil|betaalmiddel|betalen/i, kw:["ruilmiddel","betaalmiddel","ruil"]},
    {label:"Spaarmiddel", tekst:"Noemt spaarmiddel en legt uit dat je met geld waarde kunt bewaren voor later.", rx:/spaar|bewaar/i, kw:["spaarmiddel","sparen","bewaren"]},
-   {label:"Waardemeter", tekst:"Noemt waardemeter (of rekeneenheid) en legt uit dat je de waarde of prijs van dingen in geld uitdrukt.", rx:/waardemeter|rekeneenheid|prijs|waarde/i, kw:["waardemeter","rekeneenheid","prijs"]}],
-  model:"Ruilmiddel: je betaalt ermee voor spullen. Spaarmiddel: je bewaart het voor later. Waardemeter: je drukt de waarde of prijs van iets uit in euro's.",
-  hints:["Eén functie gaat over betalen, één over bewaren en één over prijzen.","De functies eindigen op 'middel', 'middel' en 'meter'.","Ruilmiddel, spaarmiddel en waardemeter. Leg bij elk uit wat het is."]});
+   {label:"Rekenmiddel", tekst:"Noemt rekenmiddel en legt uit dat je met geld de waarde of prijs van dingen uitdrukt en kunt vergelijken.", rx:/rekenmiddel|rekeneenheid|waardemeter|prijs|waarde/i, kw:["rekenmiddel","rekeneenheid","waardemeter","prijs"]}],
+  model:"Ruilmiddel: je betaalt ermee voor spullen. Spaarmiddel: je bewaart het voor later. Rekenmiddel: je drukt de waarde of prijs van iets uit in euro's.",
+  hints:["Eén functie gaat over betalen, één over bewaren en één over prijzen.","Alle drie de functies eindigen op 'middel'.","Ruilmiddel, spaarmiddel en rekenmiddel. Leg bij elk uit wat het is."]});
 add({id:"o_motieven", type:"open", pts:30, label:"Open vraag",
   q:"Noem de drie spaarmotieven en geef bij elk motief een voorbeeld.",
   crit:[
@@ -765,10 +765,12 @@ function startQ(){
   cur = {def, att:0, hints:0, paid:0, freeUsed:false, done:false, earned:0, msg:null, text:"", sel:[], gaveUp:false, busy:false, fails:0};
   if (def.type === "mc") {
     const idx = def.opts.map((_,i)=>i);
-    cur.order = def.fixedOrder ? idx : shuffle(idx.slice());
+    cur.order = idx.slice();
+    if (!def.fixedOrder) { let t = 0; do { shuffle(cur.order); t++; } while (t < 20 && (cur.order.every((v,i)=>v===i) || (!def.multi && cur.order[0] === def.correct[0] && Math.random() < .7))); }
   } else if (def.type === "koppel") {
-    cur.left = def.pairs.map((_,i)=>i);
+    cur.left = shuffle(def.pairs.map((_,i)=>i));
     cur.right = shuffle(def.pairs.map((_,i)=>i));
+    for (let t = 0; t < 50 && cur.left.some((l,i) => l === cur.right[i]); t++) shuffle(cur.right);
     cur.link = {};         // left -> right
     cur.locked = {};       // left -> true
     cur.pickL = null; cur.lastWrong = [];
