@@ -442,35 +442,35 @@ add({id:"p1_debat", type:"koppel", label:"Wie zegt dat?",
   hints:["Wie praat over het geloof?","Wie wil dat de overheid zich er helemaal niet mee bemoeit?","Van de liberalen wil de ene groep niets doen, de andere wél wetten maken."]});
 
 /* Open vragen (AI) */
-op("o1_toennu","Vergelijk: in 1880 wordt een fabrieksarbeider ziek. Nu, in 2026, wordt een werknemer ziek. Leg uit wat er toen gebeurde en wat er nu anders is.",
-  [cr("Toen","Legt uit dat de arbeider in 1880 geen loon of uitkering kreeg en afhankelijk was van liefdadigheid of de kerk.",["geen loon","geen geld","geen uitkering","kerk","liefdadigheid","niks","niets"]),
-   cr("Nu","Legt uit dat er nu regels zijn: je krijgt doorbetaald of een uitkering, geregeld door de overheid (verzorgingsstaat).",["doorbetaald","uitkering","overheid","verzorgingsstaat","verzekering","loon"])],
-  "In 1880 kreeg een zieke arbeider geen loon en geen uitkering. Hij moest hopen op hulp van de kerk of de liefdadigheid. Nu krijg je je loon doorbetaald of een uitkering, omdat de overheid dat regelt.",
-  ["Bestond er in 1880 al een uitkering bij ziekte?","Wie hielp toen wel?","Nu regelt de overheid dat je geld blijft krijgen."]);
-op("o1_kiesrecht","Waarom was algemeen kiesrecht voor de sociaal-democraten zo belangrijk om de problemen van de arbeiders op te lossen?",
-  [cr("Arbeiders stemmen","Legt uit dat dan ook arbeiders (en niet alleen rijke mensen) mochten stemmen.",["arbeiders","stemmen","iedereen","niet alleen rijk"]),
-   cr("Gevolg","Legt uit dat de sociaal-democraten dan meer stemmen en zetels kregen, zodat zij sociale wetten konden maken.",["meer stemmen","zetels","macht","wetten","parlement"])],
-  "Met algemeen kiesrecht mochten ook de arbeiders stemmen. Zij zouden op de sociaal-democraten stemmen, die dan meer macht in het parlement kregen om sociale wetten te maken.",
-  ["Wie mocht er rond 1890 stemmen?","Op welke groep zouden arbeiders waarschijnlijk stemmen?","Meer stemmen = meer macht = sociale wetten."]);
-op("o1_rijken","Rond 1900 wilden ook veel rijke burgers dat er iets veranderde in de arbeiderswijken. Geef twee redenen waarom.",
-  [cr("Ziektes","Noemt dat besmettelijke ziektes (zoals cholera) uit de arbeiderswijken ook voor de rijken gevaarlijk waren.",["ziekte","ziektes","cholera","besmet"]),
-   cr("Tweede reden","Noemt een tweede reden, bijvoorbeeld: ze zagen de armoede steeds beter (de wijken groeiden, kranten en onderzoeken lieten het zien), of ze waren bang voor stakingen en protest.",["zagen","kranten","onderzoek","staking","protest","vakbond","medelijden","geloof"])],
+op("o1_toennu","Vergelijk: in 1880 wordt een fabrieksarbeider ziek. Nu, in 2026, wordt een werknemer ziek. Beantwoord in je antwoord deze twee vragen:\n* 1880: kreeg de zieke arbeider nog loon? En van wie kon hij dan wél hulp krijgen?\n* Nu: wat krijg je als je ziek bent? En wie regelt of betaalt dat?",
+  [cr("1880: loon? En van wie kreeg hij wél hulp?","Zegt dat de zieke arbeider in 1880 geen loon (en geen uitkering) kreeg, en noemt van wie hij wél hulp kon krijgen: de kerk, de liefdadigheid of rijke burgers (of de gemeente in uiterste nood).",["kerk","liefdadigheid","rijke","gemeente"]),
+   cr("Nu: wat krijg je, en wie regelt of betaalt dat?","Zegt wat je nu krijgt (je loon wordt doorbetaald of je krijgt een uitkering) en wie dat regelt of betaalt: de overheid met wetten (de verzorgingsstaat), of de werkgever omdat de wet dat verplicht, of een verzekering zoals het UWV. Elk van deze is goed.",["overheid","verzorgingsstaat","wet","werkgever","baas","uwv","verzekering","regering"])],
+  "In 1880 kreeg een zieke arbeider geen loon en geen uitkering. Hij kon alleen hulp krijgen van de kerk of de liefdadigheid. Nu krijg je je loon doorbetaald of een uitkering. Dat is geregeld door de overheid met wetten: de werkgever moet doorbetalen.",
+  ["Bestond er in 1880 al een uitkering bij ziekte? Wie gaf toen wel eten of geld aan arme mensen?","De hulp kwam in 1880 van de kerk en de liefdadigheid. Nu is er de verzorgingsstaat.","Nu zorgt de overheid met wetten dat je geld blijft krijgen: je baas moet doorbetalen of je krijgt een uitkering."]);
+op("o1_kiesrecht","Waarom was algemeen kiesrecht voor de sociaal-democraten zo belangrijk? Leg het uit in twee stappen:\n* Wie mochten er door algemeen kiesrecht ineens wél stemmen?\n* Wat betekende dat voor de sociaal-democraten en voor de sociale wetten?",
+  [cr("Wie mochten er dan wél stemmen?","Legt uit dat door algemeen kiesrecht ook de arbeiders (en niet alleen rijke mensen) mochten stemmen.",["arbeiders","iedereen","alle mannen","niet alleen rijk"]),
+   cr("Wat betekende dat voor de sociaal-democraten?","Legt uit dat de sociaal-democraten dan meer stemmen en zetels kregen, zodat zij sociale wetten konden maken.",["meer stemmen","zetels","macht","wetten","parlement"])],
+  "Met algemeen kiesrecht mochten ook de arbeiders stemmen. Zij zouden op de sociaal-democraten stemmen. Die kregen dan meer macht in het parlement en konden sociale wetten maken.",
+  ["Wie mocht er rond 1890 stemmen? Alleen rijke mannen.","Op welke groep zouden arbeiders waarschijnlijk stemmen?","Meer stemmen = meer zetels = meer macht om sociale wetten te maken."]);
+op("o1_rijken","Rond 1900 wilden ook veel rijke burgers dat er iets veranderde in de arbeiderswijken. Geef twee redenen:\n* Reden 1: welk gevaar kwam er uit de arbeiderswijken, ook voor de rijken?\n* Reden 2: hoe kwamen de rijken erachter hoe erg de armoede was? (Of: waar waren ze bang voor?)",
+  [cr("Welk gevaar kwam er uit de arbeiderswijken?","Noemt dat besmettelijke ziektes (zoals cholera) uit de arbeiderswijken ook voor de rijken gevaarlijk waren.",["ziekte","ziektes","cholera","besmet"]),
+   cr("Hoe zagen ze de armoede, of waar waren ze bang voor?","Noemt een tweede reden, bijvoorbeeld: ze zagen de armoede steeds beter (de wijken groeiden, kranten en onderzoeken lieten het zien), of ze waren bang voor stakingen en protest.",["zagen","kranten","onderzoek","staking","protest","vakbond","medelijden","geloof"])],
   "Besmettelijke ziektes zoals cholera kwamen uit de arbeiderswijken en waren ook gevaarlijk voor de rijken. En door kranten en onderzoeken zagen ze hoe erg de armoede was.",
-  ["Wat verspreidde zich vanuit de krotten door de hele stad?","Hoe kwamen rijke mensen erachter hoe erg het was?","Ziektes, en kranten en onderzoeken lieten de armoede zien."]);
-op("o1_staking","In 1903 legden de spoorwegarbeiders samen het werk neer. Waarom was een staking een sterk wapen voor arbeiders? En waarom was het ook gevaarlijk voor hen?",
-  [cr("Sterk","Legt uit dat als alle arbeiders samen stoppen, alles stil komt te liggen en de bazen geld verliezen.",["stil","stilligt","geld","verliezen","samen","alles"]),
-   cr("Gevaarlijk","Legt uit dat stakers ontslagen konden worden of geen loon kregen.",["ontslag","ontslagen","geen loon","geen geld","werkloos"])],
+  ["Wat verspreidde zich vanuit de krotten door de hele stad?","Hoe kwamen rijke mensen erachter hoe erg het was? Denk aan kranten en onderzoeken.","Ziektes, en kranten en onderzoeken lieten de armoede zien."]);
+op("o1_staking","In 1903 legden de spoorwegarbeiders samen het werk neer. Beantwoord deze twee vragen:\n* Waarom was een staking een sterk wapen? Wat gebeurt er als alle arbeiders tegelijk stoppen?\n* Waarom was staken ook gevaarlijk voor de arbeider zelf?",
+  [cr("Waarom was staken sterk?","Legt uit dat als alle arbeiders samen stoppen, alles stil komt te liggen en de bazen geld verliezen.",["stil","stilligt","geld","verliezen","samen","alles"]),
+   cr("Waarom was het gevaarlijk?","Legt uit dat stakers ontslagen konden worden of geen loon kregen.",["ontslag","ontslagen","geen loon","geen geld","werkloos"])],
   "Als alle arbeiders samen stoppen, ligt alles stil en verliezen de bazen veel geld. Maar het was gevaarlijk, want je kon ontslagen worden en dan had je geen loon meer.",
   ["Wat gebeurt er met de treinen als niemand werkt?","Wat kon de baas doen met stakers?","Sterk: alles ligt stil. Gevaarlijk: ontslag."]);
 
 /* Creatief (AI) */
-op("cr1_brief","Schrijf een korte brief terug aan Gerrit (ongeveer 3 zinnen). Vertel hem welke groep in het parlement voor hem opkomt en welke wet zijn leven beter gaat maken.",
-  [cr("Groep","Noemt een groep die opkomt voor arbeiders (sociaal-democraten, of jong-liberalen of confessionelen) met iets wat die groep wil.",["sociaal","democraten","jong","liberalen","confessionelen"]),
-   cr("Wet","Noemt een sociale wet die bij Gerrit past (Kinderwetje, geen nachtwerk voor kinderen, Leerplichtwet, Woningwet of Ongevallenwet) en zegt goed wat die regelt.",["kinderwet","nachtwerk","leerplicht","woningwet","ongevallen","school"]),
-   cr("Brief","Het is een brief aan Gerrit van ongeveer 3 zinnen die past bij zijn leven (kinderarbeid, nachtwerk of slecht wonen).",["gerrit","beste","lieve","hoi","fabriek"])],
-  "Beste Gerrit, de sociaal-democraten komen voor jou op: zij willen acht uur werken en hogere lonen. Over twee jaar komt er een wet die nachtwerk voor kinderen verbiedt, en later moet je naar school door de Leerplichtwet. Hou vol!",
-  ["Begin met 'Beste Gerrit' en schrijf als iemand uit de toekomst.","Welke groep kwam op voor de arbeiders? Wat wilden ze?","Een wet die past: geen nachtwerk voor kinderen (1889), de Leerplichtwet of de Woningwet."],
-  {label:"Creatieve opdracht", creatief:true});
+op("cr1_brief","Gerrit is 10 en werkt 's nachts in de glasfabriek. Jij weet hoe het verder gaat. Schrijf hem een korte brief terug (3 tot 5 zinnen). Zet deze drie dingen in je brief:\n* Begin met: Beste Gerrit,\n* Welke groep in het parlement komt op voor arbeiders zoals hij? Noem ook één ding dat die groep wil.\n* Welke wet maakt het leven van Gerrit beter? Vertel wat die wet precies regelt.",
+  [cr("Welke groep komt voor hem op, en wat wil die groep?","Noemt een groep die opkomt voor arbeiders (sociaal-democraten, of jong-liberalen of confessionelen) en één ding wat die groep wil, bijvoorbeeld acht uur werken, hogere lonen, kiesrecht of wetten tegen uitbuiting.",["sociaal","democraten","jong","liberalen","confessionelen"]),
+   cr("Welke wet, en wat regelt die wet?","Noemt een sociale wet die bij Gerrit past en zegt goed wat die regelt: het Kinderwetje (kinderen onder de 12 mogen niet in een fabriek werken), de eerste sociale wetten van 1889 (geen nachtwerk voor vrouwen en kinderen), de Leerplichtwet (kinderen van 6 tot 12 moeten naar school), de Woningwet of de Ongevallenwet.",["kinderwet","nachtwerk","leerplicht","woningwet","ongevallen","school"]),
+   cr("Is het een brief aan Gerrit?","Het is geschreven als brief aan Gerrit: er staat een aanhef zoals 'Beste Gerrit' of 'Lieve Gerrit', of Gerrit wordt met 'je' aangesproken. Dat is genoeg: wees hier ruim en let niet op de lengte of de stijl.",["gerrit","beste","lieve","hoi","je"])],
+  "Beste Gerrit, ik weet dat het nu heel zwaar is. De sociaal-democraten komen voor jou op: zij willen dat arbeiders maximaal acht uur werken. In 1889 komt er een wet die nachtwerk voor kinderen verbiedt, dus dan hoef je niet meer 's nachts in de fabriek te staan. Hou vol!",
+  ["Gebruik de zinnen in het vak hierboven. Vul alleen de puntjes in.","Welke groep kwam op voor de arbeiders? De sociaal-democraten wilden bijvoorbeeld acht uur werken en hogere lonen.","Een wet die past: geen nachtwerk voor kinderen (1889), de Leerplichtwet (naar school van 6 tot 12) of het Kinderwetje (onder de 12 niet in de fabriek)."],
+  {label:"Creatieve opdracht", creatief:true, starters:["Beste Gerrit,","De ... komen voor jou op. Zij willen ...","Er komt een wet: de ... Die zorgt ervoor dat ...","Hou vol!"]});
 
 /* Slot kamer 1: krantenkoppen op volgorde */
 add({id:"s1_tijdlijn", type:"slot", lokaal:true, label:"Het slot van de brief",
@@ -572,35 +572,36 @@ add({id:"m2_maatr", type:"zoek", lokaal:true, label:"Zoek in het lokaal",
   hints:["Aanpassingspolitiek = bezuinigen: alles wat omlaag gaat.","Het Plan van de Arbeid = de overheid geeft juist méér uit.","Er zijn " + AP.length + " berichten voor Colijn en " + PA.length + " voor de SDAP."]});
 
 /* Open vragen (AI) */
-op("o2_schoenen","Werkloze Jan koopt geen nieuwe schoenen meer. Leg uit hoe dat er uiteindelijk voor zorgt dat er nóg meer mensen werkloos worden.",
-  [cr("Minder verkopen","Legt uit dat de schoenenwinkel of schoenenfabriek dan minder verkoopt.",["winkel","fabriek","verkopen","verkoopt","minder"]),
-   cr("Meer werklozen","Legt uit dat het bedrijf daardoor mensen ontslaat of failliet gaat, zodat er nog meer werklozen komen die ook minder kopen.",["ontslaan","ontslagen","failliet","werkloos","werklozen","cirkel"])],
+op("o2_schoenen","Werkloze Jan koopt geen nieuwe schoenen meer. Leg uit hoe dat er uiteindelijk voor zorgt dat er nóg meer mensen werkloos worden. Beantwoord deze twee vragen:\n* Wat merkt de schoenenwinkel of de schoenenfabriek als Jan en veel andere werklozen geen schoenen meer kopen?\n* Wat doet die fabriek dan met haar personeel? En wat betekent dat voor het aantal werklozen?",
+  [cr("Wat merkt de schoenenfabriek?","Legt uit dat de schoenenwinkel of schoenenfabriek dan minder verkoopt.",["winkel","fabriek","verkopen","verkoopt","minder"]),
+   cr("Wat doet de fabriek, en wat gebeurt er met de werkloosheid?","Legt uit dat het bedrijf daardoor mensen ontslaat of failliet gaat, zodat er nog meer werklozen komen (die ook weer minder kopen).",["ontslaan","ontslagen","failliet","werkloos","werklozen","cirkel"])],
   "Als Jan en veel andere werklozen geen schoenen kopen, verkoopt de schoenenfabriek minder. De fabriek ontslaat mensen of gaat failliet. Dan zijn er nog meer werklozen, die ook weer minder kopen.",
   ["Wie merkt het als Jan geen schoenen koopt?","Wat doet een fabriek die bijna niets verkoopt?","Het is een vicieuze cirkel: minder kopen → minder verkopen → ontslag → minder kopen."]);
-op("o2_export","Colijn verlaagde de lonen, zodat Nederlandse producten goedkoper werden. Toch verkocht Nederland niet meer aan het buitenland. Leg uit hoe dat kwam.",
-  [cr("Andere landen","Legt uit dat de landen om ons heen de waarde van hun munt verlaagden en daardoor nog goedkoper waren.",["munt","waarde","andere landen","buitenland","goedkoper","devalu"]),
-   cr("Gevolg","Legt uit dat Nederlandse producten daardoor nog steeds duurder waren dan die uit andere landen, dus werden ze niet meer verkocht.",["duurder","niet meer","minder verkocht","te duur"])],
+op("o2_export","Colijn verlaagde de lonen, zodat Nederlandse producten goedkoper werden. Toch verkocht Nederland niet meer aan het buitenland. Beantwoord deze twee vragen:\n* Wat deden de landen om ons heen met de waarde van hun munt?\n* Waarom verkocht Nederland daardoor toch niet meer?",
+  [cr("Wat deden de landen om ons heen?","Legt uit dat de landen om ons heen de waarde van hun munt verlaagden en daardoor nog goedkoper werden.",["munt","waarde","andere landen","buitenland","goedkoper","devalu"]),
+   cr("Waarom verkocht Nederland niet meer?","Legt uit dat Nederlandse producten daardoor nog steeds duurder waren dan die uit andere landen, dus werden ze niet meer verkocht.",["duurder","niet meer","minder verkocht","te duur"])],
   "De landen om ons heen verlaagden de waarde van hun munt. Daardoor waren hun producten nog goedkoper. Nederlandse producten bleven dus duurder en werden niet meer verkocht.",
-  ["Had elk land in de jaren dertig een eigen munt?","Wat deden de landen om ons heen met de waarde van hun munt?","Andere landen werden nog goedkoper, dus Nederland bleef te duur."]);
-op("o2_jordaan","In 1934 kwamen de mensen in de Amsterdamse Jordaan in opstand. Waarom waren ze zo boos? En wat deed de overheid daarna met de straten?",
-  [cr("Waarom boos","Noemt dat de steunuitkering voor werklozen werd verlaagd.",["steun","uitkering","verlaagd","omlaag","minder"]),
-   cr("De straten","Noemt dat de straten werden geasfalteerd, zodat er geen straatstenen meer gegooid konden worden.",["asfalt","geasfalteerd","stenen","straatstenen"])],
+  ["Had elk land in de jaren dertig een eigen munt? Wat kun je met de waarde van een munt doen?","De landen om ons heen maakten hun munt minder waard. Wat gebeurt er dan met hun prijzen?","Andere landen werden nog goedkoper, dus Nederland bleef te duur."]);
+op("o2_jordaan","In 1934 kwamen de mensen in de Amsterdamse Jordaan in opstand. Beantwoord deze twee vragen:\n* Waarom waren de mensen zo boos? Wat had de regering-Colijn gedaan?\n* Wat deed de overheid daarna met de straten in de Jordaan, en waarom?",
+  [cr("Waarom waren ze boos?","Noemt dat de steunuitkering voor werklozen werd verlaagd.",["steun","uitkering","verlaagd","omlaag","minder"]),
+   cr("Wat gebeurde er met de straten, en waarom?","Noemt dat de straten werden geasfalteerd, zodat er geen straatstenen meer gegooid konden worden.",["asfalt","geasfalteerd","stenen","straatstenen"])],
   "Ze waren boos omdat de steun voor werklozen werd verlaagd. Daarna werden de straten in de Jordaan geasfalteerd, zodat relschoppers geen straatstenen meer konden gooien.",
-  ["Jan schrijft in zijn dagboek wat Colijn had gedaan.","De mensen gooiden met iets wat uit de straat kwam.","Boos om lagere steun. De straten kregen asfalt."]);
-op("o2_overtuig","Stel: jij bent in 1935 politicus van de SDAP. Overtuig premier Colijn in twee of drie zinnen dat hij het anders moet aanpakken.",
-  [cr("Wat anders","Zegt dat de overheid juist meer geld moet uitgeven, bijvoorbeeld aan werkverschaffing of hogere lonen.",["meer geld","uitgeven","hogere lonen","werkverschaffing","projecten","investeren"]),
-   cr("Waarom","Legt uit dat mensen dan meer kunnen kopen, zodat bedrijven meer verkopen en er minder werklozen komen, of dat bezuinigen de crisis juist erger maakt.",["kopen","verkopen","minder werkloos","bedrijven","erger","beter"])],
+  ["Jan schrijft in zijn dagboek wat Colijn had gedaan met de steun.","De mensen gooiden met iets wat uit de straat kwam.","Boos om lagere steun. De straten kregen asfalt, dan zijn er geen stenen meer om te gooien."]);
+op("o2_overtuig","Stel: jij bent in 1935 politicus van de SDAP. Overtuig premier Colijn in twee of drie zinnen dat hij het anders moet aanpakken. Zet erin:\n* Wat moet Colijn volgens de SDAP doen? Noem een voorbeeld uit het Plan van de Arbeid.\n* Waarom is dat beter dan bezuinigen? Wat gebeurt er als mensen meer geld hebben?",
+  [cr("Wat moet Colijn doen? (voorbeeld uit het plan)","Zegt dat de overheid juist meer geld moet uitgeven, met een voorbeeld zoals meer werkverschaffing, grote projecten of hogere lonen.",["meer geld","uitgeven","hogere lonen","werkverschaffing","projecten","investeren"]),
+   cr("Waarom is dat beter?","Legt uit dat mensen dan meer kunnen kopen, zodat bedrijven meer verkopen en er minder werklozen komen, of dat bezuinigen de crisis juist erger maakt.",["kopen","verkopen","minder werkloos","bedrijven","erger","beter"])],
   "Meneer Colijn, stop met bezuinigen en geef juist meer geld uit aan werkverschaffing en hogere lonen. Dan kunnen mensen weer kopen, verkopen bedrijven meer en komen er minder werklozen.",
-  ["Wat stond er in het Plan van de Arbeid?","Wat gebeurt er als mensen meer geld hebben?","Zeg wat hij moet doen (meer uitgeven) en waarom (meer kopen, minder werklozen)."]);
+  ["Wat stond er in het Plan van de Arbeid?","Wat gebeurt er als mensen meer geld hebben?","Zeg wat hij moet doen (meer uitgeven, bijvoorbeeld aan werk) en waarom (meer kopen, minder werklozen)."]);
 
 /* Creatief (AI) */
-op("cr2_colijn","Schrijf een korte brief van Jan aan premier Colijn (3 of 4 zinnen). Vertel hoe de lagere steun zijn gezin raakt, en vraag Colijn om iets te doen.",
-  [cr("Gevolg voor het gezin","Beschrijft wat de lagere steun betekent voor het gezin, zoals te weinig eten, geen kleding of schoenen, of de huur niet kunnen betalen.",["eten","honger","brood","melk","kleding","schoenen","huur","kinderen","geld"]),
-   cr("Klopt met 1934","Noemt iets wat past bij werklozen in de jaren dertig, zoals stempelen, controle thuis, werkverschaffing of schaamte.",["stempel","controle","werkverschaffing","schaamte","schaam","gaarkeuken","rij"]),
-   cr("Vraag aan Colijn","Vraagt Colijn om iets wat past, zoals meer steun, meer werk of het Plan van de Arbeid.",["meer steun","werk","plan","alstublieft","vraag","verhoog"])],
-  "Geachte heer Colijn, sinds u de steun hebt verlaagd, kunnen wij bijna geen brood en melk meer kopen. Ik sta elke dag twee keer in de rij voor mijn stempel en schaam me voor de controleur. Geef ons alstublieft meer steun of echt werk.",
-  ["Begin met 'Geachte heer Colijn'.","Wat kun je niet meer kopen als de steun omlaag gaat?","Vertel over je dag (stempelen, controle) en vraag om meer steun of werk."],
-  {label:"Creatieve opdracht", creatief:true});
+op("cr2_colijn","Jan is boos op premier Colijn. Schrijf een brief van Jan aan Colijn (4 tot 6 zinnen). Zet deze drie dingen in je brief:\n* Wat is de aanpassingspolitiek van Colijn? Leg in één zin uit wat de regering doet.\n* Wat zijn de gevolgen voor het gezin van Jan? Bijvoorbeeld voor eten, kleding, schoenen of de huur.\n* Vraag Colijn om te luisteren naar het Plan van de Arbeid van de SDAP. Geef een voorbeeld uit dat plan en leg uit waarom dat een beter idee is.",
+  [cr("Wat is de aanpassingspolitiek?","Legt uit wat de aanpassingspolitiek is: de regering bezuinigt omdat ze minder belasting binnenkrijgt. Ze geeft niet meer uit dan er binnenkomt, en verlaagt de steun, de lonen bij de werkverschaffing of de salarissen van ambtenaren.",["bezuinig","minder uitgeven","verlaagd","verlaagt","lager","omlaag","inkomsten","binnenkomt"]),
+   cr("Wat zijn de gevolgen voor het gezin?","Beschrijft een direct gevolg voor het gezin van Jan, zoals te weinig eten, geen nieuwe kleding of schoenen, de huur niet kunnen betalen of honger.",["eten","honger","brood","melk","kleding","schoenen","huur","kinderen"]),
+   cr("Een voorbeeld uit het Plan van de Arbeid","Noemt een voorbeeld uit het Plan van de Arbeid: de overheid moet juist meer geld uitgeven, bijvoorbeeld aan meer werkverschaffing of grote projecten, of zorgen voor hogere lonen.",["plan van de arbeid","sdap","meer geld","uitgeven","werkverschaffing","projecten","hogere lonen","werk"]),
+   cr("Waarom is dat een beter idee?","Legt uit waarom dat beter is: mensen krijgen meer geld en kopen meer, dan verkopen bedrijven meer en komen er minder werklozen. Of: bezuinigen maakt de crisis juist erger.",["kopen","verkopen","bedrijven","minder werkloos","werklozen","erger","beter"])],
+  "Geachte heer Colijn, uw regering bezuinigt omdat er minder belasting binnenkomt, en daarom is mijn steun verlaagd. Nu kan ik bijna geen brood meer kopen en mijn kinderen lopen op kapotte schoenen. Luister alstublieft naar het Plan van de Arbeid: geef juist meer geld uit aan werk, zoals grote werkverschaffingsprojecten. Dan krijgen mensen loon, kopen ze weer spullen en hebben de fabrieken weer werk.",
+  ["Gebruik de zinnen in het vak hierboven. Vul de puntjes in met wat je weet.","Aanpassingspolitiek: de overheid geeft niet meer uit dan er binnenkomt, dus de steun en de lonen gaan omlaag.","Plan van de Arbeid: de overheid geeft juist méér uit, bijvoorbeeld aan werkverschaffing. Dan hebben mensen geld om te kopen en krijgen bedrijven weer werk."],
+  {label:"Creatieve opdracht", creatief:true, starters:["Geachte heer Colijn,","Uw regering bezuinigt: ...","Daardoor kan mijn gezin ...","Luister naar het Plan van de Arbeid van de SDAP. Dat wil ...","Dat is beter, want ..."]});
 
 /* Slot kamer 2: de envelop */
 add({id:"s2_ketting", type:"slot", lokaal:true, label:"Het slot van het dagboek",
@@ -861,7 +862,12 @@ function vKamer(){
   ${vHints(d)}
   <div class="foot"><button class="link" data-act="zolder">Even terug naar de zolder</button></div>`;
 }
-function qHtml(q){ return String(q).split("\n").filter(r => r.trim()).map(r => `<p class="q">${esc(r)}</p>`).join(""); }
+function qHtml(q){
+  let out = "", lijst = [];
+  const flush = () => { if (lijst.length) { out += `<ul class="ql">${lijst.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`; lijst = []; } };
+  for (const r of String(q).split("\n")) { if (/^\* /.test(r)) lijst.push(r.slice(2)); else { flush(); if (r.trim()) out += `<p class="q">${esc(r)}</p>`; } }
+  flush(); return out;
+}
 function vBody(d){
   const dis = cur.done ? "disabled" : "";
   if (d.type === "mc") {
@@ -898,8 +904,12 @@ function vBody(d){
     }).join("") + `</div>`;
   }
   if (d.type === "open") {
-    const res = d.crit.map((c,i) => cur.met[i] ? `<li><span class="k" style="color:var(--good)">✓</span><span>${esc(c.label)}</span></li>` : `<li><span class="k" style="color:var(--bad)">${cur.att?"✗":"·"}</span><span style="color:var(--ink-soft)">${cur.att?"Onderdeel "+(i+1)+" ontbreekt of klopt nog niet":"Onderdeel "+(i+1)}</span></li>`).join("");
-    return `<textarea id="txt" placeholder="Typ hier je antwoord..." ${dis} ${d.creatief?'style="min-height:220px"':""}>${esc(cur.text)}</textarea><ul class="crit">${res}</ul>`;
+    const res = d.crit.map((c,i) => {
+      const st = cur.met[i] ? `<span class="k" style="color:var(--good)">✓</span>` : cur.att ? `<span class="k" style="color:var(--bad)">✗</span>` : `<span class="k" style="color:var(--ink-soft)">${i+1}.</span>`;
+      return `<li>${st}<span style="${cur.met[i]?"":"color:var(--ink-soft)"}">${esc(c.label)}</span></li>`;
+    }).join("");
+    const starters = d.starters ? `<div class="bron"><b>Zinnen die je mag gebruiken:</b><ul class="ql" style="font-size:19px;margin:6px 0 0">${d.starters.map(z => `<li>${esc(z)}</li>`).join("")}</ul></div>` : "";
+    return `${starters}<textarea id="txt" placeholder="Typ hier je antwoord..." ${dis} ${d.creatief?'style="min-height:240px"':""}>${esc(cur.text)}</textarea><p class="lead" style="font-size:16px;margin-bottom:-4px">Dit moet erin staan:</p><ul class="crit">${res}</ul>`;
   }
   if (d.type === "slot") {
     const len = d.code().length;
