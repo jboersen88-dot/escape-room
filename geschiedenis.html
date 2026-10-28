@@ -564,7 +564,7 @@ add({id:"w2_kaart", type:"zoek", lokaal:true, label:"Zoek in het lokaal",
 const AP = CONFIG.MAATREGELEN.filter(m=>m.soort==="AP").map(m=>m.c).sort().join("");
 const PA = CONFIG.MAATREGELEN.filter(m=>m.soort==="PA").map(m=>m.c).sort().join("");
 add({id:"m2_maatr", type:"zoek", lokaal:true, label:"Zoek in het lokaal",
-  walk:"Zoek in het lokaal de " + CONFIG.MAATREGELEN.length + " krantenberichten over maatregelen. Ze hangen bij de spotprent van Colijn en de poster van de SDAP, maar ook verderop.",
+  walk:"Zoek in het lokaal de " + CONFIG.MAATREGELEN.length + " krantenberichten over maatregelen. Een paar hangen bij de posters van Colijn en de SDAP, de rest verderop.",
   q:"Elk bericht heeft een cijfer. Welke berichten horen bij de aanpassingspolitiek van Colijn, en welke bij het Plan van de Arbeid van de SDAP? Typ de cijfers van klein naar groot.",
   velden:[{k:"ap", lab:"Aanpassingspolitiek (Colijn)", kind:"cijfers", want:AP},
           {k:"pa", lab:"Plan van de Arbeid (SDAP)", kind:"cijfers", want:PA}],
