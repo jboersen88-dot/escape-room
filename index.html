@@ -173,6 +173,8 @@ table.begr{width:100%;border-collapse:collapse;font-size:18px}
 .tb th,.tb td{padding:6px 8px;text-align:right;border-bottom:1px solid rgba(255,255,255,.12)}
 .tb th:first-child,.tb td.f{text-align:left}
 .tb th{color:var(--muted);font-weight:600}
+.ql{margin:2px 0 14px;padding-left:26px;font-size:22px;line-height:1.5}
+.ql li{margin:4px 0}
 .cards b{color:var(--gold);font-variant-numeric:tabular-nums}
 .sc{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-size:18px}
 .pay{font-family:var(--display);font-weight:800;color:var(--good)}
@@ -1038,6 +1040,99 @@ rk2("v_h","Je betaalt €38,95 premie per kwartaal voor een fietsverzekering. Ho
 rk2("v_i","De premie stijgt van €9,45 naar €10,20 per maand. Met hoeveel procent stijgt de premie? Rond af op 1 decimaal.",() => ((10.2-9.45)/9.45)*100,1,"%",
   ["Het oude bedrag is €9,45, het nieuwe bedrag €10,20.","De formule is (Nieuw - oud) : oud x 100.","(10,20 - 9,45) : 9,45 x 100, rond af op 1 decimaal."]);
 
+
+/* ---------- Spaarkamer: rente met 2 decimalen ---------- */
+const spRente2 = () => Math.round((SP.pct/100)*SP.bedrag*100)/100;
+add({id:"sa1", type:"reken", pts:20, label:"Zoekopdracht", box:BOXS,
+  q:"Hoeveel rente krijg je na een jaar? Rond af op 2 decimalen.",
+  raw:() => (SP.pct/100)*SP.bedrag, dec:2, unit:"€",
+  hints:["Gebruik het spaarbedrag en het rentepercentage van je kaartjes.","De formule is (Percentage : 100) x totaal.","(1,4 : 100) x 2450, rond af op 2 decimalen."]});
+add({id:"sa2", type:"reken", pts:20, label:"Zoekopdracht", box:BOXS,
+  q:"Hoeveel staat er na een jaar op de spaarrekening? Rond af op 2 decimalen.",
+  vorige:[["Rente na een jaar", () => eur2(spRente2())]],
+  raw:() => SP.bedrag + spRente2(), dec:2, unit:"€",
+  hints:["Je spaarbedrag blijft staan en de rente komt erbij.","Tel de rente op bij het spaarbedrag.","2450 + de rente die je net berekende."]});
+add({id:"sa3", type:"reken", pts:20, label:"Zoekopdracht", box:BOXS,
+  q:"Je wilt na een jaar €2.600 hebben voor een nieuwe scooter. Hoeveel euro moet je dan nog extra bijsparen? Rond af op 2 decimalen.",
+  vorige:[["Rente na een jaar", () => eur2(spRente2())], ["Saldo na een jaar", () => eur2(SP.bedrag + spRente2())]],
+  raw:() => 2600 - (SP.bedrag + spRente2()), dec:2, unit:"€",
+  hints:["Vergelijk wat je wilt hebben met wat er na een jaar op je rekening staat.","Trek het saldo na een jaar af van het bedrag dat je wilt hebben.","2600 min het saldo na een jaar."]});
+
+add({id:"c_spaarplan", type:"open", creatief:true, pts:60, label:"Creatieve opdracht",
+  q:"Sanne (14) wil over 6 maanden €300 hebben voor een nieuwe telefoon. Schrijf een spaarplan voor Sanne.\nZeg in je plan:\n* welke reden om te sparen dit is;\n* hoeveel ze per maand moet sparen (laat dit zien met een berekening);\n* waar ze haar spaargeld bewaart en waarom.",
+  crit:[
+   cr("Reden om te sparen","Noemt de juiste reden om te sparen: sparen voor een doel (een telefoon kopen).",/doel|telefoon kopen|iets kopen/i,["doel"]),
+   cr("Bedrag per maand met berekening","Berekent met een zichtbare berekening dat Sanne €50 per maand moet sparen (300 : 6 = 50).",/\b50\b/),
+   cr("Waar bewaren en waarom","Noemt een plek om te sparen (bijvoorbeeld een spaarrekening bij de bank) en geeft een reden, bijvoorbeeld dat je rente krijgt of dat het veilig is.",/spaarrekening|bank|rente|veilig|spaarpot/i,["spaarrekening","bank","rente","veilig","spaarpot"])],
+  model:"Het is sparen voor een doel. Sanne moet 300 : 6 = €50 per maand sparen. Ze bewaart het op een spaarrekening, want dan is het veilig en krijgt ze rente.",
+  hints:["Je wilt iets kopen. Welke reden om te sparen is dat?","Deel het bedrag dat ze wil hebben door het aantal maanden.","Denk aan een spaarrekening bij de bank."]});
+
+/* ---------- Hints per onderdeel: de leerling krijgt een hint bij het onderdeel dat nog niet klopt ---------- */
+const OH = {
+ c_spaarplan:[["Sanne wil iets kopen. Denk aan de drie redenen om te sparen: welke past hier?","Er is een reden waarbij je spaart voor iets dat je wilt kopen. Hoe heet die reden?"],
+              ["Sanne wil €300 hebben in 6 maanden. Hoeveel moet ze elke maand sparen? Schrijf je berekening op.","Deel het bedrag dat ze wil hebben door het aantal maanden en schrijf de som erbij."],
+              ["Waar kan Sanne haar geld veilig bewaren? Schrijf ook waarom je die plek kiest.","Denk aan de bank en aan wat je daar krijgt voor je spaargeld."]],
+ c_scooter:[["Bereken de totale kosten van optie A: wat betaal je in totaal terug?","Maandtermijn x aantal maanden. Gebruik de gegevens van optie A."],
+            ["Bereken de totale kosten van optie B: wat betaal je in totaal terug?","Maandtermijn x aantal maanden. Gebruik de gegevens van optie B."],
+            ["Noem de rente van beide opties. De rente zijn de kosten van het lenen.","Totale kosten min het geleende bedrag, bij allebei de opties."],
+            ["Kies een optie en leg uit waarom je die kiest.","Vergelijk de kosten van A en B en schrijf op welke goedkoper is."]],
+ o_termijn:[["Een maandtermijn bestaat uit twee delen. Het eerste deel gaat over het geleende geld zelf.","Het deel waarmee je het geleende bedrag terugbetaalt, begint met 'af'."],
+            ["Het tweede deel gaat over wat je de bank betaalt voor het lenen.","Dat deel begint met 'ren'."]],
+ o_waarom:[["Kijk naar hoe lang je erover doet om terug te betalen.","Bij een korter terugbetaalperiode kies je een korte of lange looptijd?"],
+           ["Wat betekent een kortere periode voor de rente die je in totaal betaalt?","Je betaalt minder of meer rente in totaal? Leg uit."]],
+ o_inkomsten:[["Noem het inkomen dat je krijgt als je bij een baas werkt.","Het inkomen voor werken in dienst van een bedrijf heet loon of salaris."],
+              ["Noem het inkomen van iemand met een eigen bedrijf.","Wat houd je over als je eigen bedrijf meer verdient dan het kost?"],
+              ["Noem geld dat je van de overheid krijgt.","Denk aan kinderbijslag of een bijstandsuitkering."]],
+ o_uitgaven:[["Noem uitgaven die je met een vaste regelmaat betaalt en geef een voorbeeld.","Denk aan huur, abonnementen of contributie."],
+             ["Noem dagelijkse uitgaven en geef een voorbeeld.","Denk aan boodschappen."],
+             ["Noem grote uitgaven die je af en toe doet en geef een voorbeeld.","Denk aan een laptop of een vakantie."]],
+ o_functies:[["Noem de functie van geld waarbij je betaalt voor spullen.","Het woord eindigt op 'middel' en begint met 'ruil'."],
+             ["Noem de functie van geld waarbij je het bewaart voor later.","Het woord begint met 'spaar'."],
+             ["Noem de functie van geld waarbij je kunt uitrekenen hoeveel iets kost of hoeveel korting je krijgt.","Het woord begint met 'reken'."]],
+ o_motieven:[["Noem de reden om te sparen waarbij je iets wilt kopen.","Het begint met 'sparen voor een...'. Geef een voorbeeld."],
+             ["Noem de reden om te sparen waarbij je extra geld van de bank wilt krijgen.","Het begint met 'sparen voor de...'. Geef een voorbeeld."],
+             ["Noem de reden om te sparen voor onverwachte kosten.","Het begint met 'sparen uit...'. Geef een voorbeeld."]],
+ o_bram:[["Wat spaart Bram voor? Welke reden om te sparen hoort bij een brommer kopen?","Bram weet waarvoor hij het geld wil gebruiken. Leg uit waarom."],
+         ["Sanne weet niet wat er kapot zal gaan. Welke reden om te sparen hoort daarbij?","Het gaat om geld achter de hand voor onverwachte kosten. Leg uit waarom."]],
+ o_premie:[["Eén ding waar het van afhangt gaat over de kans dat je schade hebt.","Noem de kans op schade (het risico) en leg uit."],
+           ["Een ander ding gaat over hoe hoog het bedrag van de schade kan zijn.","Noem de hoogte van het bedrag en leg uit."],
+           ["Het derde gaat over jouw eigen geld: kun je de schade zelf betalen?","Noem dat het ervan afhangt of je de schade zelf kunt betalen."]],
+ o_eigenrisico:[["Wat betekent eigen risico: wie betaalt welk deel van de schade?","Het eigen risico is het deel van de schade dat je zelf betaalt."],
+                ["Waarom is de premie lager als je zelf een deel van de schade betaalt?","Denk aan wat de verzekeraar dan minder hoeft te vergoeden."]],
+ o_mila:[["Mila heeft geen verzekering. Wie betaalt de schade dan?","Zonder verzekering betaalt Mila de hele schade zelf."],
+         ["Jesse heeft wel een verzekering. Wat krijgt hij vergoed en wat betaalt hij zelf?","De verzekeraar betaalt de schade min het eigen risico."]],
+ c_scooter2:[["Bereken de premie per jaar van A en van B.","Premie per maand x 12."],
+             ["Bereken wat Jesse in totaal betaalt bij verzekering A als er schade is.","Premie per jaar plus eigen risico."],
+             ["Bereken wat Jesse in totaal betaalt bij verzekering B als er schade is.","Premie per jaar plus eigen risico."],
+             ["Kies een verzekering en leg uit waarom je die kiest.","Vergelijk de totale kosten met en zonder schade."]],
+ o_nut:[["Wat staat er in een begroting? Beschrijf wat het is.","Een overzicht van je verwachte inkomsten en uitgaven."],
+        ["Wat kun je zien als je inkomsten en uitgaven naast elkaar zet?","Je ziet of je rond kunt komen. Noem een voordeel."]],
+ o_vastelasten:[["Waarom kun je vaste lasten niet zomaar veranderen?","Denk aan afspraken die je hebt gemaakt, zoals een contract."],
+                ["Hoe kun je zelf minder energie gebruiken? Noem één manier.","Denk aan licht, douchen of de verwarming."]],
+ o_weekmaand:[["Noem de stappen: hoe reken je van een bedrag per week naar een bedrag per maand?","Een jaar heeft 52 weken en 12 maanden. Eerst naar een jaarbedrag."],
+              ["Schrijf de uitkomst op: wat is het bedrag per maand?","(9 x 52) : 12."],
+              ["Waarom reken je bedragen om naar dezelfde periode?","Zodat je ze kunt vergelijken of bij elkaar optellen."]],
+ o_meerdere:[["Bedenk een persoon die twee soorten inkomsten tegelijk heeft.","Er zijn drie soorten: loon, winst en uitkering. Combineer er twee."]],
+ o_rwaarom:[["Wat doet de bank met het geld dat jij spaart?","De bank leent het uit aan andere mensen."],
+            ["Wat levert dat de bank op? En wat krijg jij daarvoor?","De bank verdient eraan en betaalt jou daarom rente."]],
+ o_verschil:[["Wat gebeurt er met rente als je spaart?","Als je spaart, ontvang je rente van de bank."],
+             ["Wat gebeurt er met rente als je geld leent?","Als je leent, betaal je rente aan de bank."]],
+ o_rrekenen:[["Welke berekening gebruik je voor rente? Schrijf de som op.","(Percentage : 100) x spaarbedrag."],
+             ["Reken de rente uit en schrijf de uitkomst op.","(2,4 : 100) x 1150."],
+             ["Staat je antwoord in 2 decimalen, zoals bij geld?","Schrijf het bedrag met twee cijfers achter de komma."]],
+ o_reden2:[["Noem een reden waarbij je iets duurs nu al wilt hebben.","Je wilt niet wachten tot je genoeg gespaard hebt. Geef een voorbeeld."],
+           ["Noem een reden waarbij je ineens snel geld nodig hebt.","Er gaat iets onverwacht kapot. Geef een voorbeeld."]],
+ o_risico:[["Wat moet je met geleend geld doen?","Je moet het terugbetalen, met rente."],
+           ["Wat gebeurt er als je niet kunt terugbetalen?","Je krijgt geldproblemen of schulden."]],
+ o_kosten:[["Welk onderdeel betaal je extra aan de bank voor het lenen?","Het begint met 'ren'."],
+           ["Vergelijk wat je terugbetaalt met wat je leende.","Je betaalt in totaal meer terug dan je leende."]],
+ o_waarom_verz:[["Wat gebeurt er als je schade hebt zonder verzekering?","Je loopt risico op hoge kosten."],
+                ["Wie betaalt de schade als je verzekerd bent?","De verzekeraar vergoedt de financiële gevolgen."]],
+ o_zorg:[["Wat kost zorg, bijvoorbeeld een ziekenhuisopname?","Zorg kan erg duur zijn."],
+         ["Wat gebeurt er als iedereen verzekerd is?","Iedereen kan zorg krijgen als dat nodig is."]]
+};
+Object.keys(OH).forEach(id => { if (Q[id]) Q[id].crit.forEach((c,i) => { if (OH[id][i]) c.h = OH[id][i]; }); });
+
 function bouwRij(k){
   const used = new Set();
   const pick = a => { const b = a.filter(x => !used.has(x)); const c = b.length ? b : a; const r = c[Math.floor(Math.random()*c.length)]; used.add(r); return r; };
@@ -1228,7 +1323,7 @@ function startKamer(k){
 }
 function startQ(){
   const def = Q[S.rij[S.qi]];
-  cur = {def, att:0, hints:0, paid:0, freeUsed:false, done:false, earned:0, msg:null, text:"", sel:[], gaveUp:false, busy:false, fails:0};
+  cur = {def, att:0, hints:0, paid:0, freeUsed:false, done:false, earned:0, msg:null, text:"", sel:[], gaveUp:false, busy:false, fails:0, hl:[], hc:{}};
   if (def.type === "mc") {
     const idx = def.opts.map((_,i)=>i);
     cur.order = idx.slice();
@@ -1259,7 +1354,7 @@ function vKamer(){
   <section class="card stack">
     <div><span class="tag">${d.label}</span></div>
     ${d.tabel ? tabelBox(d.tabel) : ""}${d.box ? kaartBox(d) : ""}
-    <p class="q">${esc(d.q)}</p>
+    ${qHtml(d.q)}
 
     ${vBody(d)}
     ${cur.msg ? cur.msg : ""}
@@ -1271,6 +1366,12 @@ function vKamer(){
 }
 function tabelBox(t){
   return `<div class="tw"><div class="tt">${esc(t.titel)}</div><table class="tb"><thead><tr>${t.kop.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${t.rijen.map(r=>`<tr>${r.map((c,i)=>`<td${i===0?' class="f"':''}>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+function qHtml(q){
+  const regels = String(q).split("\n"); let out = "", lijst = [];
+  const flush = () => { if (lijst.length) { out += `<ul class="ql">${lijst.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`; lijst = []; } };
+  for (const r of regels) { if (/^\* /.test(r)) lijst.push(r.slice(2)); else { flush(); if (r.trim()) out += `<p class="q">${esc(r)}</p>`; } }
+  flush(); return out;
 }
 function kaartBox(d){
   const items = d.box.map(v => `<span>${v[0]}: <b>${v[1]()}</b></span>`).join("");
@@ -1354,7 +1455,8 @@ function vActions(d){
 function vHints(d){
   if (cur.done) return "";
   const n = cur.hints, max = d.hints.length;
-  const list = d.hints.slice(0,n).map(h => `<div class="hint">${esc(h)}</div>`).join("");
+  const toon = heeftOnderdeelHints(d) ? cur.hl : d.hints.slice(0,n);
+  const list = toon.map(h => `<div class="hint">${esc(h)}</div>`).join("");
   const cost = CONFIG.HINT_KOSTEN[Math.min(cur.paid, CONFIG.HINT_KOSTEN.length-1)];
   const can = n < max && S.saldo >= cost;
   const btn = n >= max ? `<button class="btn small ghost" disabled>Geen hints meer</button>`
@@ -1467,9 +1569,21 @@ async function beoordeelAI(vraag, crit, text, voorbeeld){
   }
   return {ok: crit.map(c => !!critMatch(c, text)), fb:"", viaAI:false};
 }
+function heeftOnderdeelHints(d){ return d.type === "open" && d.crit.some(c => c.h); }
+function nieuweHint(){
+  const d = cur.def;
+  if (heeftOnderdeelHints(d)) {
+    let i = d.crit.findIndex((c,j) => c.h && !(cur.met && cur.met[j]));
+    if (i < 0) i = d.crit.findIndex(c => c.h);
+    const c = d.crit[i], lvl = Math.min(cur.hc[i] || 0, c.h.length - 1);
+    cur.hc[i] = (cur.hc[i] || 0) + 1;
+    cur.hl.push(`Bij “${c.label}”: ${c.h[lvl]}`);
+  }
+  cur.hints++;
+}
 function gratisHint(){
   const d = cur.def;
-  if (!cur.freeUsed && cur.hints < d.hints.length) { cur.freeUsed = true; cur.hints++; return ` <b>Je krijgt een gratis hint.</b> Lees hem goed onder de opdracht en denk zelf na over wat je kunt verbeteren.`; }
+  if (!cur.freeUsed && cur.hints < d.hints.length) { cur.freeUsed = true; nieuweHint(); return ` <b>Je krijgt een gratis hint.</b> Lees hem goed onder de opdracht en denk zelf na over wat je kunt verbeteren.`; }
   return "";
 }
 async function checkOpen(){
@@ -1655,7 +1769,7 @@ const A = {
   hint(){
     const d = cur.def, n = cur.hints, cost = CONFIG.HINT_KOSTEN[Math.min(cur.paid, CONFIG.HINT_KOSTEN.length-1)];
     if (n >= d.hints.length || S.saldo < cost) return;
-    S.saldo -= cost; cur.hints++; cur.paid++; render(); setTimeout(tweenSaldo, 30);
+    S.saldo -= cost; nieuweHint(); cur.paid++; render(); setTimeout(tweenSaldo, 30);
   },
   volgende(){
     if (S.qi < S.rij.length-1) { S.qi++; startQ(); render(); }
