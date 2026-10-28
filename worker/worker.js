@@ -4,6 +4,7 @@
 // Instellingen in Cloudflare (Settings > Variables and Secrets):
 //   ANTHROPIC_API_KEY  (Secret)  jouw nieuwe sleutel voor dit project
 //   ALLOWED_ORIGINS    (Text)    bijvoorbeeld https://jouwnaam.github.io  (meerdere adressen scheiden met een komma)
+//   WORKSPACE_ID       (Text, optioneel)  alleen nodig als je sleutel niet aan een workspace hangt (wrkspc_...)
 //   MODEL              (Text, optioneel)  standaard claude-haiku-5-5
 
 const SYSTEM = `Je bent een vriendelijke, eerlijke nakijker voor een economieles op mavo, jaar 2.
@@ -104,7 +105,7 @@ async function roep(env, system, user) {
       try {
         const res = await fetch("https://api.anthropic.com/v1/messages", {
           method: "POST",
-          headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+          headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json", ...(env.WORKSPACE_ID ? { "anthropic-workspace-id": env.WORKSPACE_ID } : {}) },
           body: JSON.stringify({ model, max_tokens: 500, system, messages: [{ role: "user", content: user }] }),
         });
         if (!res.ok) {
