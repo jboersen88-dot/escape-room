@@ -1088,7 +1088,7 @@ const fresh = () => ({fase:"start", duo:"", saldo:CONFIG.START_GELD, open:{}, kl
 let S = fresh();
 let cur = null;           // huidige vraag (runtime)
 let shown = S.saldo;      // getoond saldo (animatie)
-const LS = "millionair-worden-v1";
+const LS = "millionair-worden-v2";
 function save(){ try { localStorage.setItem(LS, JSON.stringify(S)); } catch(e){} }
 function load(){ try { const j = localStorage.getItem(LS); if (j) return Object.assign(fresh(), JSON.parse(j)); } catch(e){} return null; }
 
