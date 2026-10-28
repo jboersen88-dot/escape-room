@@ -1173,7 +1173,7 @@ function vStart(){
   </section>
   <section class="card stack">
     <h3>Spelregels</h3>
-    <p>Goed antwoord in één keer: volle prijs. Tweede poging: de helft. Daarna een kwart.</p>
+    <p>Goed antwoord in één keer: volle prijs. Na een fout krijg je een gratis hint en nog één kans voor de helft. Lukt het dan nog niet, dan zie je het antwoord en gaan jullie door naar de volgende opdracht.</p>
     <p>Een hint kost geld (${CONFIG.HINT_KOSTEN.map(eur).join(", ")}). Het duo met het meeste geld wint.</p>
     <p>Elke kamer geeft één cijfer. Daarna zoeken jullie de goede volgorde voor de kluis.</p>
   </section>
@@ -1348,7 +1348,7 @@ function vActions(d){
   else if (d.type === "begroting") b = `<button class="btn gold" data-act="check">Controleer</button>`;
   else if (d.type === "open") b = `<button class="btn gold" data-act="check" ${cur.busy?"disabled":""}>${cur.busy ? "Aan het nakijken..." : "Laat nakijken"}</button>`;
   else b = `<button class="btn gold" data-act="check">Controleer</button>`;
-  const give = (cur.att >= 3 || cur.fails >= 3) ? `<button class="btn ghost" data-act="geefop">Toon het antwoord (€0)</button>` : "";
+  const give = "";
   return `<div class="row">${b}${give}</div>`;
 }
 function vHints(d){
@@ -1372,7 +1372,7 @@ function payTxt(a, att){
   return `<div class="fb good"><b>Goed!</b> Je verdient <span class="pay">${eur(a)}</span>. ${t}</div>`;
 }
 function wrongTxt(extra){
-  const nxt = cur.att === 1 ? "Opnieuw proberen levert de helft op." : "Opnieuw proberen levert een kwart op.";
+  const nxt = "Je hebt nog één kans: dan levert het de helft op." + gratisHint();
   return `<div class="fb bad"><b>Nog niet goed.</b> ${extra ? extra + " " : ""}${nxt}</div>`;
 }
 function finishGood(a){
@@ -1432,7 +1432,7 @@ function checkKaartjes(){
   let all = true; cur.att++;
   for (const v of cur.def.velden) { const ok = parseNum(cur.f[v.k]) === v.want && (!v.per || cur.per[v.k] === v.per); cur.fok[v.k] = ok; if (!ok) all = false; }
   if (all) { finishGood(0); cur.msg = `<div class="fb good"><b>Gevonden!</b> Met deze gegevens kun je de lening uitrekenen.</div>`; render(); }
-  else { cur.fails++; cur.msg = `<div class="fb bad"><b>Nog niet alles klopt.</b> De rode velden kloppen niet. Kijk nog eens goed op de kaartjes. Een hint kan helpen.</div>`; render(); }
+  else { cur.fails++; cur.msg = `<div class="fb bad"><b>Nog niet alles klopt.</b> De rode velden kloppen niet. Kijk nog eens goed op de kaartjes. Je hebt nog één kans (de helft van de punten).${gratisHint()}</div>`; render(); }
 }
 function checkKoppel(){
   const d = cur.def; cur.att++;
@@ -1487,7 +1487,7 @@ async function checkOpen(){
   else {
     cur.fails++;
     const n = d.crit.filter((_,i)=>cur.met[i]).length;
-    cur.msg = `<div class="fb bad"><b>${n} van de ${d.crit.length} onderdelen kloppen.</b>${gratisHint()} ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Verbeter je antwoord en laat opnieuw nakijken.${fbTxt}${res.viaAI ? "" : '<div style="margin-top:6px;color:var(--muted);font-size:15px">(demo-nakijker' + (cur.aiErr ? ' - foutcode: ' + esc(cur.aiErr) : '') + ')</div>'}</div>`;
+    cur.msg = `<div class="fb bad"><b>${n} van de ${d.crit.length} onderdelen kloppen.</b>${gratisHint()} ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Je hebt nog één kans (de helft van de punten). Verbeter je antwoord en laat opnieuw nakijken.${fbTxt}${res.viaAI ? "" : '<div style="margin-top:6px;color:var(--muted);font-size:15px">(demo-nakijker' + (cur.aiErr ? ' - foutcode: ' + esc(cur.aiErr) : '') + ')</div>'}</div>`;
   }
   tweenAfter();
 }
@@ -1512,12 +1512,12 @@ function checkBegroting(){
   if (n === ids.length) { cur.done = true; cur.msg = `<div class="fb good"><b>Compleet!</b> In totaal verdiend: <span class="pay">${eur(cur.earned)}</span>.</div>`; }
   else {
     cur.fails++;
-    cur.msg = `<div class="fb bad"><b>${n} van de ${ids.length} onderdelen kloppen.</b>${gratisHint()} ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Rode vakjes kloppen nog niet. Verbeter ze en controleer opnieuw.</div>`;
+    cur.msg = `<div class="fb bad"><b>${n} van de ${ids.length} onderdelen kloppen.</b>${gratisHint()} ${got ? `Je verdiende <span class="pay">${eur(got)}</span>. ` : ""}Rode vakjes kloppen nog niet. Je hebt nog één kans (de helft van de punten). Verbeter ze en controleer opnieuw.</div>`;
   }
   tweenAfter();
 }
 
-function geefOp(){
+function geefOp(auto){
   const d = cur.def; let ans = "";
   if (d.type === "mc") ans = d.correct.map(i => d.opts[i]).join(" en ");
   else if (d.type === "reken") ans = (d.unit==="€"?"€":"") + nf(Number(d.raw().toFixed(d.dec)), d.dec) + (d.unit==="%"?"%":"");
@@ -1527,7 +1527,10 @@ function geefOp(){
   if (d.type === "koppel") d.pairs.forEach((_,i) => { cur.link[i] = i; cur.locked[i] = true; });
   if (d.type === "mc") cur.sel = d.correct.slice();
   cur.done = true; cur.gaveUp = true;
-  cur.msg = `<div class="fb info"><b>Het antwoord was:</b> ${esc(ans)}</div>`;
+  const verd = cur.earned > 0 ? ` Je verdiende bij deze opdracht <span class="pay">${eur(cur.earned)}</span>.` : "";
+  cur.msg = auto
+    ? `<div class="fb info"><b>Helaas, het is niet gelukt.</b>${verd} Het antwoord was: ${esc(ans)}<div style="margin-top:6px">Lees het goed door en ga door naar de volgende opdracht. Daar kun je weer geld verdienen!</div></div>`
+    : `<div class="fb info"><b>Het antwoord was:</b> ${esc(ans)}</div>`;
   render();
 }
 
@@ -1642,12 +1645,13 @@ const A = {
     if (cur.pickL === null) { toast("Tik eerst links op een begrip."); return; }
     cur.link[cur.pickL] = r; cur.pickL = null; cur.msg = null; render();
   },
-  check(){
-    const t = cur.def.type;
+  async check(){
+    const t = cur.def.type, mine = cur;
     if (t === "mc") checkMC(); else if (t === "reken") checkReken(); else if (t === "koppel") checkKoppel();
-    else if (t === "kaartjes") checkKaartjes(); else if (t === "open") checkOpen(); else if (t === "begroting") checkBegroting();
+    else if (t === "kaartjes") checkKaartjes(); else if (t === "open") await checkOpen(); else if (t === "begroting") checkBegroting();
+    if (cur === mine && !cur.done && cur.att >= 2) geefOp(true);
   },
-  geefop: geefOp,
+  geefop(){ geefOp(false); },
   hint(){
     const d = cur.def, n = cur.hints, cost = CONFIG.HINT_KOSTEN[Math.min(cur.paid, CONFIG.HINT_KOSTEN.length-1)];
     if (n >= d.hints.length || S.saldo < cost) return;
