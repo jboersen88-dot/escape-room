@@ -268,6 +268,9 @@ body{background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.014) 0 2
 .leerknop .nr{font-family:var(--type);font-size:30px;color:var(--red)}
 .leerknop .pijl{margin-left:auto;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
 .fr select{width:min(100%,250px)}
+
+.foto{display:block;width:100%;max-width:560px;border-radius:8px;border:3px solid var(--ink)}
+.boekje{color:var(--on-wood);font-size:18px;margin:14px 0 4px;padding:12px 16px;border-left:4px solid var(--brass);background:rgba(255,255,255,.05);border-radius:6px}
 </style>
 </head>
 <body>
@@ -291,17 +294,18 @@ const CONFIG = {
   BONUS_STEMPELS: 2,
   DOCENTCODE: "boersen",          // code om de docentmodus te openen
   HINT_KOST: 1,                   // een hint kost 1 stempel
+  LEERDOSSIER: false,             // true = eerst een leerdossier lezen (uit: leerlingen gebruiken hun boek)
   ANTWOORD: {wie: "dekker", waar: "kunst", wat: "biljet"},   // de aanklacht
   KOFFERCODE: "1971",             // code van het cijferslot op de koffer in het kunstlokaal
   FILMS: {intro: ""},             // link naar de introfilm (NotebookLM). Leeg = geen filmknop.
-  /* Kamer 2: vijf biljetten (spelgeld) in het lokaal. Eén is vals: bij dat biljet klopt één kenmerk niet.
+  /* Kamer 2: vijf oude guldenbiljetten (spelgeld) in het lokaal; waarde in gulden. Eén is vals: bij dat biljet klopt één kenmerk niet.
      d = het cijfer dat achterop het biljet staat. De code van het slot = de cijfers van de echte biljetten, van laag naar hoog. */
   BILJETTEN: [
-    {l: "A", waarde: 5,   vals: false, d: "7"},
-    {l: "B", waarde: 10,  vals: false, d: "3"},
-    {l: "C", waarde: 20,  vals: false, d: "9"},
-    {l: "D", waarde: 50,  vals: true,  d: "4", fout: "Kantelen: het hologram verandert niet"},
-    {l: "E", waarde: 100, vals: false, d: "1"}
+    {l: "A", waarde: 10,  vals: false, d: "7"},
+    {l: "B", waarde: 25,  vals: false, d: "3"},
+    {l: "C", waarde: 50,  vals: false, d: "9"},
+    {l: "D", waarde: 100, vals: true,  d: "4", fout: "Kijken: tegen het licht zie je geen watermerk"},
+    {l: "E", waarde: 250, vals: false, d: "1"}
   ],
   /* Kamer 1: zes platen aan de muur, zonder jaartal, elk met een letter achterop. Goede volgorde = codewoord. */
   TIJDLIJN: [
@@ -315,10 +319,10 @@ const CONFIG = {
 };
 
 const KAMERS = {
-  1: {naam: "De Oude Kluis",       tijd: "Het verleden van geld", plek: "de aula",          beschikbaar: true},
-  2: {naam: "Het Biljettenlab",    tijd: "Geld van nu",           plek: "het scheikundelokaal", beschikbaar: true},
-  3: {naam: "De Prijzenwinkel",    tijd: "Geld in crisis",        plek: "het ICT-hok",      beschikbaar: false},
-  4: {naam: "Het Dossierkantoor",  tijd: "Herhaling hoofdstuk 1", plek: "de torenkamer",    beschikbaar: false}
+  1: {naam: "De Oude Kluis",       tijd: "Het verleden van geld", plek: "de aula",          boek: "hoofdstuk 2", beschikbaar: true},
+  2: {naam: "Het Biljettenlab",    tijd: "Geld van nu",           plek: "het scheikundelokaal", boek: "hoofdstuk 2", beschikbaar: true},
+  3: {naam: "De Prijzenwinkel",    tijd: "Geld in crisis",        plek: "het ICT-hok",      boek: "hoofdstuk 2", beschikbaar: false},
+  4: {naam: "Het Dossierkantoor",  tijd: "Herhaling hoofdstuk 1", plek: "de torenkamer",    boek: "hoofdstuk 1", beschikbaar: false}
 };
 
 /* De Cluedo-lijst: wie, waar, wat */
@@ -378,7 +382,7 @@ const BRIEVEN = {
 BRIEVEN[2] = {kop: "Maandag, 09.10 uur", aan: "Aan de onderzoekers,", tekst: [
   "Ik beheer de kantine. Gisteren stopte iemand een biljet in de kassa. Er klopt iets niet aan.",
   "Onze biljettenlezer is kapot. We moeten het dus zelf controleren.",
-  "In jullie lokaal hangen vijf biljetten. Eén is vals. Controleer ze door te voelen, te kijken en te kantelen.",
+  "In jullie lokaal hangen vijf oude biljetten van de gulden. Dat was ons geld vóór de euro. Eén biljet is vals. Controleer ze door te voelen, te kijken en te kantelen.",
   "Begin met de vragen op de iPad. Zo weten jullie waar je op moet letten. Daarna volgen de biljetten en de verdachtenwand."],
   sig: "De kantinebeheerder"};
 const LABFOTO = `<svg viewBox="0 0 360 220" role="img" aria-label="Foto van een lokaal met een gasbrander, reageerbuizen, een kolf en een systeem van de elementen aan de muur" style="width:100%;max-width:460px;border-radius:8px;border:3px solid var(--ink)"><rect width="360" height="220" fill="#dfe8e1"/><rect y="150" width="360" height="70" fill="#8a6a45"/><rect y="146" width="360" height="8" fill="#6d5233"/>
@@ -390,6 +394,8 @@ const LABFOTO = `<svg viewBox="0 0 360 220" role="img" aria-label="Foto van een 
 const CLUES = {
   2: {intro: "Het slot springt open. In de la ligt een foto. Op de foto zie je een plek in school.",
       rebus: LABFOTO,
+      foto: "img/lokaal-k2.jpg",   // echte foto van het lokaal; staat het bestand er niet, dan blijft de tekening zichtbaar
+      fotoAlt: "Foto van het scheikundelokaal",
       hulp: ["Kijk goed naar wat er op de foto staat. In welk lokaal staan deze spullen?",
              "Er staan een gasbrander, reageerbuizen en een kolf. Aan de muur hangt een systeem van de elementen.",
              "Het is het scheikundelokaal. Ga erheen en zoek de QR-code."]},
@@ -474,7 +480,7 @@ add({id: "c1_functies", type: "koppel", label: "Koppelen",
 
 /* Blok C: wisselbrief en gouden standaard (2.1) */
 tf("c1_wissel", "Juist of onjuist: met een wisselbrief hoefde een koopman geen zware zak munten mee te nemen op reis.", true,
-  ["Wat is een wisselbrief? Lees de derde kaart in het dossier.", "De koopman kreeg een briefje van een bank. Bij een andere bank kreeg hij er geld voor.", "Het antwoord is juist: het briefje was veel lichter dan een zak met munten."]);
+  ["Wat is een wisselbrief? Zoek het op in je boek.", "De koopman kreeg een briefje van een bank. Bij een andere bank kreeg hij er geld voor.", "Het antwoord is juist: het briefje was veel lichter dan een zak met munten."]);
 mc("c1_goud", "Meerkeuze", "Sinds 1971 kun je papiergeld niet meer ruilen voor goud. Waarom is geld dan toch iets waard?",
   ["Mensen vertrouwen erop dat anderen het willen hebben", "De bank bewaart voor elk biljet een stukje goud", "Het papier van een biljet is zelf veel geld waard", "De overheid betaalt je elk jaar het verschil terug"], [0],
   ["Wat kon je vroeger met papiergeld doen, en nu niet meer?", "Er zit geen goud meer achter het geld. Waar hangt de waarde dan van af?", "Van vertrouwen: iedereen gelooft dat een ander het geld aanneemt."]);
@@ -504,7 +510,7 @@ add({id: "s1_tijdlijn", type: "slot", lokaal: true, label: "Het slot van de klui
   q: "Lees op elke plaat wat er gebeurde. Zet de platen in de goede volgorde, van oud naar nieuw. Achterop elke plaat staat een letter. Typ de letters in de goede volgorde. Groene letters staan al op de goede plek.",
   code: () => CONFIG.TIJDLIJN.map(x => x.l).join(""),
   na: "RUILEN! Zo begon het: mensen gingen ruilen. En in 1971 liet Amerika het goud los. Sinds die tijd is geld alleen nog waard wat wij ervan vertrouwen.",
-  hints: ["Begin met het oudste: ruilen zonder geld.", "Daarna volgen schelpen en zout, dan munten, dan de wisselbrief.", "Het laatst komt de pinpas. Daarvoor liet Amerika het goud los. Kijk ook in het leerdossier."]});
+  hints: ["Begin met het oudste: ruilen zonder geld.", "Daarna volgen schelpen en zout, dan munten, dan de wisselbrief.", "Het laatst komt de pinpas. Daarvoor liet Amerika het goud los. Kijk ook in je boek."]});
 
 /* ---------------- KAMER 2: Het Biljettenlab ---------------- */
 mc("a2_pin", "Meerkeuze", "Je pint een broodje in de kantine. Wat gebeurt er met het geld?",
@@ -542,13 +548,13 @@ op("o2_nepgeld", "Waarom is namaakgeld gevaarlijk voor de economie? Beantwoord d
   "Er komt meer geld in omloop, maar er zijn niet meer spullen. Daardoor stijgen de prijzen. Echt geld is dan minder waard: je kunt er minder voor kopen.",
   ["Nep-biljetten zijn extra geld. Wat gebeurt er met de hoeveelheid geld?", "Er is meer geld, maar niet meer spullen. Wat doen de prijzen dan?", "Meer geld in omloop: de prijzen stijgen en echt geld is minder waard."]);
 add({id: "s2_biljetten", type: "slot", lokaal: true, label: "Het slot van de la",
-  walk: "Zoek in het lokaal de " + CONFIG.BILJETTEN.length + " biljetten. Controleer ze door te voelen, te kijken en te kantelen.",
-  q: "Eén biljet is vals. Dat biljet doe je niet mee. Zet de echte biljetten van de laagste naar de hoogste waarde. Achterop elk biljet staat een cijfer. Typ de cijfers in die volgorde. Groene cijfers staan al op de goede plek.",
+  walk: "Zoek in het lokaal de " + CONFIG.BILJETTEN.length + " oude guldenbiljetten. Controleer ze door te voelen, te kijken en te kantelen.",
+  q: "Eén biljet is vals. Dat biljet doe je niet mee. Zet de echte biljetten van de laagste naar de hoogste waarde in gulden. Achterop elk biljet staat een cijfer. Typ de cijfers in die volgorde. Groene cijfers staan al op de goede plek.",
   code: () => CONFIG.BILJETTEN.filter(b => !b.vals).sort((a, b) => a.waarde - b.waarde).map(b => b.d).join(""), digits: true,
-  na: "Bij het valse biljet veranderde het hologram niet toen je het kantelde. Zo herken je namaak.",
-  hints: ["Controleer elk biljet op voelen, kijken en kantelen. Bij één biljet klopt iets niet.", "Dat valse biljet doe je niet mee. Zet de andere biljetten van laag naar hoog.", "Je hebt vier echte biljetten. Typ het cijfer van het biljet van 5, dan 10, dan 20 en dan 100."]});
+  na: "Bij het valse biljet zag je tegen het licht geen watermerk. Zo herken je namaak. Sinds 2002 betalen we met de euro. De gulden bestaat niet meer.",
+  hints: ["Controleer elk biljet: voelen, kijken (ook tegen het licht) en kantelen. Zoek in je boek wat bij een echt biljet hoort. Bij één biljet klopt iets niet.", "Dat valse biljet doe je niet mee. Zet de andere biljetten van laag naar hoog.", "Je hebt vier echte biljetten. Typ de cijfers van de biljetten van " + CONFIG.BILJETTEN.filter(b => !b.vals).sort((a, b) => a.waarde - b.waarde).map(b => b.waarde).join(", dan ") + " gulden."]});
 
-/* Kamer 1: zes vragen (volgorde van het leerdossier) en daarna de tijdlijn. Bij ruil en bij wisselbrief/goud krijgt elk duo er een van de twee. */
+/* Kamer 1: zes vragen (volgorde van het boek) en daarna de tijdlijn. Bij ruil en bij wisselbrief/goud krijgt elk duo er een van de twee. */
 const POOL = {
   1: {rij: [["a1_ruil1", "a1_ruil2"], "c1_functies", "b1_knip", "b1_metaal", ["c1_wissel", "c1_goud"], "o1_inflatie"], slot: "s1_tijdlijn"},
   2: {rij: [["a2_pin", "a2_tf"], "c2_waarde", "b2_kenm", "c2_soort", "z2_wand", "o2_nepgeld"], slot: "s2_biljetten"}
@@ -683,7 +689,7 @@ function teacherBox(){
     <p class="lead">Testmodus: ${S.test ? "aan (QR-plekken werken ook zonder dat de kamer klaar is)" : "uit"}. Nakijken: ${CONFIG.WORKER_URL ? "AI via de Worker" : "demo (trefwoorden)"}.</p>
     <table>
       <tr><td>Codewoord kamer 1</td><td><b>${esc(Q.s1_tijdlijn.code())}</b></td></tr>
-      <tr><td>Code kamer 2</td><td><b>${esc(Q.s2_biljetten.code())}</b> (echte biljetten, laag naar hoog: ${CONFIG.BILJETTEN.filter(b => !b.vals).sort((a,b)=>a.waarde-b.waarde).map(b => b.l + " = " + b.d).join(", ")}). Vals: ${CONFIG.BILJETTEN.filter(b => b.vals).map(b => b.l + " (" + b.fout + ")").join(", ")}</td></tr>
+      <tr><td>Code kamer 2</td><td><b>${esc(Q.s2_biljetten.code())}</b> (echte biljetten, laag naar hoog: ${CONFIG.BILJETTEN.filter(b => !b.vals).sort((a,b)=>a.waarde-b.waarde).map(b => b.l + " (" + b.waarde + " gulden) = " + b.d).join(", ")}). Vals: ${CONFIG.BILJETTEN.filter(b => b.vals).map(b => b.l + " (" + b.fout + ")").join(", ")}</td></tr>
       <tr><td>Codes onder de QR</td><td>${[1,2,3,4].map(k => k + ": " + esc(CONFIG.PLEKCODES[k]) + " (" + KAMERS[k].plek + ")").join(" · ")} · bonus: ${esc(CONFIG.BONUSCODE)}</td></tr>
       <tr><td>Links voor de QR</td><td>${[1,2,3,4].map(k => esc(base) + "#p" + k).join("<br>")}<br>${esc(base)}#bonus</td></tr>
       <tr><td>Platen kamer 1</td><td>${CONFIG.TIJDLIJN.map(x => esc(x.l) + " = " + esc(x.t)).join(" · ")}</td></tr>
@@ -749,6 +755,7 @@ function vBrief(){
   const k = S.kamer, B = BRIEVEN[k];
   return `<section class="stack"><span class="head-tag" style="color:var(--brass)">Kamer ${k} · ${esc(KAMERS[k].tijd)}</span><h2>${esc(KAMERS[k].naam)}</h2></section>
   <section class="card lined has-lees">${LEES}<div class="letter"><p class="dt">${esc(B.kop)}</p><p>${esc(B.aan)}</p>${B.tekst.map(t => `<p>${esc(t)}</p>`).join("")}<p class="sig">${esc(B.sig)}</p></div></section>
+  <p class="boekje"><b>Pak je boek.</b> Je mag het gebruiken. Zoek de antwoorden in ${esc(KAMERS[k].boek)}.</p>
   <div class="row"><button class="btn go" data-act="leesklaar">Begin met de opdrachten</button><button class="link" data-act="bureau">Terug naar het bureau</button></div>`;
 }
 
@@ -787,7 +794,7 @@ function vKamer(){
     ${vActions(d)}
   </section>
   ${vHints(d)}
-  <div class="foot"><button class="link" data-act="dossier">Lees het dossier nog eens</button><button class="link" data-act="bureau">Even terug naar het bureau</button></div>`;
+  <div class="foot">${CONFIG.LEERDOSSIER ? `<button class="link" data-act="dossier">Lees het dossier nog eens</button>` : ""}<button class="link" data-act="bureau">Even terug naar het bureau</button></div>`;
 }
 
 /* ---- leerdossier ---- */
@@ -804,6 +811,7 @@ function vLeer(){
 }
 
 /* ---- clue en hint ---- */
+function fotoTerug(img, k){ const d = document.createElement('div'); d.innerHTML = CLUES[k].rebus; img.replaceWith(d.firstElementChild); }
 function vClue(){
   const k = S.kamer, C = CLUES[k], K = KAMERS[k];
   const hulp = C.hulp.slice(0, S.rebusHulp).map(h => `<div class="hint">${esc(h)}</div>`).join("");
@@ -813,7 +821,7 @@ function vClue(){
   <section class="card stack has-lees">${LEES}
     <div><span class="tag">De clue</span></div>
     <p class="q">${esc(C.intro)}</p>
-    ${C.rebus}
+    ${C.foto ? `<img class="foto" src="${esc(C.foto)}" alt="${esc(C.fotoAlt || "")}" onerror="fotoTerug(this,${k})">` : C.rebus}
     <p class="q">Welke plek in school is dit? Ga erheen en zoek de QR-code. Scan hem met de camera van de iPad.</p>
     <p class="lead" style="font-size:17px">Lukt scannen niet? Typ de code die onder de QR-code staat.</p>
     <div class="inl"><input id="pcode" type="text" autocapitalize="characters" autocomplete="off" placeholder="Code onder de QR-code"><button class="btn go" data-act="pcode">Controleer</button></div>
@@ -1127,7 +1135,7 @@ const A = {
     if (norm($("#bcode").value) === norm(CONFIG.BONUSCODE)) { S.bonus = true; toast("Geheime QR gevonden: +" + CONFIG.BONUS_STEMPELS + " stempels!"); render(); }
     else toast("Die code klopt niet.");
   },
-  leesklaar(){ S.fase = "leer"; render(); },
+  leesklaar(){ if (CONFIG.LEERDOSSIER) S.fase = "leer"; else { S.gelezen[S.kamer] = true; S.fase = "kamer"; } render(); },
   kaart(el){ const k = S.kamer; S.gezien[k] = S.gezien[k] || {}; S.gezien[k][Number(el.dataset.i)] = true; render(); },
   leerklaar(){ S.gelezen[S.kamer] = true; S.fase = "kamer"; render(); },
   dossier(){ S.fase = "leer"; render(); },
@@ -1211,11 +1219,11 @@ addEventListener("hashchange", () => applyHash());
 
 (function init(){
   const old = load();
-  if (old && old.fase !== "start") { S = old; S.docent = null; if (S.fase === "kamer" || S.fase === "brief" || S.fase === "leer") startQ(); }
+  if (old && old.fase !== "start") { S = old; S.docent = null; if (S.fase === "leer" && !CONFIG.LEERDOSSIER) { S.fase = "kamer"; if (S.kamer) S.gelezen[S.kamer] = true; } if (S.fase === "kamer" || S.fase === "brief" || S.fase === "leer") startQ(); }
   else if (old && old.pend) S.pend = old.pend;
   render(); applyHash();
 })();
-window.__G = {get S(){return S}, get cur(){return cur}, Q, A, CONFIG, POOL, bouwRij, KAMERS, ELIM};
+window.__G = {get S(){return S}, get cur(){return cur}, render, Q, A, CONFIG, POOL, bouwRij, KAMERS, ELIM};
 
 </script>
 </body>
