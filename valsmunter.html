@@ -1,0 +1,1080 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>De valsmunter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Kalam:wght@400;700&family=Special+Elite&display=swap">
+<style>
+/* Concept: een onderzoeksbureau. Donkergroen, bankbiljetpapier, rode stempelinkt en messing. Grote tikvlakken voor de iPad. */
+:root{
+  --wood:#0f1d1a;
+  --wood-2:#172a25;
+  --plank:#1d3a32;
+  --paper:#f2efdc;
+  --paper-2:#e5e1c6;
+  --paper-line:#c4bd96;
+  --ink:#1f2a24;
+  --ink-soft:#56604f;
+  --red:#b0322a;
+  --red-soft:rgba(168,50,42,.12);
+  --brass:#c9a54a;
+  --brass-ink:#2a1c05;
+  --good:#2f7d4f;
+  --good-soft:rgba(47,125,79,.13);
+  --bad:#b4372d;
+  --bad-soft:rgba(180,55,45,.10);
+  --on-wood:#e6efe3;
+  --on-wood-muted:#9db3a6;
+  --display:"Fraunces",Georgia,serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --hand:"Kalam","Comic Sans MS",cursive;
+  --type:"Special Elite","Courier New",monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;color:var(--on-wood);font-family:var(--body);font-size:19px;line-height:1.5;
+  background-color:var(--wood);
+  background-image:
+    repeating-linear-gradient(180deg,rgba(0,0,0,.0) 0 118px,rgba(0,0,0,.35) 118px 120px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.012) 0 3px,rgba(0,0,0,.02) 3px 7px),
+    radial-gradient(900px 500px at 75% -10%,rgba(201,151,63,.18),transparent 60%);
+  background-attachment:fixed;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 48px;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--wood)}
+.wrap{max-width:900px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);line-height:1.15;margin:0;text-wrap:balance}
+h1{font-size:clamp(34px,6vw,54px);font-weight:800}
+h2{font-size:clamp(24px,3.6vw,32px);font-weight:800}
+h3{font-size:21px;font-weight:600}
+p{margin:0}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+
+/* kop */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--wood);border-bottom:1px solid #3d2e22;margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.top .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between}
+.brand{font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:.04em;color:var(--brass)}
+.brand small{display:block;font-family:var(--body);font-weight:400;color:var(--on-wood-muted);font-size:14px;letter-spacing:0}
+.chips{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.lock{display:flex;gap:4px;background:#120d09;border:2px solid var(--brass);border-radius:10px;padding:4px}
+.lock .dg{width:34px;height:40px;border-radius:6px;background:#2b2017;display:grid;place-items:center;font-family:var(--type);font-size:24px;color:var(--on-wood-muted)}
+.lock .dg.has{color:var(--brass);background:#3a2a1b}
+.stc{display:flex;align-items:center;gap:8px;background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 16px 5px 6px;font-family:var(--display);font-weight:800;font-size:21px;font-variant-numeric:tabular-nums}
+.stc .seal{width:30px;height:30px}
+
+main{padding-top:26px;display:flex;flex-direction:column;gap:22px}
+.lead{color:var(--on-wood-muted);max-width:62ch}
+.stack{display:flex;flex-direction:column;gap:14px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+/* papier */
+.card{background:var(--paper);color:var(--ink);border-radius:6px;padding:24px;box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 10px 24px rgba(0,0,0,.35);position:relative}
+.card .lead{color:var(--ink-soft)}
+.card.lined{background-image:repeating-linear-gradient(180deg,transparent 0 33px,rgba(120,95,60,.18) 33px 34px);background-color:var(--paper)}
+.letter{font-family:var(--hand);font-size:22px;line-height:1.55;color:#2b2a5a}
+.letter p+p{margin-top:10px}
+.letter .sig{text-align:right;margin-top:12px}
+.letter .dt{font-size:19px;color:#4a477a}
+.typed{font-family:var(--type);font-size:18px;line-height:1.6;color:var(--ink)}
+.typed p+p{margin-top:10px}
+.head-tag{font-family:var(--type);font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+
+/* knoppen */
+.btn{min-height:54px;padding:12px 24px;border-radius:10px;border:2px solid var(--ink);background:var(--paper-2);color:var(--ink);cursor:pointer;font-weight:700;font-size:19px;touch-action:manipulation}
+.btn:hover{background:#e2d1ab}
+.btn.go{background:var(--red);border-color:var(--red);color:#fff6ea}
+.btn.go:hover{filter:brightness(1.07)}
+.btn.brass{background:var(--brass);border-color:var(--brass);color:var(--brass-ink)}
+.btn.ghost{background:transparent}
+.btn.small{min-height:44px;padding:8px 16px;font-size:17px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.link{background:none;border:0;color:var(--on-wood-muted);text-decoration:underline;cursor:pointer;padding:8px 4px;font-size:16px}
+.card .link{color:var(--ink-soft)}
+
+/* invoer */
+input[type=text],textarea{width:100%;background:#fffaf0;border:2px solid var(--paper-line);border-radius:8px;padding:14px 16px;font-size:20px;color:var(--ink)}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--red);outline:none}
+textarea{min-height:150px;resize:vertical}
+label.fl{display:flex;flex-direction:column;gap:6px;color:var(--ink-soft);font-size:16px}
+select{background:#fffaf0;border:2px solid var(--paper-line);border-radius:8px;padding:10px 12px;font-size:19px;color:var(--ink);min-height:52px;max-width:100%}
+.inl{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.inl input{flex:1 1 180px;width:auto}
+.bad-field{border-color:var(--bad)!important;background:#fff1ee!important}
+.good-field{border-color:var(--good)!important;background:#f1fbf4!important}
+
+/* zolder (lobby) */
+.chest{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center}
+@media(max-width:620px){.chest{grid-template-columns:1fr;justify-items:center;text-align:center}}
+.chest svg{width:190px;height:auto}
+.brieven{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.brief{position:relative;text-align:left;background:var(--paper);color:var(--ink);border:0;border-radius:4px;padding:20px 18px 18px;display:flex;flex-direction:column;gap:4px;min-height:190px;cursor:pointer;box-shadow:0 8px 18px rgba(0,0,0,.35);transform:rotate(var(--r,0deg))}
+.brief:nth-child(1){--r:-1deg}.brief:nth-child(2){--r:.8deg}.brief:nth-child(3){--r:-.6deg}.brief:nth-child(4){--r:1.1deg}
+.brief .yr{font-family:var(--type);font-size:30px;color:var(--red);line-height:1}
+.brief .nm{font-family:var(--display);font-weight:800;font-size:21px}
+.brief .sub{color:var(--ink-soft);font-size:15px}
+.brief .st{margin-top:auto;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.brief .wax{position:absolute;right:14px;top:14px;width:46px;height:46px}
+.brief.lockd .st{color:var(--red)}
+.brief.open .st{color:var(--good)}
+.brief.klaar{background:linear-gradient(180deg,#eef0dc,var(--paper))}
+.brief.klaar .st{color:var(--good)}
+.brief.soon{opacity:.55;cursor:default}
+.brief .dig{position:absolute;right:12px;bottom:12px;font-family:var(--type);font-size:26px;color:var(--good)}
+
+/* stempelkaart */
+.skaart{background:#efe2c2;color:var(--ink);border-radius:6px;padding:18px 20px;box-shadow:0 10px 24px rgba(0,0,0,.35);border:2px solid #d4c194}
+.skaart h3{font-family:var(--type);font-weight:400;letter-spacing:.08em;text-transform:uppercase;font-size:18px}
+.skrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 0;border-bottom:1px dashed #c8b386}
+.skrow:last-of-type{border-bottom:0}
+.skrow .kn{font-family:var(--type);width:92px;flex:none;font-size:15px}
+.sv{width:42px;height:42px;border-radius:50%;border:2px dashed #b9a271;display:grid;place-items:center}
+.sv svg{width:42px;height:42px}
+.sv.s1,.sv.s2{border:0}
+.sv.big{width:64px;height:64px}
+.sv.big svg{width:64px;height:64px}
+.sk-sum{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:16px;color:var(--ink-soft)}
+.sk-sum b{color:var(--ink)}
+
+/* opdracht */
+.prog{display:flex;gap:5px}
+.prog i{flex:1;height:8px;border-radius:4px;background:#4a382a}
+.prog i.d{background:var(--good)}
+.prog i.c{background:var(--brass)}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--on-wood-muted);font-size:16px}
+.meta b{color:var(--on-wood)}
+.tag{display:inline-block;border:1.5px solid var(--red);border-radius:4px;padding:1px 10px;font-family:var(--type);font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
+.tag.lokaal{background:var(--red);color:#fff6ea}
+.q{font-size:22px;line-height:1.4}
+.ql{margin:2px 0 8px;padding-left:26px;font-size:21px;line-height:1.5}
+.bron{border-left:4px solid var(--brass);background:#fbf4e2;padding:12px 16px;border-radius:2px 8px 8px 2px;font-size:19px}
+.bron cite{display:block;margin-top:6px;font-style:normal;font-size:15px;color:var(--ink-soft)}
+.walk{display:flex;gap:12px;align-items:flex-start;background:var(--red-soft);border:1.5px dashed var(--red);border-radius:8px;padding:12px 14px;font-size:18px}
+.walk svg{flex:none;width:34px;height:34px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;gap:14px;align-items:center;text-align:left;min-height:60px;padding:12px 16px;border-radius:10px;border:2px solid var(--paper-line);background:#fffaf0;cursor:pointer;font-size:20px;color:var(--ink)}
+.opt .bx{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--ink-soft)}
+.opt.multi .bx{border-radius:6px}
+.opt.sel{border-color:var(--red);background:#fbeee6}
+.opt.sel .bx{background:var(--red);border-color:var(--red)}
+.opt.ok{border-color:var(--good);background:var(--good-soft)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft)}
+.opt[disabled]{cursor:default}
+
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px}
+@media(max-width:560px){.match{grid-template-columns:1fr}}
+.mcol{display:flex;flex-direction:column;gap:10px}
+.mi{min-height:58px;padding:10px 14px;border-radius:10px;border:2px solid var(--paper-line);background:#fffaf0;text-align:left;cursor:pointer;font-size:18px;color:var(--ink)}
+.mi.pick{border-color:var(--red);box-shadow:0 0 0 3px rgba(168,50,42,.25)}
+.mi.lk{cursor:default}
+.mi.c0{border-color:#3b6fb6}.mi.c1{border-color:#b6457f}.mi.c2{border-color:#4c8a3b}.mi.c3{border-color:#c46f1c}.mi.c4{border-color:#7b52b9}.mi.c5{border-color:#1f8f88}
+.mi.ok{background:var(--good-soft);border-color:var(--good)}
+.mi.no{background:var(--bad-soft);border-color:var(--bad)}
+
+.fields{display:flex;flex-direction:column;gap:12px}
+.fr{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:10px 12px;background:#fbf4e2;border-radius:8px}
+.fr .fl2{flex:1 1 220px;font-size:18px}
+.fr input[type=text]{width:170px;flex:none}
+.fr select{width:170px}
+.fr input.wide{width:100%;flex:1 1 220px}
+
+.slotbox{display:flex;flex-direction:column;align-items:center;gap:14px}
+.slotin{font-family:var(--type);font-size:36px!important;letter-spacing:.35em;text-align:center;text-transform:uppercase;max-width:420px}
+.hist{display:flex;flex-direction:column;gap:8px;align-items:center}
+.hr{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.ht{width:44px;height:50px;border-radius:6px;display:grid;place-items:center;font-family:var(--type);font-size:26px;border:2px solid var(--paper-line);background:#fffaf0}
+.ht.g{background:var(--good);border-color:var(--good);color:#fff}
+.legend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;color:var(--ink-soft);font-size:16px}
+.legend i{width:16px;height:16px;border-radius:4px;display:inline-block;vertical-align:-2px;margin-right:6px}
+
+.fb{border-radius:8px;padding:12px 16px;font-size:18px}
+.fb.good{background:var(--good-soft);border:1.5px solid var(--good)}
+.fb.bad{background:var(--bad-soft);border:1.5px solid var(--bad)}
+.fb.info{background:#fbf4e2;border:1.5px solid var(--paper-line);color:var(--ink-soft)}
+.crit{display:flex;flex-direction:column;gap:6px;margin:8px 0 0;padding:0;list-style:none}
+.crit li{display:flex;gap:10px}
+.crit .k{flex:none;width:22px;font-weight:800}
+.hints{display:flex;flex-direction:column;gap:8px}
+.hint{background:var(--paper-2);color:var(--ink);border-left:4px solid var(--brass);border-radius:4px 10px 10px 4px;padding:10px 14px;font-size:17px}
+.won{font-family:var(--type);color:var(--red)}
+.lees{position:absolute;right:14px;top:14px;display:inline-flex;gap:6px;align-items:center;border:2px solid var(--ink);background:#fffaf0;color:var(--ink);border-radius:999px;padding:6px 14px 6px 10px;font-weight:700;font-size:16px;cursor:pointer;min-height:44px}
+.lees svg{width:22px;height:22px}
+.lees.on{background:var(--red);border-color:var(--red);color:#fff6ea}
+.card.has-lees{padding-top:70px}
+a.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+
+/* einde en kamer klaar */
+.fin{text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
+.bigcode{display:flex;gap:10px;justify-content:center}
+.bigcode span{width:72px;height:92px;border-radius:10px;background:#120d09;border:3px solid var(--brass);display:grid;place-items:center;font-family:var(--type);font-size:54px;color:var(--brass)}
+.bigcode span.e{color:#5a4632}
+.stamp-big{display:inline-block;border:4px double var(--red);color:var(--red);font-family:var(--type);font-size:26px;letter-spacing:.12em;padding:10px 24px;border-radius:8px;transform:rotate(-4deg)}
+canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--brass);color:var(--brass-ink);font-weight:700;border-radius:999px;padding:12px 24px;z-index:50;max-width:90vw;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.35)}
+.foot{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.teacher{border:1px dashed var(--on-wood-muted);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;color:var(--on-wood)}
+.teacher .lead{color:var(--on-wood-muted)}
+.teacher table{border-collapse:collapse;font-size:16px}
+.teacher td{padding:3px 12px 3px 0;vertical-align:top}
+@media(prefers-reduced-motion:no-preference){
+  main.enter > *{animation:rise .35s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .thump{animation:thump .5s cubic-bezier(.2,1.6,.4,1) both}
+  @keyframes thump{from{transform:scale(1.8) rotate(-20deg);opacity:0}to{transform:scale(1) rotate(var(--rot,-8deg));opacity:1}}
+}
+
+/* ===== De valsmunter: DNB-onderzoek (donkergroen, bankbiljetpapier) ===== */
+body{background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.014) 0 2px,transparent 2px 10px),radial-gradient(900px 500px at 75% -10%,rgba(201,165,74,.16),transparent 60%)}
+.top{border-bottom-color:#27443b}
+.prog i{background:#2a4a40}
+.card.lined{background-image:repeating-linear-gradient(180deg,transparent 0 33px,rgba(70,100,80,.16) 33px 34px)}
+.letter{color:#1f3a5a}.letter .dt{color:#3a587c}
+.verd{display:flex;align-items:baseline;gap:6px;background:#120d09;background:#0a1512;border:2px solid var(--brass);border-radius:10px;padding:4px 12px;font-family:var(--type);font-size:24px;color:var(--brass)}
+.verd small{font-family:var(--body);font-size:13px;color:var(--on-wood-muted)}
+.kamers{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.kk{position:relative;text-align:left;background:var(--paper);color:var(--ink);border:0;border-radius:4px;padding:18px 16px 16px;display:flex;flex-direction:column;gap:4px;min-height:170px;cursor:pointer;box-shadow:0 8px 18px rgba(0,0,0,.35);border-top:6px solid var(--brass)}
+.kk .nr{font-family:var(--type);font-size:34px;color:var(--red);line-height:1}
+.kk .nm{font-family:var(--display);font-weight:800;font-size:21px}
+.kk .sub{color:var(--ink-soft);font-size:15px}
+.kk .st{margin-top:auto;font-size:14px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
+.kk.clue{border-top-color:var(--red)}.kk.clue .st{color:var(--red)}
+.kk.klaar{border-top-color:var(--good);background:linear-gradient(180deg,#e9f0dc,var(--paper))}.kk.klaar .st{color:var(--good)}
+.kk.soon{opacity:.55;cursor:default}
+.dossier{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.dcol h3{font-size:19px;margin-bottom:6px}.dcol h3 small{font-family:var(--body);font-weight:400;font-size:14px;color:var(--ink-soft);margin-left:6px}
+.dcol ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.dcol li{display:flex;flex-direction:column;gap:1px;padding:8px 10px;border-radius:8px;background:#fbf8ea;border:1.5px solid var(--paper-line);font-size:18px}
+.dcol li small{display:block;font-size:14px;color:var(--ink-soft)}
+.dcol li.out{background:#ece9d6;color:#8a8a78;border-style:dashed}
+.dcol li.out span{text-decoration:line-through}
+.dcol li em{font-style:normal;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--good)}
+.note{font-family:var(--type);font-size:20px;line-height:1.55;border:2px dashed var(--red);border-radius:6px;padding:14px 16px;background:#fffdf3}
+.rebus{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;padding:16px;background:#fbf8ea;border:2px solid var(--paper-line);border-radius:10px}
+.rebus .rb{display:flex;flex-direction:column;align-items:center;gap:8px;max-width:420px;text-align:center}
+.rebus small{color:var(--ink-soft);font-size:15px}
+.rebus .pl{flex:none;align-self:center;line-height:1;font-family:var(--display);font-weight:800;font-size:44px;color:var(--red)}
+.rebus .bub{position:relative;background:#fff;border:3px solid var(--ink);border-radius:50%/60%;padding:16px 26px;font-family:var(--display);font-weight:800;font-size:40px;color:var(--red)}
+.rebus .scale{font-family:var(--type);font-size:clamp(15px,3.6vw,22px);letter-spacing:.02em;white-space:nowrap}
+.rebus .q{display:inline-block;background:var(--red);color:#fff6ea;border-radius:8px;padding:0 12px;font-size:34px}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+  <div class="brand">DE VALSMUNTER<small id="sub">Onderzoek namaakgeld · Economie 3V</small></div>
+  <div class="chips" id="chips"></div>
+</div></div>
+<div class="wrap"><main id="main" aria-live="polite"></main></div>
+<canvas id="confetti" hidden></canvas>
+<div id="toastbox"></div>
+<script>
+"use strict";
+/* =========================================================
+   INSTELLINGEN (door de docent aan te passen)
+   ========================================================= */
+const CONFIG = {
+  WORKER_URL: "https://escape-room-ai.nakijker-worker.workers.dev", // AI-nakijker (dezelfde Worker als bij de andere escape rooms). Leeg = demo-nakijker.
+  VAK: "economie", NIVEAU: "vwo, jaar 3",
+  PLEKCODES: {1: "MUNTEN", 2: "UVLICHT", 3: "LOGBOEK", 4: "BEGROTING"},  // code onder de QR-code op de plek van elke kamer
+  BONUSCODE: "ZILVERDRAAD",       // code onder de verstopte bonus-QR
+  BONUS_STEMPELS: 2,
+  DOCENTCODE: "boersen",          // code om de docentmodus te openen
+  HINT_KOST: 1,                   // een hint kost 1 stempel
+  ANTWOORD: {wie: "dekker", waar: "kunst", wat: "biljet"},   // de aanklacht
+  KOFFERCODE: "1971",             // code van het cijferslot op de koffer in het kunstlokaal
+  FILMS: {intro: ""},             // link naar de introfilm (NotebookLM). Leeg = geen filmknop.
+  /* Kamer 1: zes platen aan de muur, zonder jaartal, elk met een letter achterop. Goede volgorde = codewoord. */
+  TIJDLIJN: [
+    {t: "Ruilhandel",                  l: "R"},
+    {t: "Schelpen en zout",            l: "U"},
+    {t: "Munten (met geknipt randje)", l: "I"},
+    {t: "Wisselbrief",                 l: "L"},
+    {t: "Goud losgelaten (1971)",      l: "E"},
+    {t: "Pinpas",                      l: "N"}
+  ]
+};
+
+const KAMERS = {
+  1: {naam: "De Oude Kluis",       tijd: "Het verleden van geld", plek: "de aula",          beschikbaar: true},
+  2: {naam: "Het Biljettenlab",    tijd: "Geld van nu",           plek: "het scheikundelokaal", beschikbaar: false},
+  3: {naam: "De Prijzenwinkel",    tijd: "Geld in crisis",        plek: "het ICT-hok",      beschikbaar: false},
+  4: {naam: "Het Dossierkantoor",  tijd: "Herhaling hoofdstuk 1", plek: "de torenkamer",    beschikbaar: false}
+};
+
+/* De Cluedo-lijst: wie, waar, wat */
+const WIE = [
+  {id: "boersen",  n: "Meneer Boersen",       v: "economie"},
+  {id: "blom",     n: "Bart Blom",            v: "maatschappijleer en geschiedenis"},
+  {id: "bugajova", n: "Mevrouw Bugajová",     v: "Duits"},
+  {id: "criens",   n: "Meneer Criens",        v: "natuurkunde en scheikunde"},
+  {id: "dekker",   n: "Mevrouw Dekker",       v: "beeldende vorming"},
+  {id: "haagsma",  n: "Meneer Haagsma",       v: "geschiedenis"},
+  {id: "molen",    n: "Meneer Van der Molen", v: "ICT"}
+];
+const WAAR = [
+  {id: "kunst", n: "Het kunstlokaal"},
+  {id: "sck",   n: "Het scheikundelokaal"},
+  {id: "ict",   n: "Het ICT-hok"}
+];
+const WAT = [
+  {id: "munt",     n: "Een valse munt"},
+  {id: "biljet",   n: "Een vals biljet"},
+  {id: "digitaal", n: "Digitaal nep-geld"}
+];
+/* Wat valt af op de plek van elke kamer */
+const ELIM = {
+  1: {tekst: "Alle munten in de vitrine zijn echt. Wie alleen munten kent, kan geen biljet maken.",
+      wie: ["blom", "haagsma"], waar: [], wat: ["munt"]},
+  2: {tekst: "De uv-lamp laat zien dat het valse biljet met gewone verf en inkt is gemaakt. Er is geen lab-truc gebruikt. Dit lokaal heeft er niets mee te maken.",
+      wie: ["criens"], waar: ["sck"], wat: []},
+  3: {tekst: "De logs laten zien dat de digitale nepbetalingen van buiten school kwamen. Het gebeurde dus niet in het ICT-hok. Meneer Van der Molen is zelf het slachtoffer.",
+      wie: ["molen"], waar: ["ict"], wat: ["digitaal"]},
+  4: {tekst: "De begrotingen van meneer Boersen en mevrouw Bugajová sluiten met een overschot. Zij hebben geen geldzorgen. Op de biljetten van mevrouw Bugajová staat ‘Muster’: dat is lesmateriaal.",
+      wie: ["boersen", "bugajova"], waar: [], wat: []}
+};
+
+/* =========================================================
+   VERHALEN
+   ========================================================= */
+const OPDRACHT = [
+  "Vellesan College, maandag 07.50 uur",
+  "Aan de onderzoekers van De Nederlandsche Bank,",
+  "Vanochtend is er op jullie school namaakgeld gevonden. Iemand heeft het slim gemaakt.",
+  "Er zijn drie dingen die we nog niet weten. Wie heeft het gedaan? Waar is het gemaakt? En wat is er nagemaakt: een munt, een biljet of digitaal geld?",
+  "Er zijn zeven verdachten. Het zijn allemaal docenten van deze school.",
+  "Jullie hebben één les om het uit te zoeken. In vier kamers vinden jullie aanwijzingen. Elke kamer eindigt met een clue. Die clue wijst naar een plek in school. Daar hangt een QR-code. Scan hem en je ziet wie of wat er afvalt.",
+  "Let op: hoe langer het duurt, hoe meer namaakgeld er in omloop komt. Dan wordt echt geld steeds minder waard. Dat heet inflatie.",
+  "Veel succes, onderzoekers.\nDe Nederlandsche Bank, afdeling Onderzoek"
+];
+const BRIEVEN = {
+  1: {kop: "Maandag, 07.45 uur", aan: "Aan de onderzoekers,", tekst: [
+      "Ik ben de conciërge. Vanochtend vond ik iets raars in de oude kluis in de kelder.",
+      "Op de kluis zit een slot met zes letters. Ik krijg het niet open.",
+      "Er staat een zin op de kluis: ‘Wie de geschiedenis van geld kent, kent het woord.’",
+      "Er hangt een tijdlijn van geld in jullie lokaal. Die hoort erbij.",
+      "Begin met de vragen op de iPad. Zo leren jullie hoe geld is ontstaan. Daarna lukt de tijdlijn."],
+      sig: "De conciërge"}
+};
+const CLUES = {
+  1: {intro: "Het slot springt open. In de kluis ligt een kaartje met een plaatje. Het plaatje is een rebus. Het antwoord is een plek in school.",
+      rebus: `<div class="rebus" role="img" aria-label="Rebus: het geluid AU, plus de zesde noot na do, re, mi, fa, sol"><div class="rb"><span class="bub">AU!</span><small>Dit roep je als iets pijn doet</small></div><span class="pl">+</span><div class="rb"><span class="scale">do · re · mi · fa · sol · <b class="q">♪</b></span><small>De volgende noot</small></div></div>`,
+      hulp: ["Plak de twee delen aan elkaar. Je krijgt één woord.",
+             "De noten heten do, re, mi, fa, sol en dan komt la. Dat is het tweede deel.",
+             "AU + LA = AULA. Ga naar de aula en zoek de QR-code bij de vitrine."]}
+};
+
+/* =========================================================
+   VRAGEN
+   ========================================================= */
+const Q = {};
+const add = q => { Q[q.id] = q; return q; };
+const mc = (id, label, q, opts, correct, hints, extra) => add(Object.assign({id, type:"mc", label, q, opts, correct, hints}, extra || {}));
+const tf = (id, q, juist, hints, extra) => add(Object.assign({id, type:"mc", label:"Juist of onjuist", q, opts:["Juist","Onjuist"], correct:[juist ? 0 : 1], fixedOrder:true, hints}, extra || {}));
+const cr = (label, tekst, kw, h) => ({label, tekst, kw, h});
+const op = (id, q, crit, model, hints, extra) => add(Object.assign({id, type:"open", label:"Open vraag", q, crit, model, hints}, extra || {}));
+
+/* ---------------- KAMER 1: De Oude Kluis ---------------- */
+/* Blok A: directe en indirecte ruil (2.1) */
+mc("a1_ruil1", "Meerkeuze", "Mila heeft een kip en wil schoenen. De schoenmaker wil geen kip, maar brood. Wat is nu het probleem bij directe ruil?",
+  ["Je moet iemand vinden die precies jouw ruil wil", "Een kip is nooit evenveel waard als schoenen", "Ruilen mag niet zonder een briefje van de baas", "Schoenen kun je alleen kopen met zilveren munten"], [0],
+  ["Mila heeft iets wat de schoenmaker niet wil.", "Wat moet Mila doen voordat ze kan ruilen?", "Ze moet eerst iemand zoeken die een kip wil en iets heeft wat zij nodig heeft. Dat kost veel tijd."]);
+mc("a1_ruil2", "Meerkeuze", "Waarom is ruilen met geld (indirecte ruil) handiger dan ruilen zonder geld (directe ruil)?",
+  ["Je hoeft niemand te zoeken die precies jouw spullen wil", "Met geld wordt alles in de winkel ineens veel goedkoper", "Met geld hoef je in de winkel nooit meer iets te betalen", "Met geld kun je alleen nog maar sparen en niet meer kopen"], [0],
+  ["Denk aan Mila met de kip. Wat is lastig aan directe ruil?", "Met geld verkoop je je kip aan iedereen. Daarna koop je schoenen.", "Je hoeft niet meer iemand te vinden die jouw spullen wil. Geld is het ruilmiddel."]);
+
+/* Blok B: de drie functies van geld en de twee soorten ruil (2.1) */
+add({id: "c1_functies", type: "koppel", label: "Koppelen",
+  q: "Welk begrip hoort bij welke situatie? Tik links op een situatie en daarna rechts op het begrip.",
+  pairs: [["Je betaalt een broodje met een muntje", "Ruilmiddel"],
+          ["Op het bordje staat dat de fiets 300 euro kost", "Rekenmiddel"],
+          ["Je legt elke maand 20 euro in je spaarpot", "Spaarmiddel"],
+          ["Je geeft een kip en krijgt er schoenen voor", "Directe ruil"],
+          ["Je verkoopt een kip en koopt met het geld schoenen", "Indirecte ruil"]],
+  hints: ["Begin met de spaarpot. Wat doe je met geld dat je bewaart?", "Een prijs op een bordje laat zien wat iets waard is. Dat is rekenen.", "Bij directe ruil is er geen geld. Bij indirecte ruil gebruik je geld als tussenstap."]});
+
+/* Blok C: munten (2.2) */
+mc("b1_knip", "Meerdere antwoorden goed", "Vroeger knipten oplichters stukjes van gouden munten af. Wat gebeurde er daardoor? Meerdere antwoorden zijn goed.",
+  ["Mensen gingen munten wegen in plaats van tellen", "Mensen bewaarden goede munten en gaven slechte uit", "Munten werden zeldzamer en dus ineens meer waard", "De koning verbood meteen het gebruik van munten"], [0, 1],
+  ["Als een munt een stukje kleiner is, klopt het gewicht niet meer.", "Zou jij een goede munt uitgeven of bewaren, als je ook een geknipte munt hebt?", "Slecht geld verdringt goed geld: de goede munten verdwijnen uit omloop. En men ging wegen."],
+  {multi: true});
+add({id: "b1_metaal", type: "zoek", label: "Rekenen",
+  q: "Een zilveren munt heeft een waarde van 5 gulden. Het zilver in de munt is 4 gulden waard. Hoeveel procent van de waarde op de munt is het metaal? Gebruik: (Deel : geheel) x 100.",
+  velden: [{k: "p", lab: "Het metaal is ... van de waarde op de munt", kind: "getal", want: 80, unit: "%"}],
+  na: "Het zilver is de intrinsieke waarde. De waarde die op de munt staat is de extrinsieke waarde.",
+  model: "(4 : 5) x 100 = 80%.",
+  hints: ["Het deel is de waarde van het zilver. Het geheel is de waarde op de munt.", "Reken (4 : 5) x 100.", "4 : 5 = 0,8 en 0,8 x 100 = 80."]});
+
+/* Blok D: inflatie (2.3) */
+op("o1_inflatie", "Wat is inflatie? Beantwoord deze twee vragen:\n* Wat gebeurt er bij inflatie met de prijzen?\n* Wat merk je daarvan als je met je zakgeld naar de winkel gaat?",
+  [cr("Wat gebeurt er met de prijzen?", "Zegt dat de prijzen (gemiddeld) stijgen: alles wordt duurder.", ["stijgen", "stijgt", "hoger", "duurder", "omhoog", "dure"]),
+   cr("Wat merk je in de winkel?", "Zegt dat je voor hetzelfde geld minder kunt kopen: je geld is minder waard of je koopkracht wordt kleiner.", ["minder", "kopen", "waard", "koopkracht", "kleiner"])],
+  "Bij inflatie stijgen de prijzen. Je merkt dat in de winkel: voor hetzelfde zakgeld kun je minder kopen, want je geld is minder waard.",
+  ["Wat doen de prijzen als er inflatie is: omhoog of omlaag?", "Als alles duurder wordt en je zakgeld blijft gelijk, wat kun je dan doen?", "De prijzen stijgen. Voor hetzelfde geld koop je minder, dus je geld is minder waard."]);
+
+/* Slot kamer 1: de tijdlijn aan de muur */
+add({id: "s1_tijdlijn", type: "slot", lokaal: true, label: "Het slot van de kluis",
+  walk: "Zoek in het lokaal de " + CONFIG.TIJDLIJN.length + " platen van de tijdlijn van geld. Ze hangen door elkaar en er staat geen jaartal op.",
+  q: "Zet de platen in de goede volgorde, van oud naar nieuw. Achterop elke plaat staat een letter. Typ de letters in de goede volgorde. Groene letters staan al op de goede plek.",
+  code: () => CONFIG.TIJDLIJN.map(x => x.l).join(""),
+  na: "RUILEN! Zo begon het: mensen gingen ruilen. En in 1971 liet Amerika het goud los. Sinds die tijd is geld alleen nog waard wat wij ervan vertrouwen.",
+  hints: ["Begin met het oudste: ruilen zonder geld.", "Daarna volgen schelpen en zout, dan munten, dan de wisselbrief.", "Het laatst komt de pinpas. Daarvoor liet Amerika het goud los."]});
+
+/* Welke vragen komen in kamer 1: uit blok A en C er één, de rest vast, de tijdlijn als laatste */
+const POOL = {
+  1: {A: ["a1_ruil1", "a1_ruil2"], B: ["c1_functies"], C: ["b1_knip", "b1_metaal"], O: ["o1_inflatie"], slot: "s1_tijdlijn"}
+};
+function bouwRij(k){
+  const P = POOL[k], pick = a => a[Math.floor(Math.random() * a.length)];
+  return [pick(P.A), pick(P.B), pick(P.C), pick(P.O), P.slot];
+}
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const shuffle = a => { for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+function toast(t){ const el = document.createElement("div"); el.className="toast"; el.textContent=t; $("#toastbox").appendChild(el); setTimeout(()=>el.remove(), 2800); }
+const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]/g,"");
+
+function parseNum(str){
+  let s = String(str).trim().replace(/[€%\s]/g,"").replace(/^[-−–]/,"-");
+  if (!s) return NaN;
+  if (s.includes(",")) s = s.replace(/\./g,"").replace(",",".");
+  else if (/^-?\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g,"");
+  return /^-?\d+(\.\d+)?$/.test(s) ? Number(s) : NaN;
+}
+function lev(a, b){
+  const m = a.length, n = b.length, d = Array.from({length:m+1}, (_,i) => [i].concat(Array(n).fill(0)));
+  for (let j=1;j<=n;j++) d[0][j] = j;
+  for (let i=1;i<=m;i++) for (let j=1;j<=n;j++) d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return d[m][n];
+}
+/* Spelfouten tellen niet mee: woorden mogen een paar letters afwijken */
+function fuzzyHas(words, text){
+  const low = String(text).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+  const toks = low.split(/[^a-z0-9]+/).filter(Boolean);
+  return words.some(w => {
+    const ww = w.toLowerCase();
+    if (ww.includes(" ")) return low.includes(ww);
+    const lim = ww.length <= 3 ? 0 : Math.max(1, Math.floor(ww.length/4));
+    return toks.some(t => Math.abs(t.length-ww.length) <= lim && lev(t, ww) <= lim) || (ww.length >= 5 && toks.some(t => t.includes(ww)));
+  });
+}
+function veldGoed(v, val){
+  const raw = String(val || "").trim();
+  if (v.kind === "getal") {
+    let n = parseNum(raw); if (isNaN(n)) return false; if (v.abs) n = Math.abs(n);
+    return Array.isArray(v.want) ? (n >= v.want[0] && n <= v.want[1]) : n === Number(v.want);
+  }
+  if (v.kind === "accept") return v.acc.includes(raw.replace(/\D/g,""));
+  if (v.kind === "cijfers") return raw.replace(/\D/g,"").split("").sort().join("") === String(v.want).split("").sort().join("");
+  if (v.kind === "woord") { const a = norm(raw), b = norm(v.want); return a === b || (b.length > 5 && lev(a,b) <= Math.floor(b.length/6)); }
+  return norm(raw) === norm(v.want);
+}
+const SEAL = (n, rot) => n === 2
+  ? `<svg viewBox="0 0 60 60" style="--rot:${rot||-8}deg" class="thump" aria-label="dubbele stempel"><circle cx="30" cy="30" r="26" fill="none" stroke="#a8322a" stroke-width="3"/><circle cx="30" cy="30" r="20" fill="none" stroke="#a8322a" stroke-width="1.5" stroke-dasharray="2 2"/><text x="30" y="27" text-anchor="middle" font-family="Special Elite,monospace" font-size="11" fill="#a8322a">TOP</text><text x="30" y="40" text-anchor="middle" font-family="Special Elite,monospace" font-size="11" fill="#a8322a">★★</text></svg>`
+  : n === 1
+  ? `<svg viewBox="0 0 60 60" style="--rot:${rot||6}deg" class="thump" aria-label="stempel"><circle cx="30" cy="30" r="26" fill="none" stroke="#3d5a8a" stroke-width="3"/><text x="30" y="35" text-anchor="middle" font-family="Special Elite,monospace" font-size="13" fill="#3d5a8a">GOED</text></svg>`
+  : "";
+const LEES = `<button class="lees" data-act="lees" aria-label="Lees voor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></svg>Lees voor</button>`;
+const filmKnop = url => url ? `<a class="btn brass" href="${esc(url)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Bekijk eerst de film</a>` : "";
+/* =========================================================
+   TOESTAND
+   ========================================================= */
+const fresh = () => ({fase:"start", duo:"", open:{}, klaar:{}, plek:{}, kamer:null, rij:[], rijK:null, qi:0, st:{}, hintsBetaald:0, bonus:false, t0:null, t1:null, test:false, gelezen:{}, hist:[], pend:null, docent:null, hintK:null, rebusHulp:0, ak:{}, aPogingen:0, aMsg:""});
+let S = fresh();
+let cur = null;
+const LS = "valsmunter-v1";
+function save(){ try { localStorage.setItem(LS, JSON.stringify(S)); } catch(e){} }
+function load(){ try { const j = localStorage.getItem(LS); if (j) return Object.assign(fresh(), JSON.parse(j)); } catch(e){} return null; }
+
+/* ---- stempels ---- */
+function stempelsVan(k){ return Object.values(S.st[k] || {}).reduce((a,b)=>a+b,0); }
+function totaal(){ return [1,2,3,4].reduce((a,k)=>a+stempelsVan(k),0) + (S.bonus ? CONFIG.BONUS_STEMPELS : 0) - S.hintsBetaald; }
+function zet(n){ if (!S.st[S.kamer]) S.st[S.kamer] = {}; S.st[S.kamer][S.qi] = n; cur.stempel = n; }
+
+/* ---- wat is er afgevallen ---- */
+function afgevallen(){
+  const af = {wie:{}, waar:{}, wat:{}};
+  [1,2,3,4].filter(k => S.plek[k]).forEach(k => ["wie","waar","wat"].forEach(s => ELIM[k][s].forEach(id => { af[s][id] = k; })));
+  return af;
+}
+const overig = (lijst, soort) => lijst.filter(x => !afgevallen()[soort][x.id]).length;
+
+/* =========================================================
+   KOP
+   ========================================================= */
+function renderChips(){
+  if (S.fase === "start") { $("#chips").innerHTML = ""; return; }
+  $("#chips").innerHTML = `<div class="verd" aria-label="Aantal verdachten over">${overig(WIE,"wie")}<small>verdachten</small></div>
+    <div class="stc" aria-label="Aantal stempels">${SEAL(1,0).replace('class="thump"','class="seal"')}<span>${totaal()}</span></div>`;
+  $("#sub").textContent = S.duo ? "Duo: " + S.duo : "Onderzoek namaakgeld · Economie 3V";
+}
+
+/* =========================================================
+   SCHERMEN
+   ========================================================= */
+let lastKey = "";
+function render(){
+  renderChips();
+  const key = S.fase + ":" + S.qi + ":" + (S.kamer||"") + ":" + (S.hintK||"");
+  const changed = key !== lastKey;
+  const m = $("#main");
+  m.classList.toggle("enter", changed);
+  const V = {start:vStart, bureau:vBureau, brief:vBrief, kamer:vKamer, clue:vClue, hint:vHint, aanklacht:vAanklacht, koffer:vKoffer};
+  m.innerHTML = (V[S.fase] || vStart)();
+  save();
+  if (changed) { lastKey = key; window.scrollTo({top:0}); try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch(e){} }
+}
+
+function vStart(){
+  return `<section class="stack"><span class="head-tag" style="color:var(--brass)">Vertrouwelijk</span><h1>De valsmunter</h1>
+    <p class="lead">Economie 3V · Hoofdstuk 2 · De rol van geld</p></section>
+  ${CONFIG.FILMS.intro ? `<div class="row">${filmKnop(CONFIG.FILMS.intro)}</div>` : ""}
+  <section class="card lined has-lees">${LEES}<div class="typed">${OPDRACHT.map(p => `<p>${esc(p).replace(/\n/g,"<br>")}</p>`).join("")}</div></section>
+  <section class="card stack">
+    <h3>Spelregels</h3>
+    <p>Jullie doen de kamers in elke volgorde die jullie willen. Schrijf op het detectiveblok op wie, waar en wat er afvalt.</p>
+    <p>Elke opdracht levert stempels op. Meteen goed: <b>twee stempels</b>. Na een fout krijg je een gratis hint en nog één kans voor <b>één stempel</b>. Lukt het dan nog niet, dan zie je het antwoord en gaan jullie door.</p>
+    <p>Een extra hint kost één stempel. Het duo met de meeste stempels wint.</p>
+    <p>Opdrachten met <span class="tag lokaal">Zoek in het lokaal</span> los je op met wat er in het lokaal hangt. Spelfouten tellen niet mee.</p>
+    <label class="fl" for="duo">Namen van jullie duo
+      <input id="duo" type="text" maxlength="40" placeholder="Bijvoorbeeld: Sam en Noor" autocomplete="off">
+    </label>
+    <div class="row"><button class="btn go" data-act="begin">Begin het onderzoek</button></div>
+  </section>
+  ${teacherBox()}`;
+}
+
+function teacherBox(){
+  if (!S.docent) return `<div class="foot"><button class="link" data-act="docent">Docent</button></div>`;
+  if (S.docent === "vraag") return `<div class="teacher"><b>Docentcode</b><div class="inl"><input id="dcode" type="text" autocomplete="off" placeholder="Code"><button class="btn small brass" data-act="dcode">Open</button><button class="btn small ghost" style="color:var(--on-wood);border-color:var(--on-wood-muted)" data-act="dsluit">Sluit</button></div></div>`;
+  const base = location.origin + location.pathname;
+  const ghost = `style="color:var(--on-wood);border-color:var(--on-wood-muted)"`;
+  return `<div class="teacher"><b>Docentmodus</b>
+    <p class="lead">Testmodus: ${S.test ? "aan (QR-plekken werken ook zonder dat de kamer klaar is)" : "uit"}. Nakijken: ${CONFIG.WORKER_URL ? "AI via de Worker" : "demo (trefwoorden)"}.</p>
+    <table>
+      <tr><td>Codewoord kamer 1</td><td><b>${esc(Q.s1_tijdlijn.code())}</b></td></tr>
+      <tr><td>Codes onder de QR</td><td>${[1,2,3,4].map(k => k + ": " + esc(CONFIG.PLEKCODES[k]) + " (" + KAMERS[k].plek + ")").join(" · ")} · bonus: ${esc(CONFIG.BONUSCODE)}</td></tr>
+      <tr><td>Links voor de QR</td><td>${[1,2,3,4].map(k => esc(base) + "#p" + k).join("<br>")}<br>${esc(base)}#bonus</td></tr>
+      <tr><td>Aanklacht</td><td>Mevrouw Dekker · kunstlokaal · vals biljet</td></tr>
+      <tr><td>Code koffer</td><td><b>${esc(CONFIG.KOFFERCODE)}</b> (jaar waarin Amerika het goud losliet)</td></tr>
+    </table>
+    <div class="row"><button class="btn small brass" data-act="test">${S.test ? "Testmodus uit" : "Testmodus aan"}</button>
+    <button class="btn small ghost" ${ghost} data-act="klaarzet">Kamer 1 overslaan</button>
+    <button class="btn small ghost" ${ghost} data-act="naaraanklacht">Aanklacht openen</button>
+    <button class="btn small ghost" ${ghost} data-act="reset">Alles opnieuw beginnen</button>
+    <button class="btn small ghost" ${ghost} data-act="dsluit">Sluit</button></div></div>`;
+}
+
+function stempelkaart(){
+  const rows = [1,2,3,4].filter(k => KAMERS[k].beschikbaar).map(k => {
+    const n = S.rijK === k ? S.rij.length : bouwRij(k).length;
+    const slots = Array.from({length:n}, (_,i) => { const v = (S.st[k]||{})[i]; return `<span class="sv ${v?"s"+v:""}">${v ? SEAL(v, (i%2?7:-7)).replace('class="thump"','') : ""}</span>`; }).join("");
+    return `<div class="skrow"><span class="kn">Kamer ${k}</span>${slots}</div>`;
+  }).join("");
+  return `<section class="skaart"><h3>Stempelkaart · ${esc(S.duo)}</h3>${rows}
+    <div class="sk-sum"><span>Verdiend: <b>${[1,2,3,4].reduce((a,k)=>a+stempelsVan(k),0)}</b>${S.bonus?` · bonus: <b>+${CONFIG.BONUS_STEMPELS}</b>`:""} · hints: <b>−${S.hintsBetaald}</b></span><span>Totaal: <b>${totaal()}</b></span></div></section>`;
+}
+
+/* Het dossier: wie, waar, wat, met doorgestreepte opties */
+function dossier(){
+  const af = afgevallen();
+  const kol = (titel, lijst, soort) => `<div class="dcol"><h3>${titel} <small>${overig(lijst, soort)} van ${lijst.length}</small></h3><ul>` +
+    lijst.map(x => { const k = af[soort][x.id];
+      return `<li class="${k ? "out" : ""}"><span>${esc(x.n)}${x.v ? `<small>${esc(x.v)}</small>` : ""}</span>${k ? `<em>valt af · ${esc(KAMERS[k].plek)}</em>` : ""}</li>`; }).join("") + `</ul></div>`;
+  return `<section class="card stack"><h3>Het dossier</h3>
+    <p class="lead">Dit is wat de onderzoekers nu weten. Schrijf het ook op jullie detectiveblok.</p>
+    <div class="dossier">${kol("Wie", WIE, "wie")}${kol("Waar", WAAR, "waar")}${kol("Wat", WAT, "wat")}</div></section>`;
+}
+
+function vBureau(){
+  const alle = [1,2,3,4].every(k => S.plek[k]);
+  const kk = [1,2,3,4].map(k => {
+    const K = KAMERS[k]; let cls = "kk", st;
+    if (S.plek[k]) { cls += " klaar"; st = "Afgerond"; }
+    else if (S.klaar[k]) { cls += " clue"; st = "Opgelost. Ga naar " + K.plek + "!"; }
+    else if (!K.beschikbaar) { cls += " soon"; st = "Volgt later"; }
+    else if (S.rijK === k && S.qi > 0) st = "Bezig, ga verder";
+    else st = "Nog niet gedaan";
+    return `<button class="${cls}" data-act="kamer" data-k="${k}"><span class="nr">${k}</span><span class="nm">${esc(K.naam)}</span><span class="sub">${esc(K.tijd)}</span><span class="st">${st}</span></button>`;
+  }).join("");
+  const aanklacht = alle || S.test
+    ? `<section class="card stack"><h3>Genoeg bewijs?</h3><p>Alle plekken zijn bezocht. Jullie kunnen de aanklacht indienen.</p><div class="row"><button class="btn go" data-act="naaraanklacht">Dien de aanklacht in</button></div></section>`
+    : `<section class="card stack"><h3>De aanklacht</h3><p class="lead">De aanklacht kunnen jullie pas indienen als alle vier de kamers zijn afgerond en alle plekken zijn bezocht.</p></section>`;
+  return `<section class="stack"><span class="head-tag" style="color:var(--brass)">Hoofdkwartier</span><h2>Het bureau</h2>
+    <p class="lead">Kies zelf een kamer. Elke kamer eindigt met een clue naar een plek in school. Op die plek staat een QR-code met een hint.</p></section>
+  <section class="kamers">${kk}</section>
+  ${dossier()}
+  <section class="card stack"><h3>QR-code gescand?</h3><p class="lead">Scannen werkt het snelst. Lukt dat niet? Typ de code die onder de QR-code staat.</p>
+    <div class="inl"><input id="pcode" type="text" autocapitalize="characters" autocomplete="off" placeholder="Code onder de QR-code"><button class="btn go" data-act="pcode">Controleer</button></div></section>
+  ${aanklacht}
+  ${stempelkaart()}
+  <section class="card stack"><h3>Iets verstopt gevonden?</h3><p class="lead">Ergens in het lokaal zit een geheime QR-code. Wie hem vindt, krijgt ${CONFIG.BONUS_STEMPELS} extra stempels. Scan hem, of typ de code die eronder staat.</p>
+    <div class="inl"><input id="bcode" type="text" autocapitalize="characters" autocomplete="off" placeholder="Geheime code" ${S.bonus?"disabled":""}><button class="btn" data-act="bcode" ${S.bonus?"disabled":""}>${S.bonus ? "Al gevonden" : "Controleer"}</button></div></section>
+  ${teacherBox()}`;
+}
+
+function vBrief(){
+  const k = S.kamer, B = BRIEVEN[k];
+  return `<section class="stack"><span class="head-tag" style="color:var(--brass)">Kamer ${k} · ${esc(KAMERS[k].tijd)}</span><h2>${esc(KAMERS[k].naam)}</h2></section>
+  <section class="card lined has-lees">${LEES}<div class="letter"><p class="dt">${esc(B.kop)}</p><p>${esc(B.aan)}</p>${B.tekst.map(t => `<p>${esc(t)}</p>`).join("")}<p class="sig">${esc(B.sig)}</p></div></section>
+  <div class="row"><button class="btn go" data-act="leesklaar">Begin met de opdrachten</button><button class="link" data-act="bureau">Terug naar het bureau</button></div>`;
+}
+
+/* ---- kamer ---- */
+function startKamer(k){
+  S.kamer = k;
+  if (!S.rij.length || S.rijK !== k) { S.rij = bouwRij(k); S.rijK = k; S.qi = 0; S.hist = []; }
+  S.fase = S.gelezen[k] ? "kamer" : "brief";
+  if (!(cur && cur.def.id === S.rij[S.qi] && S.rijK === k)) startQ();   // terug van het bureau: zelfde vraag, zelfde pogingen
+  render();
+}
+function startQ(){
+  const def = Q[S.rij[S.qi]];
+  cur = {def, att:0, hints:0, freeUsed:false, done:false, msg:null, text:"", sel:[], busy:false, hl:[], hc:{}, stempel:0, f:{}, fok:{}, met:{}};
+  if (def.type === "mc") {
+    cur.order = def.opts.map((_,i)=>i);
+    if (!def.fixedOrder) { let t = 0; do { shuffle(cur.order); t++; } while (t < 20 && (cur.order.every((v,i)=>v===i) || (!def.multi && cur.order[0] === def.correct[0] && Math.random() < .7))); }
+  } else if (def.type === "koppel") {
+    cur.left = shuffle(def.pairs.map((_,i)=>i)); cur.right = shuffle(def.pairs.map((_,i)=>i));
+    for (let t = 0; t < 50 && cur.left.some((l,i) => l === cur.right[i]); t++) shuffle(cur.right);
+    cur.link = {}; cur.locked = {}; cur.pickL = null; cur.lastWrong = [];
+  } else if (def.type === "slot") { cur.val = ""; }
+}
+
+function vKamer(){
+  const d = cur.def, K = KAMERS[S.kamer];
+  const prog = S.rij.map((_,i) => `<i class="${i<S.qi?"d":i===S.qi?"c":""}"></i>`).join("");
+  return `<section class="stack"><div class="meta"><span><b>${esc(K.naam)}</b> · opdracht ${S.qi+1} van ${S.rij.length}</span><span>Te verdienen: <b>2 stempels</b></span></div><div class="prog">${prog}</div></section>
+  <section class="card stack has-lees">${LEES}
+    <div><span class="tag ${d.lokaal?"lokaal":""}">${esc(d.label)}</span></div>
+    ${d.walk ? `<div class="walk"><svg viewBox="0 0 24 24" fill="none" stroke="#b0322a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M9 10l3-3 3 2 2 3M12 7l-1 5-3 3"/></svg><span>${esc(d.walk)}</span></div>` : ""}
+    ${d.bron ? `<div class="bron">${esc(d.bron.t)}<cite>${esc(d.bron.c)}</cite></div>` : ""}
+    ${qHtml(d.q)}
+    ${vBody(d)}
+    ${cur.msg ? cur.msg : ""}
+    ${vActions(d)}
+  </section>
+  ${vHints(d)}
+  <div class="foot"><button class="link" data-act="bureau">Even terug naar het bureau</button></div>`;
+}
+
+/* ---- clue en hint ---- */
+function vClue(){
+  const k = S.kamer, C = CLUES[k], K = KAMERS[k];
+  const hulp = C.hulp.slice(0, S.rebusHulp).map(h => `<div class="hint">${esc(h)}</div>`).join("");
+  const kan = S.rebusHulp < C.hulp.length;
+  return `<section class="card fin"><span class="stamp-big">Opgelost</span>
+    <h2>${esc(K.naam)} is open</h2></section>
+  <section class="card stack has-lees">${LEES}
+    <div><span class="tag">De clue</span></div>
+    <p class="q">${esc(C.intro)}</p>
+    ${C.rebus}
+    <p class="q">Welke plek in school is dit? Ga erheen en zoek de QR-code. Scan hem met de camera van de iPad.</p>
+    <p class="lead" style="font-size:17px">Lukt scannen niet? Typ de code die onder de QR-code staat.</p>
+    <div class="inl"><input id="pcode" type="text" autocapitalize="characters" autocomplete="off" placeholder="Code onder de QR-code"><button class="btn go" data-act="pcode">Controleer</button></div>
+  </section>
+  <section class="hints">${hulp}<div class="row">${kan ? `<button class="btn small brass" data-act="rebushulp">Hulp bij de rebus</button>` : ""}<button class="btn small ghost" style="color:var(--on-wood);border-color:var(--on-wood-muted)" data-act="bureau">Terug naar het bureau</button></div></section>`;
+}
+function vHint(){
+  const k = S.hintK, E = ELIM[k], K = KAMERS[k];
+  const lijst = (titel, ids, bron) => ids.length ? `<li><b>${titel}:</b> ${ids.map(id => esc(bron.find(x => x.id === id).n)).join(", ")}</li>` : "";
+  return `<section class="stack"><span class="head-tag" style="color:var(--brass)">Op de plek</span><h2>Jullie zijn in ${esc(K.plek)}</h2></section>
+  <section class="card lined has-lees">${LEES}<div class="typed"><p><b>Een briefje bij de QR-code:</b></p><p class="note">${esc(E.tekst)}</p></div></section>
+  <section class="card stack"><h3>Streep af op jullie detectiveblok</h3>
+    <ul class="ql">${lijst("Wie", E.wie, WIE)}${lijst("Waar", E.waar, WAAR)}${lijst("Wat", E.wat, WAT)}</ul>
+    <div class="row"><button class="btn go" data-act="bureau">Terug naar het bureau</button></div></section>`;
+}
+
+/* ---- aanklacht en koffer ---- */
+function vAanklacht(){
+  const sel = (id, lijst, titel) => `<label class="fl">${titel}<select data-ak="${id}"><option value="">Kies</option>${lijst.map(x => `<option value="${x.id}" ${S.ak[id]===x.id?"selected":""}>${esc(x.n)}</option>`).join("")}</select></label>`;
+  return `<section class="stack"><span class="head-tag" style="color:var(--brass)">Het moment van de waarheid</span><h2>De aanklacht</h2></section>
+  <section class="card stack has-lees">${LEES}
+    <p class="q">Jullie weten genoeg. Wie is de valsmunter, waar is het gemaakt en wat is er nagemaakt?</p>
+    ${sel("wie", WIE, "Wie?")}${sel("waar", WAAR, "Waar?")}${sel("wat", WAT, "Wat?")}
+    ${S.aMsg ? `<div class="fb bad">${S.aMsg}</div>` : ""}
+    <div class="row"><button class="btn go" data-act="aanklacht">Dien de aanklacht in</button><button class="link" data-act="bureau">Terug naar het bureau</button></div></section>`;
+}
+function vKoffer(){
+  const min = Math.max(1, Math.round(((S.t1 || Date.now()) - (S.t0 || Date.now()))/60000));
+  return `<section class="fin stack"><span class="stamp-big" style="color:var(--brass);border-color:var(--brass)">Zaak gesloten</span>
+    <h1>${esc(S.duo || "Jullie")} hebben de valsmunter!</h1>
+    <p class="lead">Mevrouw Dekker maakte vanuit het kunstlokaal valse biljetten.</p></section>
+  <section class="card stack has-lees">${LEES}
+    <p class="q">De aanklacht klopt. Loop naar het kunstlokaal. Daar staat een koffer met bewijs, en iets lekkers voor de onderzoekers.</p>
+    <p class="q">De koffer heeft een cijferslot met vier cijfers. De code is het jaar waarin Amerika het goud losliet.</p></section>
+  <section class="card fin"><span class="tag">Laat dit scherm aan je docent zien</span>
+    <h2>${totaal()} stempels</h2><p>in ${min} ${min===1?"minuut":"minuten"}. Het duo met de meeste stempels krijgt er één extra.</p></section>
+  ${stempelkaart()}
+  <div class="foot"><button class="link" data-act="bureau">Terug naar het bureau</button></div>`;
+}
+
+/* ---- kamer klaar ---- */
+function kamerKlaar(){
+  const k = S.kamer; S.klaar[k] = true; S.rij = []; S.rijK = null; S.qi = 0; cur = null;
+  S.fase = "clue"; S.rebusHulp = 0; render(); confetti();
+}
+
+function plekOpen(k){
+  if (!S.klaar[k] && !S.test) { toast("Los eerst de kamer op. Dan pas is deze plek voor jullie."); return false; }
+  S.plek[k] = true; S.hintK = k; S.fase = "hint"; render(); toast("Hint gevonden!"); return true;
+}
+
+function qHtml(q){
+  let out = "", lijst = [];
+  const flush = () => { if (lijst.length) { out += `<ul class="ql">${lijst.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`; lijst = []; } };
+  for (const r of String(q).split("\n")) { if (/^\* /.test(r)) lijst.push(r.slice(2)); else { flush(); if (r.trim()) out += `<p class="q">${esc(r)}</p>`; } }
+  flush(); return out;
+}
+function vBody(d){
+  const dis = cur.done ? "disabled" : "";
+  if (d.type === "mc") {
+    return `<div class="opts">` + cur.order.map(i => {
+      let c = "opt" + (d.multi ? " multi" : "");
+      if (cur.sel.includes(i)) c += " sel";
+      if (cur.done && d.correct.includes(i)) c += " ok";
+      if (cur.mark && cur.mark.includes(i)) c += " no";
+      return `<button class="${c}" data-act="kies" data-i="${i}" ${dis}><span class="bx"></span><span>${esc(d.opts[i])}</span></button>`;
+    }).join("") + `</div>` + (d.multi ? `<p class="lead" style="font-size:16px">Meerdere antwoorden zijn goed. Tik ze allemaal aan.</p>` : "");
+  }
+  if (d.type === "koppel") {
+    const colorOf = l => Object.keys(cur.link).indexOf(String(l));
+    const L = cur.left.map(l => {
+      let c = "mi"; if (cur.pickL === l) c += " pick"; if (cur.link[l] !== undefined) c += " c" + (colorOf(l)%6);
+      if (cur.locked[l]) c += " ok lk"; if (cur.lastWrong.includes(l)) c += " no";
+      return `<button class="${c}" data-act="kl" data-l="${l}">${esc(d.pairs[l][0])}</button>`;
+    }).join("");
+    const R = cur.right.map(r => {
+      const l = Object.keys(cur.link).find(x => cur.link[x] === r);
+      let c = "mi"; if (l !== undefined) c += " c" + (colorOf(l)%6); if (l !== undefined && cur.locked[l]) c += " ok lk";
+      return `<button class="${c}" data-act="kr" data-r="${r}">${esc(d.pairs[r][1])}</button>`;
+    }).join("");
+    return `<div class="match"><div class="mcol">${L}</div><div class="mcol">${R}</div></div>`;
+  }
+  if (d.type === "zoek") {
+    return `<div class="fields">` + d.velden.map(v => {
+      const cls = cur.fok[v.k] === true ? "good-field" : cur.fok[v.k] === false ? "bad-field" : "";
+      const val = esc(cur.f[v.k] || "");
+      const inp = v.kind === "keuze"
+        ? `<select id="f_${v.k}" data-f="${v.k}" class="${cls}" ${dis}><option value="">Kies</option>${v.opts.map(o => `<option ${cur.f[v.k]===o?"selected":""}>${o}</option>`).join("")}</select>`
+        : `<input id="f_${v.k}" data-f="${v.k}" type="text" ${v.kind==="getal"||v.kind==="cijfers"||v.kind==="accept"?'inputmode="decimal"':'autocapitalize="characters"'} autocomplete="off" value="${val}" class="${cls} ${v.wide?"wide":""}" ${dis} placeholder="${v.kind==="getal"?"getal":v.kind==="cijfers"?"cijfers":v.kind==="woord"?"typ het begrip":v.kind==="accept"?"uur":"letter of cijfer"}">${v.unit?`<b>${v.unit}</b>`:""}`;
+      return `<div class="fr"><span class="fl2">${esc(v.lab)}</span>${inp}</div>`;
+    }).join("") + `</div>`;
+  }
+  if (d.type === "open") {
+    const res = d.crit.map((c,i) => {
+      const st = cur.met[i] ? `<span class="k" style="color:var(--good)">✓</span>` : cur.att ? `<span class="k" style="color:var(--bad)">✗</span>` : `<span class="k" style="color:var(--ink-soft)">${i+1}.</span>`;
+      return `<li>${st}<span style="${cur.met[i]?"":"color:var(--ink-soft)"}">${esc(c.label)}</span></li>`;
+    }).join("");
+    const starters = d.starters ? `<div class="bron"><b>Zinnen die je mag gebruiken:</b><ul class="ql" style="font-size:19px;margin:6px 0 0">${d.starters.map(z => `<li>${esc(z)}</li>`).join("")}</ul></div>` : "";
+    return `${starters}<textarea id="txt" placeholder="Typ hier je antwoord..." ${dis} ${d.creatief?'style="min-height:240px"':""}>${esc(cur.text)}</textarea><p class="lead" style="font-size:16px;margin-bottom:-4px">Dit moet erin staan:</p><ul class="crit">${res}</ul>`;
+  }
+  if (d.type === "slot") {
+    const len = d.code().length;
+    const hist = (cur.hist || []).map(h => `<div class="hr">${h.split("").map((c,i) => `<div class="ht ${c===d.code()[i]?"g":""}">${esc(c)}</div>`).join("")}</div>`).join("");
+    return `<div class="slotbox"><input id="slot" class="slotin" type="text" maxlength="${len}" ${d.digits?'inputmode="numeric"':'autocapitalize="characters"'} autocomplete="off" placeholder="${"•".repeat(len)}" value="${esc(cur.val)}" ${dis}>
+      <p class="lead" style="font-size:16px">${len} ${d.digits?"cijfers":"letters"}</p>
+      ${hist ? `<div class="hist">${hist}</div><div class="legend"><span><i style="background:var(--good)"></i>Op de goede plek</span><span><i style="background:#fffaf0;border:2px solid var(--paper-line)"></i>Nog niet goed</span></div>` : ""}</div>`;
+  }
+  return "";
+}
+function vActions(d){
+  if (cur.done) {
+    const last = S.qi === S.rij.length-1;
+    const st = cur.stempel ? `<span class="sv big s${cur.stempel}">${SEAL(cur.stempel)}</span>` : "";
+    return `<div class="row">${st}<button class="btn go" data-act="volgende">${last ? "Naar de clue" : "Volgende opdracht"}</button></div>`;
+  }
+  let ok = true, lab = "Controleer";
+  if (d.type === "mc") ok = cur.sel.length > 0;
+  else if (d.type === "koppel") ok = Object.keys(cur.link).length === d.pairs.length;
+  else if (d.type === "open") { ok = !cur.busy; lab = cur.busy ? "Aan het nakijken..." : "Laat nakijken"; }
+  else if (d.type === "slot") lab = "Probeer het slot";
+  return `<div class="row"><button class="btn go" data-act="check" ${ok?"":"disabled"}>${lab}</button></div>`;
+}
+function vHints(d){
+  if (cur.done) return "";
+  const n = cur.hints, max = d.hints.length;
+  const toon = heeftOnderdeelHints(d) ? cur.hl : d.hints.slice(0,n);
+  const list = toon.map(h => `<div class="hint">${esc(h)}</div>`).join("");
+  const can = n < max && totaal() >= CONFIG.HINT_KOST;
+  const btn = n >= max ? `<button class="btn small ghost" style="color:var(--on-wood);border-color:var(--on-wood-muted)" disabled>Geen hints meer</button>`
+    : `<button class="btn small brass" data-act="hint" ${can?"":"disabled"}>Koop hint ${n+1} (kost ${CONFIG.HINT_KOST} stempel)</button>`;
+  return `<section class="hints">${list}<div class="row">${btn}${!can && n < max ? `<span class="lead" style="font-size:15px">Je hebt nog geen stempel om mee te betalen.</span>` : ""}</div></section>`;
+}
+/* ---- goed, fout en stempels ---- */
+const stTxt = n => n === 2 ? "Meteen goed: twee stempels!" : n === 1 ? "In de tweede poging: één stempel." : "";
+function finishGood(extra){
+  const n = cur.att <= 1 ? 2 : 1; zet(n); cur.done = true;
+  cur.msg = `<div class="fb good"><b>Goed!</b> ${stTxt(n)}${extra ? `<div style="margin-top:6px">${extra}</div>` : ""}</div>`;
+  render();
+}
+function wrongTxt(extra){ return `<div class="fb bad"><b>Nog niet goed.</b> ${extra ? extra + " " : ""}Je hebt nog één kans voor één stempel.${gratisHint()}</div>`; }
+function heeftOnderdeelHints(d){ return d.type === "open" && d.crit.some(c => c.h); }
+function nieuweHint(){ cur.hints++; }
+function gratisHint(){
+  const d = cur.def;
+  if (!cur.freeUsed && cur.hints < d.hints.length) { cur.freeUsed = true; nieuweHint(); return ` <b>Je krijgt een gratis hint.</b> Lees hem onder de opdracht.`; }
+  return "";
+}
+
+function checkMC(){
+  const d = cur.def; cur.att++;
+  const sel = cur.sel.slice().sort(), ok = d.correct.slice().sort();
+  const good = sel.length === ok.length && sel.every((v,i) => v === ok[i]);
+  if (good) { cur.mark = null; finishGood(); return; }
+  cur.mark = sel.filter(i => !d.correct.includes(i));
+  cur.msg = wrongTxt(d.multi && sel.some(i=>d.correct.includes(i)) ? "Een deel klopt, maar er mist er nog een of er staat er een te veel bij." : "");
+  render(); cur.sel = [];
+  setTimeout(() => { if (cur && !cur.done) { cur.mark = null; render(); } }, 900);
+}
+function checkKoppel(){
+  const d = cur.def; cur.att++;
+  const wrong = [];
+  for (const l of Object.keys(cur.link)) { if (cur.locked[l]) continue; if (Number(cur.link[l]) === Number(l)) cur.locked[l] = true; else wrong.push(l); }
+  if (!wrong.length) { finishGood(); return; }
+  cur.lastWrong = wrong.map(Number);
+  cur.msg = wrongTxt(`${wrong.length} van de ${d.pairs.length} koppelingen klopt nog niet. De goede staan vast.`);
+  render();
+  setTimeout(() => { if (!cur || cur.done) return; wrong.forEach(l => delete cur.link[l]); cur.lastWrong = []; render(); }, 1100);
+}
+function checkZoek(){
+  const d = cur.def;
+  if (d.velden.some(v => !String(cur.f[v.k] || "").trim())) { cur.msg = `<div class="fb info">Vul eerst alle vakjes in.</div>`; render(); return; }
+  cur.att++;
+  let all = true;
+  for (const v of d.velden) { const ok = veldGoed(v, cur.f[v.k]); cur.fok[v.k] = ok; if (!ok) all = false; }
+  if (all) { finishGood(d.na ? esc(d.na) : ""); return; }
+  const n = d.velden.filter(v => !cur.fok[v.k]).length;
+  cur.msg = wrongTxt(d.velden.length > 1 ? `${n} van de ${d.velden.length} vakjes ${n===1?"klopt":"kloppen"} nog niet (rood).` : "");
+  render();
+}
+function checkSlot(){
+  const d = cur.def, code = d.code(), v = norm(cur.val).toUpperCase();
+  if (v.length !== code.length) { cur.msg = `<div class="fb info">Typ precies ${code.length} ${d.digits?"cijfers":"letters"}.</div>`; render(); return; }
+  cur.att++; cur.hist = (cur.hist || []).concat(v);
+  if (v === code.toUpperCase()) {
+    const n = cur.att === 1 ? 2 : cur.att === 2 ? 1 : 0; zet(n); cur.done = true;
+    cur.msg = `<div class="fb good"><b>Het slot springt open!</b> ${n ? stTxt(n) : "Het lukte na een paar pogingen. Geen stempel, maar het slot is open!"}${d.na ? `<div style="margin-top:6px">${esc(d.na)}</div>` : ""}</div>`;
+    render(); return;
+  }
+  const goed = v.split("").filter((c,i) => c === code.toUpperCase()[i]).length;
+  cur.val = "";
+  cur.msg = `<div class="fb bad"><b>Het slot blijft dicht.</b> ${goed} van de ${code.length} staan op de goede plek (groen). Probeer het nog eens.${cur.att === 1 ? gratisHint() : ""}${cur.att >= 2 ? " Na deze poging levert het slot geen stempel meer op, maar je mag blijven proberen." : ""}</div>`;
+  render();
+}
+
+/* ---- open vragen: AI of demo ---- */
+async function beoordeelAI(vraag, crit, text, voorbeeld){
+  if (CONFIG.WORKER_URL) {
+    for (let poging = 0; poging < 3; poging++) {
+      try {
+        const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 20000);
+        const r = await fetch(CONFIG.WORKER_URL, {method:"POST", headers:{"Content-Type":"application/json"}, signal:ctl.signal,
+          body: JSON.stringify({vak:CONFIG.VAK, niveau:CONFIG.NIVEAU, vraag, voorbeeld:voorbeeld||"", criteria:crit.map((c,i)=>({id:i, tekst:c.tekst})), antwoord:text.slice(0,1500)})});
+        clearTimeout(to);
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error("status " + r.status + (j.status ? "/" + j.status : ""));
+        cur.aiErr = "";
+        return {ok: crit.map((_,i) => !!(j.resultaten && (j.resultaten[i] === true || j.resultaten[String(i)] === true))), fb:String(j.feedback || ""), viaAI:true};
+      } catch(e) {
+        cur.aiErr = String(e && e.message || e);
+        await new Promise(r => setTimeout(r, 700 * (poging + 1)));
+      }
+    }
+  }
+  return {ok: crit.map(c => fuzzyHas(c.kw || [], text)), fb:"", viaAI:false};
+}
+async function checkOpen(){
+  const d = cur.def, text = (cur.text || "").trim();
+  if (text.length < 6) { cur.msg = `<div class="fb info">Schrijf eerst je antwoord op.</div>`; render(); return; }
+  cur.busy = true; render();
+  const mine = cur;
+  const res = await beoordeelAI(d.q, d.crit, text, d.model);
+  if (cur !== mine) return;
+  cur.busy = false; cur.att++;
+  res.ok.forEach((ok,i) => { if (ok) cur.met[i] = true; });
+  const allMet = d.crit.every((_,i) => cur.met[i]);
+  const fbTxt = res.fb ? `<div style="margin-top:6px">${esc(res.fb)}</div>` : "";
+  const demo = res.viaAI ? "" : `<div style="margin-top:6px;color:var(--ink-soft);font-size:15px">(demo-nakijker${cur.aiErr ? " · foutcode: " + esc(cur.aiErr) : ""})</div>`;
+  if (allMet) { const n = cur.att <= 1 ? 2 : 1; zet(n); cur.done = true; cur.msg = `<div class="fb good"><b>Compleet!</b> ${stTxt(n)}${fbTxt}${demo}</div>`; }
+  else {
+    const n = d.crit.filter((_,i)=>cur.met[i]).length;
+    cur.msg = `<div class="fb bad"><b>${n} van de ${d.crit.length} onderdelen kloppen.</b> Verbeter je antwoord en laat het opnieuw nakijken. Je hebt nog één kans voor één stempel.${gratisHint()}${fbTxt}${demo}</div>`;
+  }
+  render();
+}
+
+function geefOp(){
+  const d = cur.def; let ans = "";
+  if (d.type === "mc") ans = d.correct.map(i => d.opts[i]).join(" en ");
+  else if (d.type === "koppel") ans = d.pairs.map(p => p[0] + " = " + p[1]).join("; ");
+  else ans = d.model || "";
+  if (d.type === "koppel") d.pairs.forEach((_,i) => { cur.link[i] = i; cur.locked[i] = true; });
+  if (d.type === "mc") cur.sel = d.correct.slice();
+  if (d.type === "zoek") d.velden.forEach(v => { if (!cur.fok[v.k]) cur.fok[v.k] = false; });
+  // open vraag: de helft of meer goed = toch één stempel
+  let n = 0;
+  if (d.type === "open" && d.crit.filter((_,i)=>cur.met[i]).length * 2 >= d.crit.length) n = 1;
+  zet(n); cur.done = true;
+  cur.msg = `<div class="fb info"><b>Helaas, het is niet helemaal gelukt.</b> ${n ? "Je verdiende wel één stempel. " : ""}Het antwoord was: ${esc(ans)}<div style="margin-top:6px">Lees het goed door en ga verder. Bij de volgende opdracht kun je weer stempels verdienen!</div></div>`;
+  render();
+}
+function confetti(){
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const c = $("#confetti"); c.hidden = false; c.width = innerWidth; c.height = innerHeight;
+  const g = c.getContext("2d"), cols = ["#c9973f","#a8322a","#f3e8cf","#2f7d4f","#3d5a8a"];
+  const P = Array.from({length:140}, () => ({x:Math.random()*c.width, y:-20-Math.random()*c.height*.6, vx:(Math.random()-.5)*3, vy:2+Math.random()*4, s:6+Math.random()*8, r:Math.random()*6, c:cols[Math.floor(Math.random()*cols.length)]}));
+  let f = 0;
+  (function loop(){ g.clearRect(0,0,c.width,c.height); P.forEach(p => { p.x+=p.vx; p.y+=p.vy; p.r+=.1; g.save(); g.translate(p.x,p.y); g.rotate(p.r); g.fillStyle=p.c; g.fillRect(-p.s/2,-p.s/4,p.s,p.s/2); g.restore(); });
+    if (++f < 260) requestAnimationFrame(loop); else c.hidden = true; })();
+}
+function leesVoor(el){
+  const ss = window.speechSynthesis;
+  if (!ss) { toast("Voorlezen werkt niet op dit apparaat."); return; }
+  if (ss.speaking || el.classList.contains("on")) { ss.cancel(); document.querySelectorAll(".lees.on").forEach(b => b.classList.remove("on")); return; }
+  const card = el.closest(".card");
+  const parts = [...card.querySelectorAll(".walk span, .bron, .typed p, .letter p, p.q, .opt, .mi, .fl2, .crit li, .fb")]
+    .filter(n => !n.closest(".row") && !n.closest(".lees")).map(n => n.textContent.replace(/\s+/g," ").trim()).filter(Boolean);
+  const zinnen = parts.join(". ").replace(/\.\s*\./g,".").match(/[^.!?]+[.!?]*/g) || [];
+  const stem = ss.getVoices().find(v => /^nl(-|_)NL/i.test(v.lang)) || ss.getVoices().find(v => /^nl/i.test(v.lang));
+  el.classList.add("on");
+  zinnen.forEach((z,i) => {
+    const u = new SpeechSynthesisUtterance(z.trim()); u.lang = "nl-NL"; u.rate = 0.92; if (stem) u.voice = stem;
+    if (i === zinnen.length-1) u.onend = () => el.classList.remove("on");
+    ss.speak(u);
+  });
+}
+/* =========================================================
+   ACTIES
+   ========================================================= */
+const A = {
+  lees(el){ leesVoor(el); },
+  begin(){
+    const v = ($("#duo").value || "").trim();
+    if (v.length < 2) { toast("Vul eerst jullie namen in."); return; }
+    S.duo = v; S.fase = "bureau"; S.t0 = Date.now(); render(); const p = S.pend; S.pend = null; applyHash(p);
+  },
+  docent(){ S.docent = "vraag"; render(); setTimeout(() => { const i = $("#dcode"); if (i) i.focus(); }, 30); },
+  dcode(){ if (($("#dcode").value || "").trim() === CONFIG.DOCENTCODE) { S.docent = "open"; render(); } else toast("Die code klopt niet."); },
+  dsluit(){ S.docent = null; render(); },
+  test(){ S.test = !S.test; render(); },
+  klaarzet(){ if (S.fase === "start") { toast("Vul eerst een duonaam in."); return; } S.kamer = 1; if (S.klaar[1]) { toast("Kamer 1 is al klaar."); return; } S.st[1] = S.st[1] || {}; [0,1,2,3,4].forEach(i => { if (S.st[1][i] === undefined) S.st[1][i] = 2; }); kamerKlaar(); },
+  naaraanklacht(){ S.fase = "aanklacht"; S.aMsg = ""; render(); },
+  reset(){ try { localStorage.removeItem(LS); } catch(e){} S = fresh(); cur = null; render(); },
+  bureau(){ S.fase = "bureau"; render(); },
+  kamer(el){
+    const k = Number(el.dataset.k), K = KAMERS[k];
+    if (S.plek[k]) { S.hintK = k; S.fase = "hint"; render(); return; }
+    if (S.klaar[k]) { S.kamer = k; S.fase = "clue"; render(); return; }
+    if (!K.beschikbaar) { toast("Deze kamer komt later."); return; }
+    startKamer(k);
+  },
+  pcode(){
+    const v = norm($("#pcode").value).toUpperCase();
+    if (!v) { toast("Typ eerst de code."); return; }
+    const k = [1,2,3,4].find(x => norm(CONFIG.PLEKCODES[x]).toUpperCase() === v);
+    if (!k) { toast("Die code klopt niet. Kijk nog eens onder de QR-code."); return; }
+    plekOpen(k);
+  },
+  rebushulp(){ if (S.rebusHulp < CLUES[S.kamer].hulp.length) { S.rebusHulp++; render(); } },
+  bcode(){
+    if (S.bonus) return;
+    if (norm($("#bcode").value) === norm(CONFIG.BONUSCODE)) { S.bonus = true; toast("Geheime QR gevonden: +" + CONFIG.BONUS_STEMPELS + " stempels!"); render(); }
+    else toast("Die code klopt niet.");
+  },
+  leesklaar(){ S.gelezen[S.kamer] = true; S.fase = "kamer"; render(); },
+  aanklacht(){
+    const a = S.ak || {};
+    if (!a.wie || !a.waar || !a.wat) { S.aMsg = "Kies eerst bij alle drie een antwoord."; render(); return; }
+    const goed = ["wie","waar","wat"].filter(x => a[x] === CONFIG.ANTWOORD[x]).length;
+    S.aPogingen++;
+    if (goed === 3) { S.aMsg = ""; S.fase = "koffer"; S.t1 = S.t1 || Date.now(); render(); confetti(); }
+    else { S.aMsg = `<b>De rechter wijst de aanklacht af.</b> ${goed} van de 3 klopt. Kijk nog eens naar het dossier en naar jullie detectiveblok.`; render(); }
+  },
+  kies(el){
+    const i = Number(el.dataset.i), d = cur.def; if (cur.done) return;
+    cur.sel = d.multi ? (cur.sel.includes(i) ? cur.sel.filter(x => x !== i) : cur.sel.concat(i)) : [i];
+    cur.mark = null; cur.msg = null; render();
+  },
+  kl(el){
+    const l = Number(el.dataset.l); if (cur.done || cur.locked[l]) return;
+    if (cur.link[l] !== undefined) { delete cur.link[l]; cur.pickL = null; }
+    else cur.pickL = (cur.pickL === l ? null : l);
+    cur.msg = null; render();
+  },
+  kr(el){
+    const r = Number(el.dataset.r); if (cur.done) return;
+    const owner = Object.keys(cur.link).find(x => cur.link[x] === r);
+    if (owner !== undefined) { if (!cur.locked[owner]) delete cur.link[owner]; cur.msg = null; render(); return; }
+    if (cur.pickL === null) { toast("Tik eerst links op een situatie."); return; }
+    cur.link[cur.pickL] = r; cur.pickL = null; cur.msg = null; render();
+  },
+  async check(){
+    const t = cur.def.type, mine = cur;
+    if (t === "mc") checkMC(); else if (t === "koppel") checkKoppel(); else if (t === "zoek") checkZoek();
+    else if (t === "open") await checkOpen(); else if (t === "slot") { checkSlot(); return; }
+    if (cur === mine && !cur.done && cur.att >= 2) geefOp();
+  },
+  hint(){
+    const d = cur.def;
+    if (cur.hints >= d.hints.length || totaal() < CONFIG.HINT_KOST) return;
+    S.hintsBetaald += CONFIG.HINT_KOST; nieuweHint(); render();
+  },
+  volgende(){
+    if (S.qi < S.rij.length-1) { S.qi++; startQ(); render(); }
+    else kamerKlaar();
+  }
+};
+document.addEventListener("click", e => { const el = e.target.closest("[data-act]"); if (el && A[el.dataset.act]) A[el.dataset.act](el, e); });
+document.addEventListener("input", e => {
+  const t = e.target; if (!cur) return;
+  if (t.id === "txt") cur.text = t.value;
+  else if (t.id === "slot") cur.val = t.value;
+  else if (t.dataset && t.dataset.f) cur.f[t.dataset.f] = t.value;
+});
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset && t.dataset.ak) { S.ak[t.dataset.ak] = t.value; save(); return; }
+  if (cur && t.dataset && t.dataset.f) cur.f[t.dataset.f] = t.value;
+});
+document.addEventListener("keydown", e => {
+  const id = e.target.id;
+  if (e.key !== "Enter") return;
+  if (id === "duo") { e.preventDefault(); A.begin(); }
+  else if (id === "pcode") { e.preventDefault(); A.pcode(); }
+  else if (id === "bcode") { e.preventDefault(); A.bcode(); }
+  else if (id === "dcode") { e.preventDefault(); A.dcode(); }
+  else if (id === "slot" && cur && !cur.done) { e.preventDefault(); A.check(); }
+});
+
+/* QR-codes: de link eindigt op #p1, #p2 ... of #bonus */
+function applyHash(h){
+  const hash = h || location.hash || "";
+  const m = /^#(p[1-4]|bonus)$/.exec(hash);
+  if (!m) return;
+  if (S.fase === "start") { S.pend = hash; save(); toast("Vul eerst jullie namen in. Daarna gaat de QR-code open."); return; }
+  try { history.replaceState(null, "", location.pathname + location.search); } catch(e){}
+  if (m[1] === "bonus") { if (!S.bonus) { S.bonus = true; toast("Geheime QR gevonden: +" + CONFIG.BONUS_STEMPELS + " stempels!"); } if (S.fase === "bureau") render(); else save(); return; }
+  const k = Number(m[1].slice(1));
+  if (!KAMERS[k].beschikbaar && !S.test) { toast("Deze plek is nog niet in gebruik."); return; }
+  plekOpen(k);
+}
+addEventListener("hashchange", () => applyHash());
+
+(function init(){
+  const old = load();
+  if (old && old.fase !== "start") { S = old; S.docent = null; if (S.fase === "kamer" || S.fase === "brief") startQ(); }
+  else if (old && old.pend) S.pend = old.pend;
+  render(); applyHash();
+})();
+window.__G = {get S(){return S}, get cur(){return cur}, Q, A, CONFIG, POOL, bouwRij, KAMERS, ELIM};
+
+</script>
+</body>
+</html>
