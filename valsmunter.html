@@ -269,7 +269,7 @@ body{background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.014) 0 2
 .leerknop .pijl{margin-left:auto;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
 .fr select{width:min(100%,250px)}
 
-.foto{display:block;width:100%;max-width:560px;border-radius:8px;border:3px solid var(--ink)}
+.foto{display:block;width:min(100%,440px);height:auto;border-radius:8px;border:3px solid var(--ink)}
 .boekje{color:var(--on-wood);font-size:18px;margin:14px 0 4px;padding:12px 16px;border-left:4px solid var(--brass);background:rgba(255,255,255,.05);border-radius:6px}
 </style>
 </head>
@@ -396,10 +396,10 @@ const LABFOTO = `<svg viewBox="0 0 360 220" role="img" aria-label="Foto van een 
 const CLUES = {
   2: {intro: "Het slot springt open. In de la ligt een foto. Op de foto zie je een plek in school.",
       rebus: LABFOTO,
-      foto: "img/lokaal-k2.jpg",   // echte foto van het lokaal; staat het bestand er niet, dan blijft de tekening zichtbaar
-      fotoAlt: "Foto van het scheikundelokaal",
-      hulp: ["Kijk goed naar wat er op de foto staat. In welk lokaal staan deze spullen?",
-             "Er staan een gasbrander, reageerbuizen en een kolf. Aan de muur hangt een systeem van de elementen.",
+      foto: "img/plek2.jpg",   // foto van de plek (scheikundelokaal); staat het bestand er niet, dan blijft de tekening zichtbaar
+      fotoAlt: "Foto van een plek in school",
+      hulp: ["Kijk goed naar wat er op de foto staat. Wat voor meubels zie je? Waar staat zoiets in school?",
+             "Dit zijn hoge werktafels met krukken, bij grote ramen. Aan zulke tafels doe je proefjes.",
              "Het is het scheikundelokaal. Ga erheen en zoek de QR-code."]},
   1: {intro: "Het slot springt open. In de kluis ligt een kaartje met een plaatje. Het plaatje is een rebus. Het antwoord is een plek in school.",
       rebus: `<div class="rebus" role="img" aria-label="Rebus: het geluid AU, plus de zesde noot na do, re, mi, fa, sol"><div class="rb"><span class="bub">AU!</span><small>Dit roep je als iets pijn doet</small></div><span class="pl">+</span><div class="rb"><span class="scale">do · re · mi · fa · sol · <b class="q">♪</b></span><small>De volgende noot</small></div></div>`,
