@@ -309,6 +309,16 @@ const CONFIG = {
     {l: "E", waarde: 100,  vals: false, d: "1"},
     {l: "F", waarde: 1000, vals: false, d: "6"}
   ],
+  /* Kamer 3: vijf handgetekende prijskaartjes in de winkel (prijzen in euro). Op elk kaartje staat ook een indexcijfer (basisjaar = 100).
+     Eén kaartje is fout uitgerekend: Pauline schreef het percentage (50) op in plaats van het indexcijfer (150). Op dat kaartje zit een verfvlekje.
+     Code van het slot = nummer van het foute kaartje + het juiste indexcijfer. */
+  KAARTJES: [
+    {n: 1, product: "Brood",      basis: 2.00, nu: 2.50, getal: 125},
+    {n: 2, product: "Melk",       basis: 1.50, nu: 1.80, getal: 120},
+    {n: 3, product: "Schrift",    basis: 4.00, nu: 4.60, getal: 115},
+    {n: 4, product: "Kaas",       basis: 6.00, nu: 9.00, getal: 50, fout: true},
+    {n: 5, product: "Frisdrank",  basis: 1.00, nu: 1.40, getal: 140}
+  ],
   /* Kamer 1: zes platen aan de muur, zonder jaartal, elk met een letter achterop. Goede volgorde = codewoord. */
   TIJDLIJN: [
     {t: "Ruilhandel",                  l: "R", tekst: "Mensen ruilen spullen met elkaar. Er is nog geen geld."},
@@ -323,7 +333,7 @@ const CONFIG = {
 const KAMERS = {
   1: {naam: "De Oude Kluis",       tijd: "Het verleden van geld", plek: "de aula",          boek: "hoofdstuk 2", beschikbaar: true},
   2: {naam: "Het Biljettenlab",    tijd: "Geld van nu",           plek: "het scheikundelokaal", boek: "hoofdstuk 2", beschikbaar: true},
-  3: {naam: "De Prijzenwinkel",    tijd: "Geld in crisis",        plek: "het ICT-hok",      boek: "hoofdstuk 2", beschikbaar: false},
+  3: {naam: "De Prijzenwinkel",    tijd: "Geld in crisis",        plek: "het ICT-hok",      boek: "hoofdstuk 2", beschikbaar: true},
   4: {naam: "Het Dossierkantoor",  tijd: "Herhaling hoofdstuk 1", plek: "de tekenzolder",   boek: "hoofdstuk 1", beschikbaar: false}
 };
 
@@ -387,6 +397,12 @@ BRIEVEN[2] = {kop: "Maandag, 09.10 uur", aan: "Aan de onderzoekers,", tekst: [
   "In jullie lokaal hangen zes biljetten van de gulden. Dat was ons geld vóór de euro. Eén biljet heeft nooit bestaan. Dat is het valse biljet. Zoek op internet hoe echte guldenbiljetten eruitzagen.",
   "Begin met de vragen op de iPad. Zo weten jullie waar je op moet letten. Daarna volgen de biljetten en de verdachtenwand."],
   sig: "De kantinebeheerder"};
+BRIEVEN[3] = {kop: "Maandag, 10.30 uur", aan: "Aan de onderzoekers,", tekst: [
+  "Ik run de schoolwinkel. Vanochtend viel mijn kassa uit. Daarna ging het ook mis met mijn prijzen.",
+  "Bij de kassa ligt een stapel prijskaartjes. Ze zijn met de hand getekend, mooi en netjes.",
+  "Op elk kaartje staat de prijs in het basisjaar en de prijs nu. Daarnaast staat het indexcijfer. Eén kaartje is fout uitgerekend.",
+  "Wie rekent zoiets fout uit? Begin met de vragen op de iPad. Daarna volgen de prijskaartjes."],
+  sig: "De winkelier van de schoolwinkel"};
 const LABFOTO = `<svg viewBox="0 0 360 220" role="img" aria-label="Foto van een lokaal met een gasbrander, reageerbuizen, een kolf en een systeem van de elementen aan de muur" style="width:100%;max-width:460px;border-radius:8px;border:3px solid var(--ink)"><rect width="360" height="220" fill="#dfe8e1"/><rect y="150" width="360" height="70" fill="#8a6a45"/><rect y="146" width="360" height="8" fill="#6d5233"/>
 <g transform="translate(200 18)"><rect width="150" height="96" fill="#f6f3e4" stroke="#56604f" stroke-width="2"/>${Array.from({length:7},(_,r)=>Array.from({length:12},(_,c)=>(r<2&&c>0&&c<11&&!(r===0&&c>1&&c<10)?'':`<rect x="${6+c*11.5}" y="${8+r*11.5}" width="9" height="9" fill="${["#e6b8a8","#a8c5e6","#b8dfb0","#ecd99a"][(r+c)%4]}"/>`)).join("")).join("")}</g>
 <g transform="translate(40 60)"><path d="M30 0h20v34l30 62H0l30-62z" fill="#cfe9d6" stroke="#2f5d45" stroke-width="3"/><path d="M8 80h64l8 16H0z" fill="#5fae7d" opacity=".8"/></g>
@@ -401,6 +417,13 @@ const CLUES = {
       hulp: ["Kijk goed naar wat er op de foto staat. Wat voor meubels zie je? Waar staat zoiets in school?",
              "Dit zijn hoge werktafels met krukken, bij grote ramen. Aan zulke tafels doe je proefjes.",
              "Het is het scheikundelokaal. Ga erheen en zoek de QR-code."]},
+  3: {intro: "De kassa springt open. Onder de bonrol ligt een foto. Op de foto zie je een plek in school.",
+      rebus: `<p class="lead">De foto is niet gevonden. Vraag de docent.</p>`,
+      foto: "img/plek3.jpg",
+      fotoAlt: "Foto van een plek in school",
+      hulp: ["Kijk goed naar de foto. Wat zie je door de open deur?",
+             "Door de deur zie je een klein kantoortje met een balie. Wie zit daar de hele dag achter zijn scherm?",
+             "Het is het ICT-hok. Ga erheen en zoek de QR-code."]},
   1: {intro: "Het slot springt open. In de kluis ligt een kaartje met een plaatje. Het plaatje is een rebus. Het antwoord is een plek in school.",
       rebus: `<div class="rebus" role="img" aria-label="Rebus: het geluid AU, plus de zesde noot na do, re, mi, fa, sol"><div class="rb"><span class="bub">AU!</span><small>Dit roep je als iets pijn doet</small></div><span class="pl">+</span><div class="rb"><span class="scale">do · re · mi · fa · sol · <b class="q">♪</b></span><small>De volgende noot</small></div></div>`,
       hulp: ["Plak de twee delen aan elkaar. Je krijgt één woord.",
@@ -484,12 +507,12 @@ add({id: "c1_functies", type: "koppel", label: "Koppelen",
 tf("c1_wissel", "Juist of onjuist: met een wisselbrief hoefde een koopman geen zware zak munten mee te nemen op reis.", true,
   ["Wat is een wisselbrief? Zoek het op in je boek.", "De koopman kreeg een briefje van een bank. Bij een andere bank kreeg hij er geld voor.", "Het antwoord is juist: het briefje was veel lichter dan een zak met munten."]);
 mc("c1_goud", "Meerkeuze", "Sinds 1971 kun je papiergeld niet meer ruilen voor goud. Waarom is geld dan toch iets waard?",
-  ["Mensen vertrouwen erop dat anderen het willen hebben", "De bank bewaart voor elk biljet een stukje goud", "Het papier van een biljet is zelf veel geld waard", "De overheid betaalt je elk jaar het verschil terug"], [0],
+  ["Mensen vertrouwen erop dat anderen het willen", "De bank bewaart voor elk biljet een stukje goud", "Het papier van een biljet is zelf veel geld waard", "De overheid betaalt je elk jaar het verschil terug"], [0],
   ["Wat kon je vroeger met papiergeld doen, en nu niet meer?", "Er zit geen goud meer achter het geld. Waar hangt de waarde dan van af?", "Van vertrouwen: iedereen gelooft dat een ander het geld aanneemt."]);
 
 /* Blok D: munten (2.2) */
 mc("b1_knip", "Meerdere antwoorden goed", "Vroeger knipten oplichters stukjes van gouden munten af. Wat gebeurde er daardoor? Meerdere antwoorden zijn goed.",
-  ["Mensen gingen munten wegen in plaats van tellen", "Mensen bewaarden goede munten en gaven slechte uit", "Munten werden zeldzamer en dus ineens meer waard", "De koning verbood meteen het gebruik van munten"], [0, 1],
+  ["Mensen gingen munten wegen, niet meer tellen", "Mensen bewaarden goede munten, gaven slechte uit", "Munten werden zeldzamer en dus ineens meer waard", "De koning verbood meteen het gebruik van munten"], [0, 1],
   ["Als een munt een stukje kleiner is, klopt het gewicht niet meer.", "Zou jij een goede munt uitgeven of bewaren, als je ook een geknipte munt hebt?", "Slecht geld verdringt goed geld: de goede munten verdwijnen uit omloop. En men ging wegen."],
   {multi: true});
 add({id: "b1_metaal", type: "zoek", label: "Rekenen",
@@ -529,7 +552,7 @@ add({id: "c2_waarde", type: "koppel", label: "Koppelen",
           ["Je houdt het biljet schuin en het hologram verandert", "Kantelen"]],
   hints: ["Begin met het briefje in je hand. Kun je dat vasthouden?", "Intrinsiek is wat het materiaal waard is. Extrinsiek is wat er op staat.", "Voelen, kijken en kantelen zijn de drie manieren om een biljet te controleren."]});
 mc("b2_kenm", "Meerdere antwoorden goed", "Je wilt weten of een biljet echt is. Wat kun je doen? Meerdere antwoorden zijn goed.",
-  ["Je voelt of het papier stevig is en reliëf heeft", "Je kantelt het biljet en let op het hologram", "Je telt hoeveel biljetten er in de kassa liggen", "Je kijkt of er een naam van de kassier op staat"], [0, 1],
+  ["Je voelt of het papier stevig is en reliëf heeft", "Je kantelt het biljet en let op het hologram", "Je telt hoeveel biljetten er precies in de kassa liggen", "Je kijkt of er een naam van de kassier op staat"], [0, 1],
   ["Denk aan de drie manieren: voelen, kijken en kantelen.", "Het gaat om kenmerken van het biljet zelf, niet om de kassa.", "Voelen (reliëf) en kantelen (hologram) horen erbij."],
   {multi: true});
 mc("c2_soort", "Meerkeuze", "Een bakker moet meer betalen voor meel en energie. Hij maakt zijn brood duurder. Hoe ontstaat hier de inflatie?",
@@ -556,10 +579,57 @@ add({id: "s2_biljetten", type: "slot", lokaal: true, label: "Het slot van de la"
   na: "Het biljet van 20 gulden met Hugo de Groot heeft nooit bestaan. Je herkent namaak ook door het te vergelijken met een echte bron. Sinds 2002 betalen we met de euro. De gulden bestaat niet meer.",
   hints: ["Zoek op internet naar: guldenbiljetten met een portret, 1968 tot 1973. Welke biljetten zie je daar?", "Zoek de namen bij de portretten op: Vondel, Frans Hals, Sweelinck, De Ruyter, Spinoza. Eén portret hoort niet op een guldenbiljet. Dat valse biljet doe je niet mee.", "Je hebt vijf echte biljetten. Typ de cijfers van de biljetten van " + CONFIG.BILJETTEN.filter(b => !b.vals).sort((a, b) => a.waarde - b.waarde).map(b => b.waarde).join(", dan ") + " gulden."]});
 
+/* ---------------- KAMER 3: De Prijzenwinkel ---------------- */
+mc("a3_hyper", "Meerkeuze", "In Duitsland in 1923 stegen de prijzen zo snel dat mensen met een kruiwagen vol geld naar de bakker gingen. Hoe heet dat?",
+  ["Hyperinflatie: de prijzen stijgen zo hard dat geld niets meer waard is", "Deflatie: de prijzen dalen zo hard dat winkels geen brood meer verkopen", "Koopkracht: je kunt met je inkomen ineens veel meer spullen kopen", "Spaaractie: de bank geeft extra rente zodat mensen meer gaan sparen"], [0],
+  ["De prijzen stijgen in dit verhaal razendsnel. Hoe heet dat?", "Het gaat om inflatie die helemaal uit de hand loopt.", "Dat heet hyperinflatie: geld is bijna niets meer waard."]);
+mc("a3_spaar", "Meerkeuze", "Je hebt 100 euro op een spaarrekening zonder rente. Het jaar daarna is de inflatie 5 procent. Wat gebeurt er met je geld?", 
+  ["Je hebt nog 100 euro, maar je kunt er minder voor kopen", "Je hebt na een jaar 105 euro want de prijzen zijn gestegen", "Je hebt nog 100 euro en kunt er precies evenveel mee kopen", "Je hebt na een jaar 95 euro want de bank rekent kosten af"], [0],
+  ["Er staat geen rente op de rekening. Hoeveel euro heb je na een jaar?", "De prijzen zijn 5 procent gestegen. Wat kun je met dezelfde 100 euro kopen?", "Het bedrag blijft gelijk, maar de koopkracht daalt."]);
+tf("c3_koop", "Juist of onjuist: als je inkomen gelijk blijft en de prijzen stijgen, dan daalt je koopkracht.", true,
+  ["Koopkracht is wat je kunt kopen met je inkomen.", "De prijzen stijgen, maar je inkomen niet. Kun je dan meer of minder kopen?", "Het antwoord is juist: je kunt dan minder kopen."]);
+tf("c3_index", "Juist of onjuist: een prijsindexcijfer van 120 betekent dat de prijzen 120 procent zijn gestegen.", false,
+  ["In het basisjaar is het prijsindexcijfer 100. Hoeveel hoger is 120?", "120 min 100 is 20.", "Het antwoord is onjuist: de prijzen zijn 20 procent gestegen."]);
+add({id: "c3_begrippen", type: "koppel", label: "Koppelen",
+  q: "Welk begrip hoort bij welke omschrijving? Tik links op een omschrijving en daarna rechts op het begrip.",
+  pairs: [["De prijzen stijgen bijna overal", "Inflatie"],
+          ["Wat je kunt kopen met je inkomen", "Koopkracht"],
+          ["De prijzen stijgen razendsnel en geld wordt waardeloos", "Hyperinflatie"],
+          ["Het cijfer dat de prijzen vergelijkt met het basisjaar", "Prijsindexcijfer"]],
+  hints: ["Begin met de omschrijving over wat je kunt kopen. Welk woord past daarbij?", "Het basisjaar heeft altijd indexcijfer 100. Welk begrip hoort daarbij?", "Razendsnelle inflatie heet hyperinflatie. Gewoon stijgende prijzen heet inflatie."]});
+add({id: "b3_pic", type: "zoek", label: "Rekenen",
+  q: "In het basisjaar kostte een brood 2 euro. Nu kost het 2,50 euro. Wat is het prijsindexcijfer van het brood nu?",
+  velden: [{k: "i", lab: "Het prijsindexcijfer is nu", kind: "getal", want: 125, unit: ""}],
+  na: "Het basisjaar is 100. De prijs is nu 25 procent hoger, dus het indexcijfer is 125.",
+  model: "(2,50 : 2,00) x 100 = 125.",
+  hints: ["In het basisjaar is het indexcijfer 100. Dat is 2 euro.", "Je vergelijkt de prijs nu met de prijs in het basisjaar.", "2,50 : 2,00 = 1,25 en 1,25 x 100 = 125."]});
+add({id: "b3_infl", type: "zoek", label: "Rekenen",
+  q: "Het prijsindexcijfer stijgt van 125 naar 130. Hoeveel procent is de inflatie?",
+  velden: [{k: "p", lab: "De inflatie is", kind: "getal", want: 4, unit: "%"}],
+  na: "Het indexcijfer steeg van 125 naar 130. De inflatie is dus 4 procent. Let op: dat is niet 5 procent, want je rekent met 125 als begin.",
+  model: "(130 - 125) : 125 x 100 = 4%.",
+  hints: ["Je zoekt de procentuele verandering. Wat is de oude waarde?", "Het verschil is 5. De oude waarde is 125.", "5 : 125 = 0,04 en 0,04 x 100 = 4."]});
+mc("b3_gevolg", "Meerdere antwoorden goed", "Bij inflatie veranderen er dingen voor je portemonnee. Welke uitspraken kloppen? Meerdere antwoorden zijn goed.",
+  ["Spaargeld zonder rente is na een jaar minder waard", "Met je zakgeld kun je minder kopen dan eerst", "De prijzen in de winkel dalen daardoor een beetje mee", "Je loon wordt door de bank automatisch verhoogd"], [0, 1],
+  ["Denk aan je zakgeld en aan geld op een spaarrekening.", "Bij inflatie stijgen de prijzen. Wat betekent dat voor wat je kunt kopen?", "Spaargeld zonder rente en zakgeld verliezen allebei koopkracht."],
+  {multi: true});
+op("o3_koopkracht", "Meneer Boersen krijgt 3 procent meer loon. De prijzen stijgen met 5 procent. Beantwoord deze twee vragen:\n* Stijgt of daalt zijn koopkracht?\n* Leg uit waarom, met de twee percentages.",
+  [cr("Stijgt of daalt de koopkracht?", "Zegt dat de koopkracht daalt.", ["daalt", "daling", "lager", "minder", "achteruit", "afneemt"]),
+   cr("Waarom?", "Legt uit dat de prijzen (5%) harder stijgen dan het loon (3%), dus hij kan minder kopen.", ["prijzen", "5", "3", "harder", "sneller", "meer dan", "minder kopen"])],
+  "Zijn koopkracht daalt. De prijzen stijgen met 5 procent en zijn loon maar met 3 procent. De prijzen stijgen dus harder dan zijn loon. Hij kan daardoor minder kopen dan eerst.",
+  ["Vergelijk de twee percentages. Welk percentage is groter?", "De prijzen stijgen harder dan zijn loon. Kan hij dan meer of minder kopen?", "De koopkracht daalt: 5 procent is meer dan 3 procent."]);
+add({id: "s3_kaartjes", type: "slot", lokaal: true, label: "Het slot van de kassa",
+  walk: "Zoek in de winkel de " + CONFIG.KAARTJES.length + " prijskaartjes. Op elk kaartje staat een prijs en een indexcijfer.",
+  q: "Eén prijskaartje is fout uitgerekend. Het basisjaar heeft indexcijfer 100. Reken bij elk kaartje het indexcijfer na. Welk kaartje klopt niet? Typ het nummer van dat kaartje. Typ daarachter het juiste indexcijfer. Groene cijfers staan al op de goede plek.",
+  code: () => { const f = CONFIG.KAARTJES.find(k => k.fout); return String(f.n) + String(Math.round(f.nu / f.basis * 100)); }, digits: true,
+  na: "Op het foute kaartje stond 50 in plaats van 150. Dat is het percentage dat de prijs steeg, niet het indexcijfer. Er zit een klein verfvlekje op de hoek van dat kaartje.",
+  hints: ["Reken bij elk kaartje: prijs nu gedeeld door prijs in het basisjaar, maal 100. Vergelijk met het cijfer op het kaartje.", "Eén kaartje heeft een ander indexcijfer dan jij uitrekent. Dat is het foute kaartje.", "Het foute kaartje is nummer " + CONFIG.KAARTJES.find(k => k.fout).n + ". Het juiste indexcijfer is " + Math.round(CONFIG.KAARTJES.find(k => k.fout).nu / CONFIG.KAARTJES.find(k => k.fout).basis * 100) + ". Typ ze samen."]});
+
 /* Kamer 1: zes vragen (volgorde van het boek) en daarna de tijdlijn. Bij ruil en bij wisselbrief/goud krijgt elk duo er een van de twee. */
 const POOL = {
   1: {rij: [["a1_ruil1", "a1_ruil2"], "c1_functies", "b1_knip", "b1_metaal", ["c1_wissel", "c1_goud"], "o1_inflatie"], slot: "s1_tijdlijn"},
-  2: {rij: [["a2_pin", "a2_tf"], "c2_waarde", "b2_kenm", "c2_soort", "z2_wand", "o2_nepgeld"], slot: "s2_biljetten"}
+  2: {rij: [["a2_pin", "a2_tf"], "c2_waarde", "b2_kenm", "c2_soort", "z2_wand", "o2_nepgeld"], slot: "s2_biljetten"},
+  3: {rij: [["a3_hyper", "a3_spaar"], ["c3_koop", "c3_index"], "c3_begrippen", ["b3_pic", "b3_infl"], "b3_gevolg", "o3_koopkracht"], slot: "s3_kaartjes"}
 };
 function bouwRij(k){
   const P = POOL[k], pick = a => a[Math.floor(Math.random() * a.length)];
@@ -692,6 +762,7 @@ function teacherBox(){
     <table>
       <tr><td>Codewoord kamer 1</td><td><b>${esc(Q.s1_tijdlijn.code())}</b></td></tr>
       <tr><td>Code kamer 2</td><td><b>${esc(Q.s2_biljetten.code())}</b> (echte biljetten, laag naar hoog: ${CONFIG.BILJETTEN.filter(b => !b.vals).sort((a,b)=>a.waarde-b.waarde).map(b => b.l + " (" + b.waarde + " gulden) = " + b.d).join(", ")}). Vals: ${CONFIG.BILJETTEN.filter(b => b.vals).map(b => b.l + " (" + b.fout + ")").join(", ")}</td></tr>
+      <tr><td>Code kamer 3</td><td><b>${esc(Q.s3_kaartjes.code())}</b> (nummer van het foute kaartje + juiste indexcijfer). Kaartjes: ${CONFIG.KAARTJES.map(k => k.n + " " + k.product + " " + k.basis.toFixed(2).replace(".", ",") + " naar " + k.nu.toFixed(2).replace(".", ",") + ", op het kaartje: " + k.getal + (k.fout ? " (FOUT, moet " + Math.round(k.nu / k.basis * 100) + " zijn, verfvlekje)" : "")).join(" · ")}</td></tr>
       <tr><td>Codes onder de QR</td><td>${[1,2,3,4].map(k => k + ": " + esc(CONFIG.PLEKCODES[k]) + " (" + KAMERS[k].plek + ")").join(" · ")} · bonus: ${esc(CONFIG.BONUSCODE)}</td></tr>
       <tr><td>Links voor de QR</td><td>${[1,2,3,4].map(k => esc(base) + "#p" + k).join("<br>")}<br>${esc(base)}#bonus</td></tr>
       <tr><td>Platen kamer 1</td><td>${CONFIG.TIJDLIJN.map(x => esc(x.l) + " = " + esc(x.t)).join(" · ")}</td></tr>
