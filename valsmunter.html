@@ -298,15 +298,16 @@ const CONFIG = {
   ANTWOORD: {wie: "dekker", waar: "kunst", wat: "biljet"},   // de aanklacht
   KOFFERCODE: "1971",             // code van het cijferslot op de koffer in het kunstlokaal
   FILMS: {intro: ""},             // link naar de introfilm (NotebookLM). Leeg = geen filmknop.
-  /* Kamer 2: vijf ontworpen spelgeld-biljetten in gulden. Vier waardes bestonden echt (10, 25, 50, 250), 150 gulden heeft nooit bestaan.
-     De leerlingen zoeken zelf op internet welke guldenbiljetten echt waren. Eén is vals: bij dat biljet klopt één kenmerk niet.
-     d = het cijfer dat achterop het biljet staat. De code van het slot = de cijfers van de echte biljetten, van laag naar hoog. */
+  /* Kamer 2: zes biljetten van de gulden (afbeeldingen van echte biljetten uit 1968-1973, uitgeprint en met een stempel "controle" met een cijfer).
+     Vijf waren echt (5 Vondel, 10 Frans Hals, 25 Sweelinck, 100 De Ruyter, 1000 Spinoza). Het biljet van 20 gulden met Hugo de Groot is door de docent gemaakt en bestond niet.
+     d = het cijfer in de stempel. De code van het slot = de cijfers van de echte biljetten, van laag naar hoog waarde. */
   BILJETTEN: [
-    {l: "A", waarde: 10,  vals: false, d: "7"},
-    {l: "B", waarde: 25,  vals: false, d: "3"},
-    {l: "C", waarde: 50,  vals: false, d: "9"},
-    {l: "D", waarde: 150, vals: true,  d: "4", fout: "een biljet van 150 gulden heeft nooit bestaan"},
-    {l: "E", waarde: 250, vals: false, d: "1"}
+    {l: "A", waarde: 5,    vals: false, d: "7"},
+    {l: "B", waarde: 10,   vals: false, d: "3"},
+    {l: "C", waarde: 20,   vals: true,  d: "4", fout: "dit biljet van 20 gulden met Hugo de Groot bestond nooit (door de docent gemaakt)"},
+    {l: "D", waarde: 25,   vals: false, d: "9"},
+    {l: "E", waarde: 100,  vals: false, d: "1"},
+    {l: "F", waarde: 1000, vals: false, d: "6"}
   ],
   /* Kamer 1: zes platen aan de muur, zonder jaartal, elk met een letter achterop. Goede volgorde = codewoord. */
   TIJDLIJN: [
@@ -383,7 +384,7 @@ const BRIEVEN = {
 BRIEVEN[2] = {kop: "Maandag, 09.10 uur", aan: "Aan de onderzoekers,", tekst: [
   "Ik beheer de kantine. Gisteren stopte iemand een biljet in de kassa. Er klopt iets niet aan.",
   "Onze biljettenlezer is kapot. We moeten het dus zelf controleren.",
-  "In jullie lokaal hangen vijf biljetten van de gulden. Dat was ons geld vóór de euro. Eén biljet heeft nooit bestaan. Dat is het valse biljet. Zoek op internet hoe echte guldenbiljetten eruitzagen.",
+  "In jullie lokaal hangen zes biljetten van de gulden. Dat was ons geld vóór de euro. Eén biljet heeft nooit bestaan. Dat is het valse biljet. Zoek op internet hoe echte guldenbiljetten eruitzagen.",
   "Begin met de vragen op de iPad. Zo weten jullie waar je op moet letten. Daarna volgen de biljetten en de verdachtenwand."],
   sig: "De kantinebeheerder"};
 const LABFOTO = `<svg viewBox="0 0 360 220" role="img" aria-label="Foto van een lokaal met een gasbrander, reageerbuizen, een kolf en een systeem van de elementen aan de muur" style="width:100%;max-width:460px;border-radius:8px;border:3px solid var(--ink)"><rect width="360" height="220" fill="#dfe8e1"/><rect y="150" width="360" height="70" fill="#8a6a45"/><rect y="146" width="360" height="8" fill="#6d5233"/>
@@ -550,10 +551,10 @@ op("o2_nepgeld", "Waarom is namaakgeld gevaarlijk voor de economie? Beantwoord d
   ["Nep-biljetten zijn extra geld. Wat gebeurt er met de hoeveelheid geld?", "Er is meer geld, maar niet meer spullen. Wat doen de prijzen dan?", "Meer geld in omloop: de prijzen stijgen en echt geld is minder waard."]);
 add({id: "s2_biljetten", type: "slot", lokaal: true, label: "Het slot van de la",
   walk: "Zoek in het lokaal de " + CONFIG.BILJETTEN.length + " biljetten van de gulden. Zoek op de iPad welke guldenbiljetten echt bestaan hebben.",
-  q: "Eén biljet is vals. Zo'n biljet heeft nooit bestaan. Zoek op internet welke guldenbiljetten echt bestaan hebben. Welk biljet hoort er niet bij? Dat biljet doe je niet mee. Zet de andere biljetten van de laagste naar de hoogste waarde in gulden. Op elk biljet staat een controlecijfer. Typ de cijfers in die volgorde. Groene cijfers staan al op de goede plek.",
+  q: "Eén biljet is vals. Zo'n biljet heeft nooit bestaan. Alle biljetten lijken op elkaar. Ze zijn van de jaren 1968 tot 1973. Zoek op internet welke biljetten er echt bestaan hebben. Welk biljet hoort er niet bij? Dat biljet doe je niet mee. Zet de andere biljetten van de laagste naar de hoogste waarde in gulden. Op elk biljet staat een rode stempel met een controlecijfer. Typ de cijfers in die volgorde. Groene cijfers staan al op de goede plek.",
   code: () => CONFIG.BILJETTEN.filter(b => !b.vals).sort((a, b) => a.waarde - b.waarde).map(b => b.d).join(""), digits: true,
-  na: "Een biljet van 150 gulden heeft nooit bestaan. Soms herken je namaak al aan een waarde die niet klopt. Sinds 2002 betalen we met de euro. De gulden bestaat niet meer.",
-  hints: ["Zoek op internet naar: guldenbiljetten, alle waardes. Welke waardes zie je daar?", "Eén biljet heeft een waarde die in de lijst niet voorkomt. Dat valse biljet doe je niet mee. Zet de andere biljetten van laag naar hoog.", "Je hebt vier echte biljetten. Typ de cijfers van de biljetten van " + CONFIG.BILJETTEN.filter(b => !b.vals).sort((a, b) => a.waarde - b.waarde).map(b => b.waarde).join(", dan ") + " gulden."]});
+  na: "Het biljet van 20 gulden met Hugo de Groot heeft nooit bestaan. Je herkent namaak ook door het te vergelijken met een echte bron. Sinds 2002 betalen we met de euro. De gulden bestaat niet meer.",
+  hints: ["Zoek op internet naar: guldenbiljetten met een portret, 1968 tot 1973. Welke biljetten zie je daar?", "Zoek de namen bij de portretten op: Vondel, Frans Hals, Sweelinck, De Ruyter, Spinoza. Eén portret hoort niet op een guldenbiljet. Dat valse biljet doe je niet mee.", "Je hebt vijf echte biljetten. Typ de cijfers van de biljetten van " + CONFIG.BILJETTEN.filter(b => !b.vals).sort((a, b) => a.waarde - b.waarde).map(b => b.waarde).join(", dan ") + " gulden."]});
 
 /* Kamer 1: zes vragen (volgorde van het boek) en daarna de tijdlijn. Bij ruil en bij wisselbrief/goud krijgt elk duo er een van de twee. */
 const POOL = {
