@@ -267,6 +267,7 @@ body{background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.014) 0 2
 .leerknop{display:flex;align-items:center;gap:14px;width:100%;text-align:left;min-height:68px;padding:12px 18px;border-radius:8px;border:2px solid var(--brass);background:var(--paper);color:var(--ink);cursor:pointer;font-size:21px;font-weight:700;box-shadow:0 8px 18px rgba(0,0,0,.3)}
 .leerknop .nr{font-family:var(--type);font-size:30px;color:var(--red)}
 .leerknop .pijl{margin-left:auto;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.fr select{width:min(100%,250px)}
 </style>
 </head>
 <body>
@@ -293,6 +294,15 @@ const CONFIG = {
   ANTWOORD: {wie: "dekker", waar: "kunst", wat: "biljet"},   // de aanklacht
   KOFFERCODE: "1971",             // code van het cijferslot op de koffer in het kunstlokaal
   FILMS: {intro: ""},             // link naar de introfilm (NotebookLM). Leeg = geen filmknop.
+  /* Kamer 2: vijf biljetten (spelgeld) in het lokaal. Eén is vals: bij dat biljet klopt één kenmerk niet.
+     d = het cijfer dat achterop het biljet staat. De code van het slot = de cijfers van de echte biljetten, van laag naar hoog. */
+  BILJETTEN: [
+    {l: "A", waarde: 5,   vals: false, d: "7"},
+    {l: "B", waarde: 10,  vals: false, d: "3"},
+    {l: "C", waarde: 20,  vals: false, d: "9"},
+    {l: "D", waarde: 50,  vals: true,  d: "4", fout: "Kantelen: het hologram verandert niet"},
+    {l: "E", waarde: 100, vals: false, d: "1"}
+  ],
   /* Kamer 1: zes platen aan de muur, zonder jaartal, elk met een letter achterop. Goede volgorde = codewoord. */
   TIJDLIJN: [
     {t: "Ruilhandel",                  l: "R", tekst: "Mensen ruilen spullen met elkaar. Er is nog geen geld."},
@@ -306,7 +316,7 @@ const CONFIG = {
 
 const KAMERS = {
   1: {naam: "De Oude Kluis",       tijd: "Het verleden van geld", plek: "de aula",          beschikbaar: true},
-  2: {naam: "Het Biljettenlab",    tijd: "Geld van nu",           plek: "het scheikundelokaal", beschikbaar: false},
+  2: {naam: "Het Biljettenlab",    tijd: "Geld van nu",           plek: "het scheikundelokaal", beschikbaar: true},
   3: {naam: "De Prijzenwinkel",    tijd: "Geld in crisis",        plek: "het ICT-hok",      beschikbaar: false},
   4: {naam: "Het Dossierkantoor",  tijd: "Herhaling hoofdstuk 1", plek: "de torenkamer",    beschikbaar: false}
 };
@@ -365,7 +375,24 @@ const BRIEVEN = {
       "Begin met de vragen op de iPad. Zo leren jullie hoe geld is ontstaan. Daarna lukt de tijdlijn."],
       sig: "De conciërge"}
 };
+BRIEVEN[2] = {kop: "Maandag, 09.10 uur", aan: "Aan de onderzoekers,", tekst: [
+  "Ik beheer de kantine. Gisteren stopte iemand een biljet in de kassa. Er klopt iets niet aan.",
+  "Onze biljettenlezer is kapot. We moeten het dus zelf controleren.",
+  "In jullie lokaal hangen vijf biljetten. Eén is vals. Controleer ze door te voelen, te kijken en te kantelen.",
+  "Begin met de vragen op de iPad. Zo weten jullie waar je op moet letten. Daarna volgen de biljetten en de verdachtenwand."],
+  sig: "De kantinebeheerder"};
+const LABFOTO = `<svg viewBox="0 0 360 220" role="img" aria-label="Foto van een lokaal met een gasbrander, reageerbuizen, een kolf en een systeem van de elementen aan de muur" style="width:100%;max-width:460px;border-radius:8px;border:3px solid var(--ink)"><rect width="360" height="220" fill="#dfe8e1"/><rect y="150" width="360" height="70" fill="#8a6a45"/><rect y="146" width="360" height="8" fill="#6d5233"/>
+<g transform="translate(200 18)"><rect width="150" height="96" fill="#f6f3e4" stroke="#56604f" stroke-width="2"/>${Array.from({length:7},(_,r)=>Array.from({length:12},(_,c)=>(r<2&&c>0&&c<11&&!(r===0&&c>1&&c<10)?'':`<rect x="${6+c*11.5}" y="${8+r*11.5}" width="9" height="9" fill="${["#e6b8a8","#a8c5e6","#b8dfb0","#ecd99a"][(r+c)%4]}"/>`)).join("")).join("")}</g>
+<g transform="translate(40 60)"><path d="M30 0h20v34l30 62H0l30-62z" fill="#cfe9d6" stroke="#2f5d45" stroke-width="3"/><path d="M8 80h64l8 16H0z" fill="#5fae7d" opacity=".8"/></g>
+<g transform="translate(150 96)"><rect x="12" y="20" width="26" height="30" fill="#4a5560"/><rect x="18" y="0" width="14" height="22" fill="#6b7682"/><path d="M25 -26c8 10 10 16 0 26-10-10-8-16 0-26z" fill="#e8742a"/><path d="M25 -14c4 6 5 9 0 14-5-5-4-8 0-14z" fill="#f5d04a"/></g>
+<g transform="translate(250 112)"><rect x="0" y="22" width="90" height="12" fill="#6d5233"/>${[10,34,58].map((x,i)=>`<rect x="${x}" y="-4" width="14" height="38" rx="5" fill="${["#e6a0c0","#a0c8e6","#d6e68a"][i]}" stroke="#56604f" stroke-width="2"/>`).join("")}</g>
+<g transform="translate(70 168)"><circle cx="14" cy="14" r="11" fill="none" stroke="#1f2a24" stroke-width="3"/><circle cx="44" cy="14" r="11" fill="none" stroke="#1f2a24" stroke-width="3"/><path d="M25 14h8" stroke="#1f2a24" stroke-width="3"/></g></svg>`;
 const CLUES = {
+  2: {intro: "Het slot springt open. In de la ligt een foto. Op de foto zie je een plek in school.",
+      rebus: LABFOTO,
+      hulp: ["Kijk goed naar wat er op de foto staat. In welk lokaal staan deze spullen?",
+             "Er staan een gasbrander, reageerbuizen en een kolf. Aan de muur hangt een systeem van de elementen.",
+             "Het is het scheikundelokaal. Ga erheen en zoek de QR-code."]},
   1: {intro: "Het slot springt open. In de kluis ligt een kaartje met een plaatje. Het plaatje is een rebus. Het antwoord is een plek in school.",
       rebus: `<div class="rebus" role="img" aria-label="Rebus: het geluid AU, plus de zesde noot na do, re, mi, fa, sol"><div class="rb"><span class="bub">AU!</span><small>Dit roep je als iets pijn doet</small></div><span class="pl">+</span><div class="rb"><span class="scale">do · re · mi · fa · sol · <b class="q">♪</b></span><small>De volgende noot</small></div></div>`,
       hulp: ["Plak de twee delen aan elkaar. Je krijgt één woord.",
@@ -397,6 +424,26 @@ const LEER = {
   ]
 };
 
+LEER[2] = [
+  {titel: "Chartaal en giraal", tekst: [
+    "Chartaal geld kun je vasthouden. Dat zijn munten en biljetten.",
+    "Giraal geld staat alleen op een bankrekening. Je kunt het niet vasthouden.",
+    "Pin je in de winkel? Dan gaat het bedrag van jouw rekening naar de rekening van de winkel. Er gaat geen biljet over de toonbank."]},
+  {titel: "Wat is geld waard?", tekst: [
+    "Een biljet is als papier bijna niets waard. Dat is de intrinsieke waarde.",
+    "Toch kun je er 20 euro mee betalen. Dat is de extrinsieke waarde. Iedereen gelooft dat het biljet 20 euro waard is.",
+    "Daarom moeten biljetten moeilijk na te maken zijn."]},
+  {titel: "Echt of vals?", tekst: [
+    "Je controleert een biljet op drie manieren.",
+    "Voelen: het papier is stevig en je voelt reliëf onder je vingers.",
+    "Kijken: houd het biljet tegen het licht. Je ziet een watermerk.",
+    "Kantelen: houd het biljet schuin. Het hologram verandert van beeld."]},
+  {titel: "Twee soorten inflatie", tekst: [
+    "Bij kosteninflatie stijgen de kosten van bedrijven. Bijvoorbeeld voor grondstoffen of lonen. Daardoor stijgen de prijzen.",
+    "Bij bestedingsinflatie willen mensen meer kopen dan er te koop is. Daardoor stijgen de prijzen.",
+    "Veel nep-geld in omloop kan de prijzen ook doen stijgen. Er is dan meer geld voor dezelfde spullen."]}
+];
+
 /* =========================================================
    VRAGEN
    ========================================================= */
@@ -412,9 +459,9 @@ const op = (id, q, crit, model, hints, extra) => add(Object.assign({id, type:"op
 mc("a1_ruil1", "Meerkeuze", "Mila heeft een kip en wil schoenen. De schoenmaker wil geen kip, maar brood. Wat is nu het probleem bij directe ruil?",
   ["Je moet iemand vinden die precies jouw ruil wil", "Een kip is nooit evenveel waard als schoenen", "Ruilen mag niet zonder een briefje van de baas", "Schoenen kun je alleen kopen met zilveren munten"], [0],
   ["Mila heeft iets wat de schoenmaker niet wil.", "Wat moet Mila doen voordat ze kan ruilen?", "Ze moet eerst iemand zoeken die een kip wil en iets heeft wat zij nodig heeft. Dat kost veel tijd."]);
-mc("a1_ruil2", "Meerkeuze", "Waarom is ruilen met geld (indirecte ruil) handiger dan ruilen zonder geld (directe ruil)?",
+mc("a1_ruil2", "Meerkeuze", "Waarom is indirecte ruil handiger dan directe ruil?",
   ["Je hoeft niemand te zoeken die precies jouw spullen wil", "Met geld wordt alles in de winkel ineens veel goedkoper", "Met geld hoef je in de winkel nooit meer iets te betalen", "Met geld kun je alleen nog maar sparen en niet meer kopen"], [0],
-  ["Denk aan Mila met de kip. Wat is lastig aan directe ruil?", "Met geld verkoop je je kip aan iedereen. Daarna koop je schoenen.", "Je hoeft niet meer iemand te vinden die jouw spullen wil. Geld is het ruilmiddel."]);
+  ["Denk aan Mila met de kip. Wat is lastig aan directe ruil?", "Bij indirecte ruil verkoop je je kip aan iedereen voor geld. Daarna koop je schoenen.", "Je hoeft niet meer iemand te vinden die jouw spullen wil. Geld is de tussenstap."]);
 
 /* Blok B: de drie functies van geld en de twee soorten ruil (2.1) */
 add({id: "c1_functies", type: "koppel", label: "Koppelen",
@@ -422,9 +469,8 @@ add({id: "c1_functies", type: "koppel", label: "Koppelen",
   pairs: [["Je betaalt een broodje met een muntje", "Ruilmiddel"],
           ["Op het bordje staat dat de fiets 300 euro kost", "Rekenmiddel"],
           ["Je legt elke maand 20 euro in je spaarpot", "Spaarmiddel"],
-          ["Je geeft een kip en krijgt er schoenen voor", "Directe ruil"],
-          ["Je verkoopt een kip en koopt met het geld schoenen", "Indirecte ruil"]],
-  hints: ["Begin met de spaarpot. Wat doe je met geld dat je bewaart?", "Een prijs op een bordje laat zien wat iets waard is. Dat is rekenen.", "Bij directe ruil is er geen geld. Bij indirecte ruil gebruik je geld als tussenstap."]});
+          ["Je geeft een kip en krijgt er schoenen voor", "Directe ruil"]],
+  hints: ["Begin met de spaarpot. Wat doe je met geld dat je bewaart?", "Een prijs op een bordje laat zien wat iets waard is. Dat is rekenen.", "Bij directe ruil is er geen geld. Bij het broodje betaal je met geld: dat is het ruilmiddel."]});
 
 /* Blok C: wisselbrief en gouden standaard (2.1) */
 tf("c1_wissel", "Juist of onjuist: met een wisselbrief hoefde een koopman geen zware zak munten mee te nemen op reis.", true,
@@ -460,13 +506,56 @@ add({id: "s1_tijdlijn", type: "slot", lokaal: true, label: "Het slot van de klui
   na: "RUILEN! Zo begon het: mensen gingen ruilen. En in 1971 liet Amerika het goud los. Sinds die tijd is geld alleen nog waard wat wij ervan vertrouwen.",
   hints: ["Begin met het oudste: ruilen zonder geld.", "Daarna volgen schelpen en zout, dan munten, dan de wisselbrief.", "Het laatst komt de pinpas. Daarvoor liet Amerika het goud los. Kijk ook in het leerdossier."]});
 
+/* ---------------- KAMER 2: Het Biljettenlab ---------------- */
+mc("a2_pin", "Meerkeuze", "Je pint een broodje in de kantine. Wat gebeurt er met het geld?",
+  ["Het bedrag gaat van jouw rekening naar die van de kantine", "De kantine krijgt een biljet uit de pinautomaat van de bank", "De bank geeft jou munten en de kantine krijgt biljetten", "Het bedrag blijft op jouw rekening staan tot de volgende dag"], [0],
+  ["Pinnen is giraal betalen. Er gaan geen biljetten of munten over de toonbank.", "Giraal geld staat alleen op rekeningen. Wat gebeurt er met die rekeningen?", "Het bedrag verdwijnt van jouw rekening en komt op die van de kantine."]);
+tf("a2_tf", "Juist of onjuist: geld op je bankrekening noem je chartaal geld.", false,
+  ["Chartaal geld kun je vasthouden. Kun je een bedrag op je rekening vasthouden?", "Geld op een rekening heet giraal geld.", "Het antwoord is onjuist: dat is giraal geld."]);
+add({id: "c2_waarde", type: "koppel", label: "Koppelen",
+  q: "Welk begrip hoort bij welke situatie? Tik links op een situatie en daarna rechts op het begrip.",
+  pairs: [["Je betaalt met een briefje van 10 euro in je hand", "Chartaal geld"],
+          ["Je pint je boodschappen in de supermarkt", "Giraal geld"],
+          ["Het papier van een biljet kost maar 5 cent", "Intrinsieke waarde"],
+          ["Op het biljet staat dat het 20 euro waard is", "Extrinsieke waarde"],
+          ["Je houdt het biljet schuin en het hologram verandert", "Kantelen"]],
+  hints: ["Begin met het briefje in je hand. Kun je dat vasthouden?", "Intrinsiek is wat het materiaal waard is. Extrinsiek is wat er op staat.", "Voelen, kijken en kantelen zijn de drie manieren om een biljet te controleren."]});
+mc("b2_kenm", "Meerdere antwoorden goed", "Je wilt weten of een biljet echt is. Wat kun je doen? Meerdere antwoorden zijn goed.",
+  ["Je voelt of het papier stevig is en reliëf heeft", "Je kantelt het biljet en let op het hologram", "Je telt hoeveel biljetten er in de kassa liggen", "Je kijkt of er een naam van de kassier op staat"], [0, 1],
+  ["Denk aan de drie manieren: voelen, kijken en kantelen.", "Het gaat om kenmerken van het biljet zelf, niet om de kassa.", "Voelen (reliëf) en kantelen (hologram) horen erbij."],
+  {multi: true});
+mc("c2_soort", "Meerkeuze", "Een bakker moet meer betalen voor meel en energie. Hij maakt zijn brood duurder. Hoe ontstaat hier de inflatie?",
+  ["De kosten van de bakker stijgen, dus de prijs stijgt mee", "Mensen willen ineens veel meer brood kopen dan er is", "De bank heeft ineens veel te veel biljetten laten drukken", "De overheid heeft de prijzen vastgezet op een laag bedrag"], [0],
+  ["Wat wordt er duurder voor de bakker? Meel en energie.", "Het gaat om de kosten van het bedrijf. Welke soort inflatie is dat?", "Dat is kosteninflatie: hogere kosten geven hogere prijzen."]);
+add({id: "z2_wand", type: "zoek", lokaal: true, label: "Zoek in het lokaal",
+  walk: "Loop naar de verdachtenwand. Daar hangen zeven dossierkaarten.",
+  q: "Lees de dossierkaarten. Welke verdachte hoort bij welke omschrijving? Kies bij elke omschrijving een naam.",
+  velden: [{k: "w1", lab: "Zijn kluisje staat vol flesjes en hij heeft een uv-lamp", kind: "keuze", opts: WIE.map(x => x.n), want: "Meneer Criens"},
+           {k: "w2", lab: "In haar la liggen biljetten uit allerlei landen", kind: "keuze", opts: WIE.map(x => x.n), want: "Mevrouw Bugajová"},
+           {k: "w3", lab: "In zijn berging staat een oud drukpersje", kind: "keuze", opts: WIE.map(x => x.n), want: "Meneer Boersen"},
+           {k: "w4", lab: "In zijn jaszak rinkelen munten uit alle eeuwen", kind: "keuze", opts: WIE.map(x => x.n), want: "Meneer Haagsma"}],
+  model: "Criens: flesjes en uv-lamp. Bugajová: biljetten uit allerlei landen. Boersen: drukpersje. Haagsma: munten uit alle eeuwen.",
+  hints: ["Lees op elke kaart wat er bij ‘Verdacht omdat’ staat.", "Een uv-lamp hoort bij iemand die veel van natuurkunde en scheikunde weet.", "Munten uit alle eeuwen: de geschiedenisleraar. Een drukpersje: de economieleraar."]});
+op("o2_nepgeld", "Waarom is namaakgeld gevaarlijk voor de economie? Beantwoord deze twee vragen:\n* Wat gebeurt er met de hoeveelheid geld als er veel nep-biljetten bijkomen?\n* Wat gebeurt er daardoor met de prijzen en met de waarde van echt geld?",
+  [cr("Wat gebeurt er met de hoeveelheid geld?", "Zegt dat er meer geld in omloop komt.", ["meer geld", "meer biljetten", "omloop", "toeneemt", "groter", "meer"]),
+   cr("Wat gebeurt er met de prijzen en de waarde van geld?", "Legt uit dat de prijzen stijgen (inflatie) en dat echt geld daardoor minder waard wordt.", ["prijzen", "stijgen", "inflatie", "minder waard", "duurder", "hoger"])],
+  "Er komt meer geld in omloop, maar er zijn niet meer spullen. Daardoor stijgen de prijzen. Echt geld is dan minder waard: je kunt er minder voor kopen.",
+  ["Nep-biljetten zijn extra geld. Wat gebeurt er met de hoeveelheid geld?", "Er is meer geld, maar niet meer spullen. Wat doen de prijzen dan?", "Meer geld in omloop: de prijzen stijgen en echt geld is minder waard."]);
+add({id: "s2_biljetten", type: "slot", lokaal: true, label: "Het slot van de la",
+  walk: "Zoek in het lokaal de " + CONFIG.BILJETTEN.length + " biljetten. Controleer ze door te voelen, te kijken en te kantelen.",
+  q: "Eén biljet is vals. Dat biljet doe je niet mee. Zet de echte biljetten van de laagste naar de hoogste waarde. Achterop elk biljet staat een cijfer. Typ de cijfers in die volgorde. Groene cijfers staan al op de goede plek.",
+  code: () => CONFIG.BILJETTEN.filter(b => !b.vals).sort((a, b) => a.waarde - b.waarde).map(b => b.d).join(""), digits: true,
+  na: "Bij het valse biljet veranderde het hologram niet toen je het kantelde. Zo herken je namaak.",
+  hints: ["Controleer elk biljet op voelen, kijken en kantelen. Bij één biljet klopt iets niet.", "Dat valse biljet doe je niet mee. Zet de andere biljetten van laag naar hoog.", "Je hebt vier echte biljetten. Typ het cijfer van het biljet van 5, dan 10, dan 20 en dan 100."]});
+
 /* Kamer 1: zes vragen (volgorde van het leerdossier) en daarna de tijdlijn. Bij ruil en bij wisselbrief/goud krijgt elk duo er een van de twee. */
 const POOL = {
-  1: {A: ["a1_ruil1", "a1_ruil2"], B: ["c1_functies"], D: ["b1_knip"], E: ["b1_metaal"], C: ["c1_wissel", "c1_goud"], O: ["o1_inflatie"], slot: "s1_tijdlijn"}
+  1: {rij: [["a1_ruil1", "a1_ruil2"], "c1_functies", "b1_knip", "b1_metaal", ["c1_wissel", "c1_goud"], "o1_inflatie"], slot: "s1_tijdlijn"},
+  2: {rij: [["a2_pin", "a2_tf"], "c2_waarde", "b2_kenm", "c2_soort", "z2_wand", "o2_nepgeld"], slot: "s2_biljetten"}
 };
 function bouwRij(k){
   const P = POOL[k], pick = a => a[Math.floor(Math.random() * a.length)];
-  return [pick(P.A), pick(P.B), pick(P.D), pick(P.E), pick(P.C), pick(P.O), P.slot];
+  return P.rij.map(x => Array.isArray(x) ? pick(x) : x).concat(P.slot);
 }
 
 const $ = s => document.querySelector(s);
@@ -594,6 +683,7 @@ function teacherBox(){
     <p class="lead">Testmodus: ${S.test ? "aan (QR-plekken werken ook zonder dat de kamer klaar is)" : "uit"}. Nakijken: ${CONFIG.WORKER_URL ? "AI via de Worker" : "demo (trefwoorden)"}.</p>
     <table>
       <tr><td>Codewoord kamer 1</td><td><b>${esc(Q.s1_tijdlijn.code())}</b></td></tr>
+      <tr><td>Code kamer 2</td><td><b>${esc(Q.s2_biljetten.code())}</b> (echte biljetten, laag naar hoog: ${CONFIG.BILJETTEN.filter(b => !b.vals).sort((a,b)=>a.waarde-b.waarde).map(b => b.l + " = " + b.d).join(", ")}). Vals: ${CONFIG.BILJETTEN.filter(b => b.vals).map(b => b.l + " (" + b.fout + ")").join(", ")}</td></tr>
       <tr><td>Codes onder de QR</td><td>${[1,2,3,4].map(k => k + ": " + esc(CONFIG.PLEKCODES[k]) + " (" + KAMERS[k].plek + ")").join(" · ")} · bonus: ${esc(CONFIG.BONUSCODE)}</td></tr>
       <tr><td>Links voor de QR</td><td>${[1,2,3,4].map(k => esc(base) + "#p" + k).join("<br>")}<br>${esc(base)}#bonus</td></tr>
       <tr><td>Platen kamer 1</td><td>${CONFIG.TIJDLIJN.map(x => esc(x.l) + " = " + esc(x.t)).join(" · ")}</td></tr>
@@ -601,7 +691,7 @@ function teacherBox(){
       <tr><td>Code koffer</td><td><b>${esc(CONFIG.KOFFERCODE)}</b> (jaar waarin Amerika het goud losliet)</td></tr>
     </table>
     <div class="row"><button class="btn small brass" data-act="test">${S.test ? "Testmodus uit" : "Testmodus aan"}</button>
-    <button class="btn small ghost" ${ghost} data-act="klaarzet">Kamer 1 overslaan</button>
+    <button class="btn small ghost" ${ghost} data-act="klaarzet">Kamer overslaan</button>
     <button class="btn small ghost" ${ghost} data-act="naaraanklacht">Aanklacht openen</button>
     <button class="btn small ghost" ${ghost} data-act="reset">Alles opnieuw beginnen</button>
     <button class="btn small ghost" ${ghost} data-act="dsluit">Sluit</button></div></div>`;
@@ -728,7 +818,7 @@ function vClue(){
     <p class="lead" style="font-size:17px">Lukt scannen niet? Typ de code die onder de QR-code staat.</p>
     <div class="inl"><input id="pcode" type="text" autocapitalize="characters" autocomplete="off" placeholder="Code onder de QR-code"><button class="btn go" data-act="pcode">Controleer</button></div>
   </section>
-  <section class="hints">${hulp}<div class="row">${kan ? `<button class="btn small brass" data-act="rebushulp" ${totaal() >= CONFIG.HINT_KOST ? "" : "disabled"}>Koop een hint voor de rebus (kost ${CONFIG.HINT_KOST} stempel)</button>` : ""}<button class="btn small ghost" style="color:var(--on-wood);border-color:var(--on-wood-muted)" data-act="bureau">Terug naar het bureau</button></div></section>`;
+  <section class="hints">${hulp}<div class="row">${kan ? `<button class="btn small brass" data-act="rebushulp" ${totaal() >= CONFIG.HINT_KOST ? "" : "disabled"}>Koop een hint voor de clue (kost ${CONFIG.HINT_KOST} stempel)</button>` : ""}<button class="btn small ghost" style="color:var(--on-wood);border-color:var(--on-wood-muted)" data-act="bureau">Terug naar het bureau</button></div></section>`;
 }
 function vHint(){
   const k = S.hintK, E = ELIM[k], K = KAMERS[k];
@@ -1013,7 +1103,7 @@ const A = {
   dcode(){ if (($("#dcode").value || "").trim() === CONFIG.DOCENTCODE) { S.docent = "open"; render(); } else toast("Die code klopt niet."); },
   dsluit(){ S.docent = null; render(); },
   test(){ S.test = !S.test; render(); },
-  klaarzet(){ if (S.fase === "start") { toast("Vul eerst een duonaam in."); return; } S.kamer = 1; if (S.klaar[1]) { toast("Kamer 1 is al klaar."); return; } S.st[1] = S.st[1] || {}; [0,1,2,3,4].forEach(i => { if (S.st[1][i] === undefined) S.st[1][i] = 2; }); kamerKlaar(); },
+  klaarzet(){ if (S.fase === "start") { toast("Vul eerst een duonaam in."); return; } const k = [1,2,3,4].find(x => KAMERS[x].beschikbaar && !S.klaar[x]); if (!k) { toast("Alle kamers zijn al klaar."); return; } S.kamer = k; S.st[k] = S.st[k] || {}; bouwRij(k).forEach((_,i) => { if (S.st[k][i] === undefined) S.st[k][i] = 2; }); kamerKlaar(); },
   naaraanklacht(){ S.fase = "aanklacht"; S.aMsg = ""; render(); },
   reset(){ try { localStorage.removeItem(LS); } catch(e){} S = fresh(); cur = null; render(); },
   bureau(){ S.fase = "bureau"; render(); },
