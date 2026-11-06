@@ -665,17 +665,17 @@ add({id: "c4_inkomen", type: "koppel", label: "Koppelen",
           ["Het geld voor bioscoop en snoep is elke maand anders", "Variabele uitgave"]],
   hints: ["Begin met de huur. Verandert die elke maand?", "Loon verdien je zelf. Kinderbijslag krijg je van de overheid.", "Primair inkomen verdien je zelf. Secundair inkomen krijg je van de overheid."]});
 add({id: "b4_budget", type: "zoek", label: "Rekenen",
-  q: "Je hebt 60 euro. Een bioscoopkaartje kost 12 euro. Hoeveel kaartjes kun je maximaal kopen, als je verder niets koopt?",
-  velden: [{k: "n", lab: "Je kunt maximaal ... kaartjes kopen", kind: "getal", want: 5, unit: ""}],
-  na: "60 gedeeld door 12 is 5. Je kunt dus 5 kaartjes kopen. Dat hoort bij je budget: het geld dat je te besteden hebt.",
-  model: "60 : 12 = 5 kaartjes.",
-  hints: ["Je deelt je budget door de prijs van één kaartje.", "Hoe vaak past 12 in 60?", "60 : 12 = 5."]});
+  q: "Je hebt 60 euro te besteden. Een bioscoopkaartje kost 12 euro en een zak popcorn kost 5 euro. Je koopt 3 kaartjes. Hoeveel zakken popcorn kun je daarna maximaal kopen?",
+  velden: [{k: "n", lab: "Je kunt nog maximaal ... zakken popcorn kopen", kind: "getal", want: 4, unit: ""}],
+  na: "Drie kaartjes kosten 36 euro. Er blijft 24 euro over. 24 gedeeld door 5 is 4,8. Je kunt alleen hele zakken kopen, dus 4.",
+  model: "3 x 12 = 36. 60 - 36 = 24. 24 : 5 = 4,8, dus maximaal 4 zakken.",
+  hints: ["Reken eerst uit wat de drie kaartjes samen kosten.", "Trek dat af van je budget. Hoeveel euro blijft er over?", "60 - 36 = 24 en 24 : 5 = 4,8. Je kunt alleen hele zakken kopen."]});
 add({id: "b4_saldo", type: "zoek", label: "Rekenen",
-  q: "Een huishouden heeft 2.500 euro inkomsten. De vaste uitgaven zijn 1.400 euro en de variabele uitgaven zijn 900 euro. Hoeveel euro overschot is er?",
-  velden: [{k: "s", lab: "Het overschot is", kind: "getal", want: 200, unit: "euro"}],
-  na: "Eerst tel je de uitgaven op: 1.400 en 900 is 2.300. Daarna trek je die af van de inkomsten: 2.500 min 2.300 is 200.",
-  model: "1.400 + 900 = 2.300. 2.500 - 2.300 = 200 euro overschot.",
-  hints: ["Tel eerst de vaste en de variabele uitgaven bij elkaar op.", "Trek de uitgaven af van de inkomsten.", "1.400 + 900 = 2.300 en 2.500 - 2.300 = 200."]});
+  q: "Een huishouden heeft 2.500 euro inkomsten per maand. De vaste uitgaven zijn 56 procent van de inkomsten. De variabele uitgaven zijn 900 euro. Hoeveel euro overschot is er per maand?",
+  velden: [{k: "s", lab: "Het overschot per maand is", kind: "getal", want: 200, unit: "euro"}],
+  na: "Eerst reken je de vaste uitgaven uit: 56 procent van 2.500 is 1.400 euro. Daarna trek je 1.400 en 900 af van de inkomsten: 2.500 min 2.300 is 200.",
+  model: "(56 : 100) x 2.500 = 1.400. 2.500 - 1.400 - 900 = 200 euro overschot.",
+  hints: ["Reken eerst de vaste uitgaven uit in euro. Het is een percentage van de inkomsten.", "56 procent van 2.500 is (56 : 100) x 2.500.", "Vaste uitgaven 1.400. Dan 2.500 - 1.400 - 900 = 200."]});
 mc("b4_budgetlijn", "Meerkeuze", "Wat laat een budgetlijn zien?",
   ["Welke combinaties van twee producten je kunt betalen", "Hoeveel geld je elke maand op je bankrekening bijspaart", "Hoe de prijs van een product door de jaren verandert", "Welk van twee producten je het allerliefste zou willen"], [0],
   ["Een budget is het geld dat je te besteden hebt.", "De lijn laat zien wat je met dat geld kunt kopen.", "Een budgetlijn laat de mogelijke combinaties van twee producten zien."]);
