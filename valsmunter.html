@@ -493,11 +493,11 @@ mc("b1_knip", "Meerdere antwoorden goed", "Vroeger knipten oplichters stukjes va
   ["Als een munt een stukje kleiner is, klopt het gewicht niet meer.", "Zou jij een goede munt uitgeven of bewaren, als je ook een geknipte munt hebt?", "Slecht geld verdringt goed geld: de goede munten verdwijnen uit omloop. En men ging wegen."],
   {multi: true});
 add({id: "b1_metaal", type: "zoek", label: "Rekenen",
-  q: "Een zilveren munt heeft een waarde van 5 gulden. Het zilver in de munt is 4 gulden waard. Hoeveel procent van de waarde op de munt is het metaal? Gebruik: (Deel : geheel) x 100.",
-  velden: [{k: "p", lab: "Het metaal is ... van de waarde op de munt", kind: "getal", want: 80, unit: "%"}],
-  na: "Het zilver is de intrinsieke waarde. De waarde die op de munt staat is de extrinsieke waarde.",
-  model: "(4 : 5) x 100 = 80%.",
-  hints: ["Het deel is de waarde van het zilver. Het geheel is de waarde op de munt.", "Reken (4 : 5) x 100.", "4 : 5 = 0,8 en 0,8 x 100 = 80."]});
+  q: "Op een zilveren munt staat dat hij 5 gulden waard is. Het zilver in de munt is 4 gulden waard. Hoeveel procent is de intrinsieke waarde van de extrinsieke waarde?",
+  velden: [{k: "p", lab: "De intrinsieke waarde is ... van de extrinsieke waarde", kind: "getal", want: 80, unit: "%"}],
+  na: "Het zilver is de intrinsieke waarde: 4 gulden. De waarde die op de munt staat is de extrinsieke waarde: 5 gulden.",
+  model: "Intrinsiek = 4, extrinsiek = 5. (4 : 5) x 100 = 80%.",
+  hints: ["Intrinsiek is wat het materiaal zelf waard is. Extrinsiek is wat er op de munt staat. Welk getal hoort bij welke waarde?", "De intrinsieke waarde is het deel. De extrinsieke waarde is het geheel.", "4 : 5 = 0,8 en 0,8 x 100 = 80."]});
 
 /* Blok D: inflatie (2.3) */
 op("o1_inflatie", "Wat is inflatie? Beantwoord deze twee vragen:\n* Wat gebeurt er bij inflatie met de prijzen?\n* Wat merk je daarvan als je met je zakgeld naar de winkel gaat?",
