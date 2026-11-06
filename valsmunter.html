@@ -263,6 +263,10 @@ body{background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.014) 0 2
 .rebus .bub{position:relative;background:#fff;border:3px solid var(--ink);border-radius:50%/60%;padding:16px 26px;font-family:var(--display);font-weight:800;font-size:40px;color:var(--red)}
 .rebus .scale{font-family:var(--type);font-size:clamp(15px,3.6vw,22px);letter-spacing:.02em;white-space:nowrap}
 .rebus .q{display:inline-block;background:var(--red);color:#fff6ea;border-radius:8px;padding:0 12px;font-size:34px}
+.leer .typed{font-family:var(--body);font-size:20px;line-height:1.6}
+.leerknop{display:flex;align-items:center;gap:14px;width:100%;text-align:left;min-height:68px;padding:12px 18px;border-radius:8px;border:2px solid var(--brass);background:var(--paper);color:var(--ink);cursor:pointer;font-size:21px;font-weight:700;box-shadow:0 8px 18px rgba(0,0,0,.3)}
+.leerknop .nr{font-family:var(--type);font-size:30px;color:var(--red)}
+.leerknop .pijl{margin-left:auto;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
 </style>
 </head>
 <body>
@@ -291,12 +295,12 @@ const CONFIG = {
   FILMS: {intro: ""},             // link naar de introfilm (NotebookLM). Leeg = geen filmknop.
   /* Kamer 1: zes platen aan de muur, zonder jaartal, elk met een letter achterop. Goede volgorde = codewoord. */
   TIJDLIJN: [
-    {t: "Ruilhandel",                  l: "R"},
-    {t: "Schelpen en zout",            l: "U"},
-    {t: "Munten (met geknipt randje)", l: "I"},
-    {t: "Wisselbrief",                 l: "L"},
-    {t: "Goud losgelaten (1971)",      l: "E"},
-    {t: "Pinpas",                      l: "N"}
+    {t: "Ruilhandel",                  l: "R", tekst: "Mensen ruilen spullen met elkaar. Er is nog geen geld."},
+    {t: "Schelpen en zout",            l: "U", tekst: "Schelpen en zout zijn het eerste geld."},
+    {t: "Munten (met geknipt randje)", l: "I", tekst: "Munten van goud en zilver. Oplichters knippen stukjes af."},
+    {t: "Wisselbrief",                 l: "L", tekst: "Kooplieden betalen met een briefje van de bank."},
+    {t: "Goud losgelaten",             l: "E", tekst: "Amerika laat het goud los. Geld is waard wat wij ervan vertrouwen."},
+    {t: "Pinpas",                      l: "N", tekst: "Je betaalt met je pas. Het geld is een getal op een scherm."}
   ]
 };
 
@@ -369,6 +373,30 @@ const CLUES = {
              "AU + LA = AULA. Ga naar de aula en zoek de QR-code bij de vitrine."]}
 };
 
+/* Het leerdossier: korte kaarten die de duo's lezen voordat ze de vragen doen */
+const LEER = {
+  1: [
+    {titel: "Ruilen zonder geld", tekst: [
+      "Vroeger was er geen geld. Mensen ruilden spullen met elkaar. Een kip tegen een paar schoenen. Dat heet directe ruil.",
+      "Er is een probleem. Je moet iemand vinden die jouw spullen wil hebben én iets heeft wat jij nodig hebt. Dat kost veel tijd.",
+      "Met geld is dat opgelost. Je verkoopt je kip voor geld. Daarna koop je schoenen met dat geld. Dat heet indirecte ruil.",
+      "Geld heeft drie functies. Ruilmiddel: je betaalt ermee. Rekenmiddel: je ziet wat iets kost. Spaarmiddel: je bewaart het voor later."]},
+    {titel: "Van schelp tot munt", tekst: [
+      "Eerst gebruikte men schelpen en zout als geld. Later kwamen er munten van goud en zilver.",
+      "Het metaal in een munt heeft zelf waarde. Dat is de intrinsieke waarde. De waarde die op de munt staat, is de extrinsieke waarde.",
+      "Oplichters knipten stukjes van de munten af. Zo kregen ze gratis goud. De munten werden lichter. Mensen gingen de munten wegen.",
+      "Mensen bewaarden de goede munten en gaven de geknipte munten uit. Dat noemen we: slecht geld verdringt goed geld."]},
+    {titel: "Wisselbrief en gouden standaard", tekst: [
+      "Kooplieden wilden geen zware zakken munten meenemen. Ze gebruikten een wisselbrief. Dat is een briefje van een bank. Bij een andere bank kreeg je er geld voor.",
+      "Later kwam er papiergeld. Je kon het ruilen voor goud. Dat heet de gouden standaard.",
+      "In 1971 liet Amerika het goud los. Papiergeld kon niet meer worden ingewisseld voor goud. Geld is sindsdien iets waard omdat mensen erop vertrouwen."]},
+    {titel: "Inflatie", tekst: [
+      "Bij inflatie stijgen de prijzen van bijna alles. Voor hetzelfde geld kun je dan minder kopen. Je geld is minder waard.",
+      "Hoeveel je met je geld kunt kopen, heet koopkracht. Stijgen de prijzen en stijgt je inkomen niet mee? Dan daalt je koopkracht.",
+      "Komt er veel meer geld in omloop, maar niet meer spullen? Dan kan er inflatie ontstaan. Daarom is namaakgeld gevaarlijk."]}
+  ]
+};
+
 /* =========================================================
    VRAGEN
    ========================================================= */
@@ -398,7 +426,14 @@ add({id: "c1_functies", type: "koppel", label: "Koppelen",
           ["Je verkoopt een kip en koopt met het geld schoenen", "Indirecte ruil"]],
   hints: ["Begin met de spaarpot. Wat doe je met geld dat je bewaart?", "Een prijs op een bordje laat zien wat iets waard is. Dat is rekenen.", "Bij directe ruil is er geen geld. Bij indirecte ruil gebruik je geld als tussenstap."]});
 
-/* Blok C: munten (2.2) */
+/* Blok C: wisselbrief en gouden standaard (2.1) */
+tf("c1_wissel", "Juist of onjuist: met een wisselbrief hoefde een koopman geen zware zak munten mee te nemen op reis.", true,
+  ["Wat is een wisselbrief? Lees de derde kaart in het dossier.", "De koopman kreeg een briefje van een bank. Bij een andere bank kreeg hij er geld voor.", "Het antwoord is juist: het briefje was veel lichter dan een zak met munten."]);
+mc("c1_goud", "Meerkeuze", "Sinds 1971 kun je papiergeld niet meer ruilen voor goud. Waarom is geld dan toch iets waard?",
+  ["Mensen vertrouwen erop dat anderen het willen hebben", "De bank bewaart voor elk biljet een stukje goud", "Het papier van een biljet is zelf veel geld waard", "De overheid betaalt je elk jaar het verschil terug"], [0],
+  ["Wat kon je vroeger met papiergeld doen, en nu niet meer?", "Er zit geen goud meer achter het geld. Waar hangt de waarde dan van af?", "Van vertrouwen: iedereen gelooft dat een ander het geld aanneemt."]);
+
+/* Blok D: munten (2.2) */
 mc("b1_knip", "Meerdere antwoorden goed", "Vroeger knipten oplichters stukjes van gouden munten af. Wat gebeurde er daardoor? Meerdere antwoorden zijn goed.",
   ["Mensen gingen munten wegen in plaats van tellen", "Mensen bewaarden goede munten en gaven slechte uit", "Munten werden zeldzamer en dus ineens meer waard", "De koning verbood meteen het gebruik van munten"], [0, 1],
   ["Als een munt een stukje kleiner is, klopt het gewicht niet meer.", "Zou jij een goede munt uitgeven of bewaren, als je ook een geknipte munt hebt?", "Slecht geld verdringt goed geld: de goede munten verdwijnen uit omloop. En men ging wegen."],
@@ -420,18 +455,18 @@ op("o1_inflatie", "Wat is inflatie? Beantwoord deze twee vragen:\n* Wat gebeurt 
 /* Slot kamer 1: de tijdlijn aan de muur */
 add({id: "s1_tijdlijn", type: "slot", lokaal: true, label: "Het slot van de kluis",
   walk: "Zoek in het lokaal de " + CONFIG.TIJDLIJN.length + " platen van de tijdlijn van geld. Ze hangen door elkaar en er staat geen jaartal op.",
-  q: "Zet de platen in de goede volgorde, van oud naar nieuw. Achterop elke plaat staat een letter. Typ de letters in de goede volgorde. Groene letters staan al op de goede plek.",
+  q: "Lees op elke plaat wat er gebeurde. Zet de platen in de goede volgorde, van oud naar nieuw. Achterop elke plaat staat een letter. Typ de letters in de goede volgorde. Groene letters staan al op de goede plek.",
   code: () => CONFIG.TIJDLIJN.map(x => x.l).join(""),
   na: "RUILEN! Zo begon het: mensen gingen ruilen. En in 1971 liet Amerika het goud los. Sinds die tijd is geld alleen nog waard wat wij ervan vertrouwen.",
-  hints: ["Begin met het oudste: ruilen zonder geld.", "Daarna volgen schelpen en zout, dan munten, dan de wisselbrief.", "Het laatst komt de pinpas. Daarvoor liet Amerika het goud los."]});
+  hints: ["Begin met het oudste: ruilen zonder geld.", "Daarna volgen schelpen en zout, dan munten, dan de wisselbrief.", "Het laatst komt de pinpas. Daarvoor liet Amerika het goud los. Kijk ook in het leerdossier."]});
 
-/* Welke vragen komen in kamer 1: uit blok A en C er één, de rest vast, de tijdlijn als laatste */
+/* Kamer 1: zes vragen (volgorde van het leerdossier) en daarna de tijdlijn. Bij ruil en bij wisselbrief/goud krijgt elk duo er een van de twee. */
 const POOL = {
-  1: {A: ["a1_ruil1", "a1_ruil2"], B: ["c1_functies"], C: ["b1_knip", "b1_metaal"], O: ["o1_inflatie"], slot: "s1_tijdlijn"}
+  1: {A: ["a1_ruil1", "a1_ruil2"], B: ["c1_functies"], D: ["b1_knip"], E: ["b1_metaal"], C: ["c1_wissel", "c1_goud"], O: ["o1_inflatie"], slot: "s1_tijdlijn"}
 };
 function bouwRij(k){
   const P = POOL[k], pick = a => a[Math.floor(Math.random() * a.length)];
-  return [pick(P.A), pick(P.B), pick(P.C), pick(P.O), P.slot];
+  return [pick(P.A), pick(P.B), pick(P.D), pick(P.E), pick(P.C), pick(P.O), P.slot];
 }
 
 const $ = s => document.querySelector(s);
@@ -485,7 +520,7 @@ const filmKnop = url => url ? `<a class="btn brass" href="${esc(url)}" target="_
 /* =========================================================
    TOESTAND
    ========================================================= */
-const fresh = () => ({fase:"start", duo:"", open:{}, klaar:{}, plek:{}, kamer:null, rij:[], rijK:null, qi:0, st:{}, hintsBetaald:0, bonus:false, t0:null, t1:null, test:false, gelezen:{}, hist:[], pend:null, docent:null, hintK:null, rebusHulp:0, ak:{}, aPogingen:0, aMsg:""});
+const fresh = () => ({fase:"start", duo:"", open:{}, klaar:{}, plek:{}, kamer:null, rij:[], rijK:null, qi:0, st:{}, hintsBetaald:0, bonus:false, t0:null, t1:null, test:false, gelezen:{}, hist:[], pend:null, docent:null, hintK:null, gezien:{}, rebusHulp:0, ak:{}, aPogingen:0, aMsg:""});
 let S = fresh();
 let cur = null;
 const LS = "valsmunter-v1";
@@ -525,7 +560,7 @@ function render(){
   const changed = key !== lastKey;
   const m = $("#main");
   m.classList.toggle("enter", changed);
-  const V = {start:vStart, bureau:vBureau, brief:vBrief, kamer:vKamer, clue:vClue, hint:vHint, aanklacht:vAanklacht, koffer:vKoffer};
+  const V = {start:vStart, bureau:vBureau, brief:vBrief, leer:vLeer, kamer:vKamer, clue:vClue, hint:vHint, aanklacht:vAanklacht, koffer:vKoffer};
   m.innerHTML = (V[S.fase] || vStart)();
   save();
   if (changed) { lastKey = key; window.scrollTo({top:0}); try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch(e){} }
@@ -561,6 +596,7 @@ function teacherBox(){
       <tr><td>Codewoord kamer 1</td><td><b>${esc(Q.s1_tijdlijn.code())}</b></td></tr>
       <tr><td>Codes onder de QR</td><td>${[1,2,3,4].map(k => k + ": " + esc(CONFIG.PLEKCODES[k]) + " (" + KAMERS[k].plek + ")").join(" · ")} · bonus: ${esc(CONFIG.BONUSCODE)}</td></tr>
       <tr><td>Links voor de QR</td><td>${[1,2,3,4].map(k => esc(base) + "#p" + k).join("<br>")}<br>${esc(base)}#bonus</td></tr>
+      <tr><td>Platen kamer 1</td><td>${CONFIG.TIJDLIJN.map(x => esc(x.l) + " = " + esc(x.t)).join(" · ")}</td></tr>
       <tr><td>Aanklacht</td><td>Mevrouw Dekker · kunstlokaal · vals biljet</td></tr>
       <tr><td>Code koffer</td><td><b>${esc(CONFIG.KOFFERCODE)}</b> (jaar waarin Amerika het goud losliet)</td></tr>
     </table>
@@ -661,7 +697,20 @@ function vKamer(){
     ${vActions(d)}
   </section>
   ${vHints(d)}
-  <div class="foot"><button class="link" data-act="bureau">Even terug naar het bureau</button></div>`;
+  <div class="foot"><button class="link" data-act="dossier">Lees het dossier nog eens</button><button class="link" data-act="bureau">Even terug naar het bureau</button></div>`;
+}
+
+/* ---- leerdossier ---- */
+function vLeer(){
+  const k = S.kamer, kaarten = LEER[k], g = S.gezien[k] || {};
+  const alle = kaarten.every((_,i) => g[i]);
+  const kaartHtml = kaarten.map((c,i) => g[i]
+    ? `<section class="card stack leer has-lees">${LEES}<p class="q"><b>${esc(c.titel)}</b></p><div class="typed lt">${c.tekst.map(t => `<p>${esc(t)}</p>`).join("")}</div></section>`
+    : `<button class="leerknop" data-act="kaart" data-i="${i}"><span class="nr">${i+1}</span><span>Lees: ${esc(c.titel)}</span><span class="pijl">Open</span></button>`).join("");
+  return `<section class="stack"><span class="head-tag" style="color:var(--brass)">${esc(KAMERS[k].naam)} · het dossier</span><h2>Lees eerst het dossier</h2>
+    <p class="lead">In het dossier staat wat je nodig hebt voor de vragen. Tik een kaart open en lees hem goed. Je mag het dossier later nog eens lezen.</p></section>
+  ${kaartHtml}
+  <div class="row">${S.gelezen[k] ? "" : ""}<button class="btn go" data-act="leerklaar" ${alle ? "" : "disabled"}>${S.gelezen[k] ? "Terug naar de vragen" : "Naar de vragen"}</button>${alle ? "" : `<span class="lead" style="font-size:16px">Lees eerst alle ${kaarten.length} kaarten.</span>`}</div>`;
 }
 
 /* ---- clue en hint ---- */
@@ -679,7 +728,7 @@ function vClue(){
     <p class="lead" style="font-size:17px">Lukt scannen niet? Typ de code die onder de QR-code staat.</p>
     <div class="inl"><input id="pcode" type="text" autocapitalize="characters" autocomplete="off" placeholder="Code onder de QR-code"><button class="btn go" data-act="pcode">Controleer</button></div>
   </section>
-  <section class="hints">${hulp}<div class="row">${kan ? `<button class="btn small brass" data-act="rebushulp">Hulp bij de rebus</button>` : ""}<button class="btn small ghost" style="color:var(--on-wood);border-color:var(--on-wood-muted)" data-act="bureau">Terug naar het bureau</button></div></section>`;
+  <section class="hints">${hulp}<div class="row">${kan ? `<button class="btn small brass" data-act="rebushulp" ${totaal() >= CONFIG.HINT_KOST ? "" : "disabled"}>Koop een hint voor de rebus (kost ${CONFIG.HINT_KOST} stempel)</button>` : ""}<button class="btn small ghost" style="color:var(--on-wood);border-color:var(--on-wood-muted)" data-act="bureau">Terug naar het bureau</button></div></section>`;
 }
 function vHint(){
   const k = S.hintK, E = ELIM[k], K = KAMERS[k];
@@ -939,7 +988,7 @@ function leesVoor(el){
   if (!ss) { toast("Voorlezen werkt niet op dit apparaat."); return; }
   if (ss.speaking || el.classList.contains("on")) { ss.cancel(); document.querySelectorAll(".lees.on").forEach(b => b.classList.remove("on")); return; }
   const card = el.closest(".card");
-  const parts = [...card.querySelectorAll(".walk span, .bron, .typed p, .letter p, p.q, .opt, .mi, .fl2, .crit li, .fb")]
+  const parts = [...card.querySelectorAll(".walk span, .bron, .typed p, .letter p, p.q, .opt, .mi, .fl2, .crit li, .fb, .leer p.q")]
     .filter(n => !n.closest(".row") && !n.closest(".lees")).map(n => n.textContent.replace(/\s+/g," ").trim()).filter(Boolean);
   const zinnen = parts.join(". ").replace(/\.\s*\./g,".").match(/[^.!?]+[.!?]*/g) || [];
   const stem = ss.getVoices().find(v => /^nl(-|_)NL/i.test(v.lang)) || ss.getVoices().find(v => /^nl/i.test(v.lang));
@@ -982,13 +1031,16 @@ const A = {
     if (!k) { toast("Die code klopt niet. Kijk nog eens onder de QR-code."); return; }
     plekOpen(k);
   },
-  rebushulp(){ if (S.rebusHulp < CLUES[S.kamer].hulp.length) { S.rebusHulp++; render(); } },
+  rebushulp(){ if (S.rebusHulp >= CLUES[S.kamer].hulp.length) return; if (totaal() < CONFIG.HINT_KOST) { toast("Je hebt geen stempel om mee te betalen."); return; } S.hintsBetaald += CONFIG.HINT_KOST; S.rebusHulp++; render(); },
   bcode(){
     if (S.bonus) return;
     if (norm($("#bcode").value) === norm(CONFIG.BONUSCODE)) { S.bonus = true; toast("Geheime QR gevonden: +" + CONFIG.BONUS_STEMPELS + " stempels!"); render(); }
     else toast("Die code klopt niet.");
   },
-  leesklaar(){ S.gelezen[S.kamer] = true; S.fase = "kamer"; render(); },
+  leesklaar(){ S.fase = "leer"; render(); },
+  kaart(el){ const k = S.kamer; S.gezien[k] = S.gezien[k] || {}; S.gezien[k][Number(el.dataset.i)] = true; render(); },
+  leerklaar(){ S.gelezen[S.kamer] = true; S.fase = "kamer"; render(); },
+  dossier(){ S.fase = "leer"; render(); },
   aanklacht(){
     const a = S.ak || {};
     if (!a.wie || !a.waar || !a.wat) { S.aMsg = "Kies eerst bij alle drie een antwoord."; render(); return; }
@@ -1069,7 +1121,7 @@ addEventListener("hashchange", () => applyHash());
 
 (function init(){
   const old = load();
-  if (old && old.fase !== "start") { S = old; S.docent = null; if (S.fase === "kamer" || S.fase === "brief") startQ(); }
+  if (old && old.fase !== "start") { S = old; S.docent = null; if (S.fase === "kamer" || S.fase === "brief" || S.fase === "leer") startQ(); }
   else if (old && old.pend) S.pend = old.pend;
   render(); applyHash();
 })();
