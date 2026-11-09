@@ -341,7 +341,7 @@ const CONFIG = {
 const KAMERS = {
   1: {naam: "De Oude Kluis",       tijd: "Het verleden van geld", plek: "de aula",          boek: "hoofdstuk 2", beschikbaar: true},
   2: {naam: "Het Biljettenlab",    tijd: "Geld van nu",           plek: "het scheikundelokaal", boek: "hoofdstuk 2", beschikbaar: true},
-  3: {naam: "De Prijzenwinkel",    tijd: "Geld in crisis",        plek: "het ICT-hok",      boek: "hoofdstuk 2", beschikbaar: true},
+  3: {naam: "De Prijzenwinkel",    tijd: "Geld in crisis",        plek: "de torenkamer",     boek: "hoofdstuk 2", beschikbaar: true},
   4: {naam: "Het Dossierkantoor",  tijd: "Herhaling hoofdstuk 1", plek: "de tekenzolder",   boek: "hoofdstuk 1", beschikbaar: true}
 };
 
@@ -358,7 +358,7 @@ const WIE = [
 const WAAR = [
   {id: "kunst", n: "Het kunstlokaal"},
   {id: "sck",   n: "Het scheikundelokaal"},
-  {id: "ict",   n: "Het ICT-hok"}
+  {id: "toren", n: "De torenkamer"}
 ];
 const WAT = [
   {id: "munt",     n: "Een valse munt"},
@@ -371,8 +371,8 @@ const ELIM = {
       wie: ["blom", "haagsma"], waar: [], wat: ["munt"]},
   2: {tekst: "De uv-lamp laat zien dat het valse biljet met gewone verf en inkt is gemaakt. Er is geen lab-truc gebruikt. Dit lokaal heeft er niets mee te maken.",
       wie: ["criens"], waar: ["sck"], wat: []},
-  3: {tekst: "Het logboek laat zien dat de digitale nepbetalingen van buiten school kwamen. Het gebeurde dus niet in het ICT-hok. Er zit ook een campingbon in het logboek: mevrouw Swagerman stond die dagen met haar camper op een camping in Frankrijk.",
-      wie: ["swagerman"], waar: ["ict"], wat: ["digitaal"]},
+  3: {tekst: "In het reislogboek van mevrouw Swagerman zit een campingbon uit Frankrijk. Zij stond die dagen echt met haar camper op een camping. De bank meldt ook dat er geen digitale nepbetalingen zijn geweest, alleen papieren en metalen geld. En in de torenkamer is niets nagemaakt.",
+      wie: ["swagerman"], waar: ["toren"], wat: ["digitaal"]},
   4: {tekst: "De begrotingen van meneer Boersen en mevrouw Bugajová sluiten met een overschot. Zij hebben geen geldzorgen. Op de biljetten van mevrouw Bugajová staat ‘Muster’: dat is lesmateriaal.",
       wie: ["boersen", "bugajova"], waar: [], wat: []}
 };
@@ -435,9 +435,9 @@ const CLUES = {
       rebus: `<p class="lead">De foto is niet gevonden. Vraag de docent.</p>`,
       foto: "img/plek3.jpg",
       fotoAlt: "Foto van een plek in school",
-      hulp: ["Kijk goed naar de foto. Wat zie je door de open deur?",
-             "Door de deur zie je een klein kantoortje met een balie. Wie zit daar de hele dag achter zijn scherm?",
-             "Het is het ICT-hok. Ga erheen en zoek de QR-code."]},
+      hulp: ["Kijk goed naar de foto. Wat zie je? Hoe zit de ruimte eruit?",
+             "Dit is een ruimte hoog in het gebouw, in een toren. Je moet naar boven om hem te vinden.",
+             "Het is de torenkamer. Ga erheen en zoek de QR-code."]},
   4: {intro: "Het dossierkabinet springt open. Achter de laatste map ligt een foto. Op de foto zie je een plek in school.",
       rebus: `<p class="lead">De foto is niet gevonden. Vraag de docent.</p>`,
       foto: "img/plek4.jpg",
@@ -685,11 +685,11 @@ op("o4_begroting", "Waarom maakt een huishouden een begroting? Beantwoord deze t
   "In een begroting staan de verwachte inkomsten en uitgaven. Zo zie je vooraf of je genoeg geld hebt. Je voorkomt een tekort en schulden.",
   ["Een begroting kijkt vooruit. Welke twee soorten bedragen staan erin?", "Wat gebeurt er als je meer uitgeeft dan je binnenkrijgt?", "Er staan inkomsten en uitgaven in. Je voorkomt een tekort en schulden."]);
 add({id: "s4_dossiers", type: "slot", lokaal: true, label: "Het slot van het dossierkabinet",
-  walk: "Zoek in het lokaal de " + CONFIG.DOSSIERS.length + " financiële dossiers. Daarin staan de inkomsten en de uitgaven per maand.",
-  q: "Reken bij elk dossier uit hoeveel overschot of tekort er is. Welke verdachte heeft het grootste tekort per maand? Typ dat tekort in euro. Typ alleen de cijfers, zonder min-teken. Groene cijfers staan al op de goede plek.",
+  walk: "Zoek in het lokaal de " + CONFIG.DOSSIERS.length + " financiële dossiers. Daarin staan alle bedragen per maand. Ze zijn nog niet opgeteld.",
+  q: "Tel bij elk dossier eerst de inkomsten, de vaste uitgaven en de variabele uitgaven op. Reken daarna uit hoeveel overschot of tekort er is. Welke verdachte heeft het grootste tekort per maand? Typ dat tekort in euro. Typ alleen de cijfers, zonder min-teken. Groene cijfers staan al op de goede plek.",
   code: () => String(Math.max(...CONFIG.DOSSIERS.map(d => d.vast + d.variabel - d.inkomsten))), digits: true,
   na: "Wie meer uitgeeft dan hij binnenkrijgt, heeft een tekort. Een groot tekort is een reden om aan extra geld te willen komen.",
-  hints: ["Reken per dossier: inkomsten min vaste uitgaven min variabele uitgaven. Is de uitkomst negatief, dan is er een tekort.", "Twee dossiers hebben een overschot en twee een tekort. Vergelijk de twee tekorten.", "Het grootste tekort is " + Math.max(...CONFIG.DOSSIERS.map(d => d.vast + d.variabel - d.inkomsten)) + " euro. Typ die cijfers."]});
+  hints: ["Tel per dossier eerst de bedragen op: alle inkomsten, alle vaste uitgaven en alle variabele uitgaven. Daarna: inkomsten min vaste uitgaven min variabele uitgaven. Is de uitkomst negatief, dan is er een tekort.", "Twee dossiers hebben een overschot en twee een tekort. Vergelijk de twee tekorten.", "Het grootste tekort is " + Math.max(...CONFIG.DOSSIERS.map(d => d.vast + d.variabel - d.inkomsten)) + " euro. Typ die cijfers."]});
 
 /* Kamer 1: zes vragen (volgorde van het boek) en daarna de tijdlijn. Bij ruil en bij wisselbrief/goud krijgt elk duo er een van de twee. */
 const POOL = {
