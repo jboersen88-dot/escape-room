@@ -327,7 +327,7 @@ const CONFIG = {
     {n: "Meneer Haagsma",    inkomsten: 3600, vast: 2700, variabel: 1250},
     {n: "Mevrouw Dekker",    inkomsten: 3000, vast: 2800, variabel: 1450}
   ],
-  /* Kamer 1: zes platen aan de muur, zonder jaartal, elk met een letter achterop. Goede volgorde = codewoord. */
+  /* Kamer 1: zes platen aan de muur, zonder jaartal, elk met een letter onderaan. Goede volgorde = codewoord. */
   TIJDLIJN: [
     {t: "Ruilhandel",                  l: "R", tekst: "Mensen ruilen spullen met elkaar. Er is nog geen geld."},
     {t: "Schelpen en zout",            l: "U", tekst: "Schelpen en zout zijn het eerste geld."},
@@ -553,7 +553,7 @@ op("o1_inflatie", "Wat is inflatie? Beantwoord deze twee vragen:\n* Wat gebeurt 
 /* Slot kamer 1: de tijdlijn aan de muur */
 add({id: "s1_tijdlijn", type: "slot", lokaal: true, label: "Het slot van de kluis",
   walk: "Zoek in het lokaal de " + CONFIG.TIJDLIJN.length + " platen van de tijdlijn van geld. Ze hangen door elkaar en er staat geen jaartal op.",
-  q: "Lees op elke plaat wat er gebeurde. Zet de platen in de goede volgorde, van oud naar nieuw. Achterop elke plaat staat een letter. Typ de letters in de goede volgorde. Groene letters staan al op de goede plek.",
+  q: "Lees op elke plaat wat er gebeurde. Zet de platen in de goede volgorde, van oud naar nieuw. Onderaan elke plaat staat een letter. Typ de letters in de goede volgorde. Groene letters staan al op de goede plek.",
   code: () => CONFIG.TIJDLIJN.map(x => x.l).join(""),
   na: "RUILEN! Zo begon het: mensen gingen ruilen. En in 1971 liet Amerika het goud los. Sinds die tijd is geld alleen nog waard wat wij ervan vertrouwen.",
   hints: ["Begin met het oudste: ruilen zonder geld.", "Daarna volgen schelpen en zout, dan munten, dan de wisselbrief.", "Het laatst komt de pinpas. Daarvoor liet Amerika het goud los. Kijk ook in je boek."]});
